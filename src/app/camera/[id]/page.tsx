@@ -41,7 +41,7 @@ export default function CameraPage({ params }: { params: { id: string } }) {
             facingMode: "environment",
           }}
         />
-        <Button>{event?.name}</Button>
+        <Button >{event?.userId}</Button>
         
       </div>
     </main>
