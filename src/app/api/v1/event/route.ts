@@ -21,3 +21,20 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
     },
   });
 };
+
+export const POST = async (req: NextRequest, res: NextResponse) => {
+  const { data: event, error } = await supabase
+    .from("Events")
+    .insert(req.body)
+    .single();
+
+  if (error) {
+    return new NextResponse(JSON.stringify(error));
+  }
+
+  return new NextResponse(JSON.stringify(event), {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};

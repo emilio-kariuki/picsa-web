@@ -1,5 +1,4 @@
 export class EventModel {
-  
     id: string;
     name: string;
     userId: string;
@@ -10,7 +9,7 @@ export class EventModel {
       this.userId = userId;
       this.createdAt = createdAt;
     }
-  
+
     static fromJson(json: any): EventModel {
       return new EventModel(
         json.id,
@@ -19,7 +18,6 @@ export class EventModel {
         new Date(json.createdAt)
       );
     }
-  
      toJson(): any {
       return {
         id: this.id,
@@ -28,9 +26,8 @@ export class EventModel {
         createdAt: this.createdAt.toISOString(),
       };
     }
-  
+
     toString(): string {
       return JSON.stringify(this.toJson());
     }
   }
-  

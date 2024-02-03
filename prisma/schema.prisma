@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Events {
+  id          String        @id
+  name        String
+  createdAt   DateTime      @default(now()) @db.Timestamp(6)
+  url         String?       @default("https://pvotaaukwfeabaqtahfu.supabase.co/storage/v1/object/public/picsa/frame_picsa.png")
+  userId      String?
+  User        User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  GuestEvents GuestEvents[]
+  Images      Images[]
+
+  @@index([userId])
+}
+
+model GuestEvents {
+  id      String  @id
+  userId  String?
+  eventId String?
+  Events  Events? @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  User    User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, eventId])
+}
+
+model Images {
+  id        String   @id
+  name      String
+  userId    String
+  eventId   String
+  createdAt DateTime @default(now())
+  url       String
+  Events    Events   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, eventId])
+}
+
+model User {
+  id          String        @id
+  email       String        @unique
+  name        String?
+  createdAt   DateTime      @default(now())
+  url         String?
+  Events      Events[]
+  GuestEvents GuestEvents[]
+  Images      Images[]
+}
