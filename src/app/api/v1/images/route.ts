@@ -1,4 +1,4 @@
-import { supabase } from "@/app/supabase";
+import { supabase } from "@/services/supabase";
 import { NextResponse, NextRequest } from "next/server";
 
 export const GET = async (req: NextRequest, res: NextResponse) => {
@@ -9,7 +9,6 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
     .select("*")
     .eq("eventId", id)
     .order("createdAt", { ascending: false })
-    .single();
 
   if (error) {
     return new NextResponse(JSON.stringify(error));
@@ -21,4 +20,5 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
     },
   });
 };
+
 

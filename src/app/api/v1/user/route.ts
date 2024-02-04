@@ -1,21 +1,20 @@
 import { supabase } from "@/services/supabase";
-import { NextApiRequest } from "next";
-import { NextResponse, NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { UserModel } from "../../../../../types";
 
 export const GET = async (req: NextRequest, res: NextResponse) => {
   const id = req.nextUrl.searchParams.get("id");
-  const { data: event, error } = await supabase
-    .from("Events")
+  const { data: user, error } = await supabase
+    .from("User")
     .select("*")
     .eq("id", id)
-    .order("createdAt", { ascending: false })
     .single();
 
   if (error) {
     return new NextResponse(JSON.stringify(error));
   }
 
-  return new NextResponse(JSON.stringify(event), {
+  return new NextResponse(JSON.stringify(user), {
     headers: {
       "Content-Type": "application/json",
     },
@@ -23,16 +22,19 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
 };
 
 export const POST = async (req: NextRequest, res: NextResponse) => {
-  const { data: event, error } = await supabase
-    .from("Events")
-    .insert(req.body)
-    .single();
+  const data: UserModel = await req.json();
+  const { data: user, error } = await supabase.from("User").insert({
+    id: data.id,
+    name: data.name,
+    email: data.email,
+    url: data.url,
+  });
 
   if (error) {
     return new NextResponse(JSON.stringify(error));
   }
 
-  return new NextResponse(JSON.stringify(event), {
+  return new NextResponse(JSON.stringify(user), {
     headers: {
       "Content-Type": "application/json",
     },

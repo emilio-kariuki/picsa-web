@@ -1,4 +1,4 @@
-import { supabase } from "@/app/supabase";
+import { supabase } from "@/services/supabase";
 import { NextRequest, NextResponse } from "next/server";
 
 type User = {
@@ -8,28 +8,52 @@ type User = {
   url: string;
 };
 
+type GuestEvents = {
+  id: string;
+  eventId: string;
+  userId: string;
+};
+
 export const GET = async (req: NextRequest, res: NextResponse) => {
-  const id = req.nextUrl.searchParams.get("id");
+  try {
+    const id = req.nextUrl.searchParams.get("id");
 
-  const usersJoined = [] as User[];
-
-  const { data: people, error } = await supabase
-    .from("GuestEvents")
-    .select("*")
-    .eq("eventId", id);
-
-  people?.map(async (person: string) => {
-    const { data: user, error } = await supabase
-      .from("Users")
+    const { data: people, error: peopleError } = await supabase
+      .from("GuestEvents")
       .select("*")
-      .eq("id", person)
-      .single();
-    usersJoined.push(user as User);
-  });
+      .eq("eventId", id);
 
-  if (error) {
-    return new NextResponse(JSON.stringify(error));
+    if (peopleError) {
+      throw new Error(JSON.stringify(peopleError));
+    }
+
+    const usersJoined: User[] = [];
+
+    await Promise.all(
+      people?.map(async (person: GuestEvents) => {
+        const { data: user, error: userError } = await supabase
+          .from("User")
+          .select("*")
+          .eq("id", person.userId)
+          .single();
+
+        if (userError) {
+          throw new Error(JSON.stringify(userError));
+        }
+
+        if (user) {
+          usersJoined.push(user);
+        }
+      })
+    );
+
+    return new NextResponse(JSON.stringify(usersJoined), {
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new NextResponse(JSON.stringify(error), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
-
-  return new NextResponse(JSON.stringify(usersJoined));
 };

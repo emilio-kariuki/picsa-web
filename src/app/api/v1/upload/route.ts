@@ -1,4 +1,4 @@
-import { supabase } from "@/app/supabase";
+import { supabase } from "@/services/supabase";
 import { decode } from "base64-arraybuffer";
 import { log } from "console";
 import { NextRequest, NextResponse } from "next/server";
@@ -27,9 +27,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
   if (uploadError) {
     return new NextResponse(JSON.stringify(uploadError));
   }
-  console.log('====================================');
-  console.log(data.userId);
-  console.log('====================================');
+
   const imageUrl = (supabase.storage.from("picsa").getPublicUrl(imageKey)).data.publicUrl;
   const { data: photo, error } = await supabase.from("Images").insert({
     id: uuidv4(),
@@ -44,20 +42,4 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
   }
 
   return new NextResponse(JSON.stringify(photo));
-};
-
-export const GET = async (req: NextRequest, res: NextResponse) => {
-  const id = req.nextUrl.searchParams.get("id");
-  const { data: photos, error } = await supabase
-    .from("Images")
-    .select("*")
-    .eq("eventId", id)
-    .order("createdAt", { ascending: false });
-
-
-  if (error) {
-    return new NextResponse(JSON.stringify(error));
-  }
-
-  return new NextResponse(JSON.stringify(photos));
 };
