@@ -20,7 +20,7 @@ import {
 
 export default function Header() {
   return (
-    <div
+    <nav
       className={cn(
         "z-40 flex h-20 w-full items-center bg-white",
         "sticky top-0"
@@ -47,7 +47,7 @@ export default function Header() {
           </Link>
         </div>
       </div>
-    </div>
+    </nav>
   );
 }
 
