@@ -71,8 +71,13 @@ export function About() {
         
       </div>
       <div className=" flex items-center justify-center">
-        <button className="bg-[#54EA53] text-white px-8 py-4 rounded-full hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-slate focus:ring-opacity-50">
+        <button onClick={()=>{
+           window.open(
+            "https://play.google.com/store/apps/details?id=com.ecoville.picsa"
+          );
+        }} className="bg-[#54EA53] text-white px-8 py-4 rounded-full hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-slate focus:ring-opacity-50">
           <div className="flex flex-row items-center gap-10">
+            
             <span className="text-base text-black">
               Download the app from PlayStore
             </span>
