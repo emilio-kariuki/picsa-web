@@ -27,7 +27,7 @@ model GuestEvents {
   Events  Events? @relation(fields: [eventId], references: [id], onDelete: Cascade)
   User    User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId, eventId])
+  @@index([userId])
 }
 
 model Images {

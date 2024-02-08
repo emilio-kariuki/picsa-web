@@ -1,4 +1,4 @@
-import { supabase } from "@/services/supabase";
+import { supabase } from "@/lib/supabase";
 import { NextRequest, NextResponse } from "next/server";
 
 type User = {
@@ -16,12 +16,12 @@ type GuestEvents = {
 
 export const GET = async (req: NextRequest, res: NextResponse) => {
   try {
-    const id = req.nextUrl.searchParams.get("id");
+    const event = req.nextUrl.searchParams.get("event");
 
     const { data: people, error: peopleError } = await supabase
       .from("GuestEvents")
       .select("*")
-      .eq("eventId", id);
+      .eq("eventId", event);
 
     if (peopleError) {
       throw new Error(JSON.stringify(peopleError));

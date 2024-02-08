@@ -1,6 +1,7 @@
-import { supabase } from "@/services/supabase";
+import { createClient } from "@supabase/supabase-js";
 import { NextApiRequest } from "next";
 import { NextResponse, NextRequest } from "next/server";
+import { supabase } from "@/lib/supabase";
 
 export const GET = async (req: NextRequest, res: NextResponse) => {
   const id = req.nextUrl.searchParams.get("id");
@@ -22,19 +23,38 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
   });
 };
 
-export const POST = async (req: NextRequest, res: NextResponse) => {
+export const DELETE = async (req: NextRequest, res: NextResponse) => {
+  const id = req.nextUrl.searchParams.get("id");
   const { data: event, error } = await supabase
     .from("Events")
-    .insert(req.body)
-    .single();
+    .delete()
+    .eq("id", id);
 
   if (error) {
-    return new NextResponse(JSON.stringify(error));
+    return new NextResponse(
+      JSON.stringify({
+        deleted: false,
+      }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
   }
 
-  return new NextResponse(JSON.stringify(event), {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  return new NextResponse(
+    JSON.stringify({
+      deleted: true,
+    }),
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+};
+
+export const PUT = async (req: NextRequest, res: NextResponse) => {
+
 };

@@ -7,7 +7,7 @@ import Image from "next/image";
 
 export function Hero() {
   return (
-    <section className="relative m-5 bg-gradient-to-b bg-[#181a1b] rounded-[100px]">
+    <section className="relative h-[800px] flex flex-col items-center justify-center bg-[#181a1b]">
       <div className="text-green-900/10">
         <GridPattern x="80%" patternTransform="translate(0 80)" />
       </div>
@@ -27,8 +27,19 @@ export function Hero() {
             tells a tale!
           </p>
           <div className="flex flex-row gap-10 mt-10 items-center">
-            <button className="bg-[#54EA53] text-white px-8 py-4 rounded-full hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-slate focus:ring-opacity-50">
-              <div className="flex flex-row items-center gap-10">
+            <button
+              onClick={() => {
+                window.open(
+                  "https://play.google.com/store/apps/details?id=com.ecoville.picsa"
+                );
+              }}
+              className="bg-[#54EA53] text-white px-8 py-4 rounded-full hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-slate focus:ring-opacity-50"
+            >
+              <div onClick={() => {
+                window.open(
+                  "https://play.google.com/store/apps/details?id=com.ecoville.picsa"
+                );
+              }} className="flex flex-row items-center gap-10">
                 <span className="text-base text-black">Get the App</span>
                 <MoveRight size={24} color="#000000" />
               </div>

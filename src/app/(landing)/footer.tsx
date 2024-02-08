@@ -59,8 +59,8 @@ const navigation = [
 
 export function Footer() {
   return (
-    <footer className="p-5 md:py-10">
-      <Container className="grid grid-cols-1 gap-5 md:grid-cols-2">
+    <footer className="p-5 md:py-10 ">
+      <Container className="grid grid-cols-1 gap-5 md:grid-cols-2 ">
         <section className="grid grid-cols-2 items-stretch gap-8 py-5 md:grid-cols-3">
           {navigation.map((group, idx) => (
             <nav key={idx}>

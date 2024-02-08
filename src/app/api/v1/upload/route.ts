@@ -1,8 +1,7 @@
-import { supabase } from "@/services/supabase";
+import { supabase } from "@/lib/supabase";
 import { decode } from "base64-arraybuffer";
-import { log } from "console";
 import { NextRequest, NextResponse } from "next/server";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 export type UploadData = {
   image: string;
@@ -12,10 +11,15 @@ export type UploadData = {
 
 export const POST = async (req: NextRequest, res: NextResponse) => {
   const data: UploadData = await req.json();
+  console.log(data.eventId);
+  console.log(data.userId);
+  console.log(data.image);
+  
+  
+  
   const time: number = new Date().valueOf();
   const imageKey: string = `web/${time}.jpg`;
-  const splitImage = data.image.split("base64,")[1];
-  const imageData = decode(splitImage);
+  const imageData = decode(data.image);
   const { data: uploadData, error: uploadError } = await supabase.storage
     .from("picsa")
     .upload(imageKey, imageData, {
@@ -28,7 +32,8 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
     return new NextResponse(JSON.stringify(uploadError));
   }
 
-  const imageUrl = (supabase.storage.from("picsa").getPublicUrl(imageKey)).data.publicUrl;
+  const imageUrl = supabase.storage.from("picsa").getPublicUrl(imageKey)
+    .data.publicUrl;
   const { data: photo, error } = await supabase.from("Images").insert({
     id: uuidv4(),
     name: imageKey,

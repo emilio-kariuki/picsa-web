@@ -11,11 +11,10 @@ import Image from "next/image";
 import { useSession } from "@supabase/auth-helpers-react";
 import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
-import { supabase } from "@/services/supabase";
+import { supabase } from "@/lib/supabase";
 import moment from "moment";
 import { ImageModel, EventModel } from "../../../../types";
 import { rubiks } from "@/lib/fonts";
-import PlayBanner from "../banner";
 
 function CaptureComponents(props: {
   takePicture: () => void;
@@ -75,7 +74,7 @@ const CameraView = (props: { eventId: string }) => {
         const uploadData: UploadData = {
           image: img,
           eventId: props.eventId,
-          userId: session?.user.id as string,
+          userId: session?.user.id ?? '',
         };
         await axios.post("/api/v1/upload", uploadData);
       }
@@ -157,7 +156,6 @@ export default function CameraPage({ params }: { params: { id: string } }) {
       <main className="flex min-h-screen h-full sm:w-auto md:max-w-2xl w-full flex-col items-center justify-start bg-transparent text-white">
         <ComponentTitle eventId={params.id} />
         <CameraView eventId={params.id} />
-        <PlayBanner />
       </main>
     </div>
   );

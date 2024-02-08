@@ -17,77 +17,83 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { useSession } from "@supabase/auth-helpers-react";
+import { supabase } from "@/lib/supabase";
 
 export default function Header() {
+  const session = useSession();
   return (
     <nav
       className={cn(
-        "z-40 flex h-20 w-full items-center bg-white",
+        "z-30 flex mn-w-[]  w-full items-center bg-[#181a1b]",
         "sticky top-0"
       )}
     >
-      <div className="mx-auto flex w-full max-w-[85rem] items-center justify-between p-5">
+      <div className="mx-auto flex w-full max-w-[85rem] items-center justify-between py-3">
         <Link
           href="/"
           className=" flex flex-row gap-2 items-center justify-center"
         >
           <PLogo />
-          <h2 className={`text-black text-[30px] ${rubiks.className}`}>
+          <h2 className={`text-white text-[25px] ${rubiks.className}`}>
             Picsa
           </h2>
         </Link>
-        {/* <NavigationMenuDemo /> */}
-
-        <div className="flex flex-row gap-5 items-center">
+        <div className="flex flex-row gap-8">
+          <Link
+            href="/"
+            className="text-white text-[16px] font-semibold hover:text-accent-foreground"
+          >
+            Home
+          </Link>
+          <Link
+            href="/about"
+            className="text-white text-[16px] font-semibold hover:text-accent-foreground"
+          >
+            About
+          </Link>
           <Link
             href="/contact"
-            className={"bg-[#54EA53] text-black text-[14px] py-3 px-6 rounded-full"}
+            className="text-white text-[16px] font-semibold hover:text-accent-foreground"
           >
-            Sign In
+            Contact
           </Link>
         </div>
+
+        {session ? (
+          <div className="flex flex-row gap-5 items-center">
+            <Link
+              href="/contact"
+              className={
+                "bg-[#54EA53] text-black text-[14px] py-2 px-6 font-semibold border-2 border-[#54EA53] rounded-full"
+              }
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/contact"
+              className={
+                "bg-transparent text-white text-[14px] py-2 px-6 font-semibold rounded-full border-2 border-[#54EA53]"
+              }
+            >
+              Sign Up
+            </Link>
+          </div>
+        ) : (
+          <Link
+            href="/"
+            onClick={async () => {
+              await supabase.auth.signOut();
+            }}
+            className={
+              "bg-transparent text-white text-[14px] py-2 px-6 font-semibold rounded-full border-2 border-[#54EA53]"
+            }
+          >
+            Sign Out
+          </Link>
+        )}
       </div>
     </nav>
-  );
-}
-
-export function NavigationMenuDemo() {
-  return (
-    <NavigationMenu>
-      <NavigationMenuList>
-        <NavigationMenuItem>
-          <NavigationMenuItem>
-            <Link href="/docs" legacyBehavior passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Get App
-              </NavigationMenuLink>
-            </Link>
-          </NavigationMenuItem>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <Link href="/docs" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Documentation
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link href="/docs" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              About
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link href="/docs" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Contacts
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-      </NavigationMenuList>
-    </NavigationMenu>
   );
 }
 

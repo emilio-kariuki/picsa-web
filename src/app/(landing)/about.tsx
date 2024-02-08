@@ -1,3 +1,4 @@
+"use client"
 import { inter, interRegular, quickSand, roboto, rubiks } from "@/lib/fonts";
 import { MoveUpRight } from "lucide-react";
 import Wedding from "@/assets/wedding.jpg";
@@ -36,7 +37,7 @@ const memories = [
 
 export function About() {
   return (
-    <section className="relative flex flex-col mt-[80px] px-20 py-20 bg-gray-100 ">
+    <section className="relative flex flex-col  px-20 py-20 bg-gray-100 ">
       <div className="flex h-[800px] w-full flex-col justify-start items-start ">
         <div className="flex flex-col items-start justify-start">
           <h1
@@ -64,6 +65,8 @@ export function About() {
               help you capture and share those moments with the world.
             </p>
            
+
+
           </div>
         </div>
         <div className="h-[60px]"></div>
