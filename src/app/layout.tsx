@@ -39,13 +39,12 @@ export default function RootLayout({
 }) {
   return (
     <Providers>
-      <html lang="en">
+      <html suppressHydrationWarning lang="en">
         <SpeedInsights />
-        <body className={inter.className}>
-          <Header />
+        <body className={`overscroll-none ${inter.className}`}>
+          {/* <Header /> */}
           <main>{children}</main>
           <Toaster />
-
         </body>
       </html>
     </Providers>

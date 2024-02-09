@@ -5,6 +5,7 @@ import Link from "next/link";
 import { MailIcon, PhoneCallIcon, PhoneCall } from "lucide-react";
 import { PLogo } from "@/components/shared/logo";
 import { Input } from "@/components/ui/input";
+import { rubiks } from "@/lib/fonts";
 
 const navigation = [
   {
@@ -74,7 +75,9 @@ export function Footer() {
                     {"href" in item && item.href ? (
                       <Link href={item.href}>{item.label}</Link>
                     ) : (
-                      <span className="text-gray-600">{('value' in item && item.value)}</span>
+                      <span className="text-gray-600">
+                        {"value" in item && item.value}
+                      </span>
                     )}
                   </div>
                 );
@@ -82,31 +85,45 @@ export function Footer() {
             </nav>
           ))}
         </section>
-        <section className="ml-auto py-5">
-          <p className="mb-5 text-lg font-semibold">
-            Subscribe to our newsletter
-          </p>
-          <p className="mb-5 text-gray-600">
-            Get the latest news and updates from Picsa
-          </p>
-          <div className="flex w-full max-w-sm items-center space-x-2">
-            <Input type="email" placeholder="Email" />
-            <Button type="submit" className="bg-[#3eb03e] hover:bg-[#54d354]">
-              Subscribe
-            </Button>
-          </div>
-        </section>
+        <Questions />
       </Container>
       <Container>
         <hr className="bg-gray-600/10" />
       </Container>
-      <Container className="flex flex-col items-center justify-between pt-8 md:flex-row">
-        <PLogo />
+      <Container className="flex flex-col items-center justify-between m-5  md:flex-row">
+        <Link
+          href="/"
+          className=" flex flex-row gap-2 items-center justify-center"
+        >
+          <PLogo />
+          <h2 className={`text-black text-[25px] ${rubiks.className}`}>
+            Picsa
+          </h2>
+        </Link>
         <span className="text-center text-gray-600">
-          &copy; {new Date().getFullYear()} Picsa . All rights
-          reserved.
+          &copy; {new Date().getFullYear()} Picsa . All rights reserved.
         </span>
       </Container>
     </footer>
+  );
+}
+
+function Questions() {
+  return (
+    <div className="flex flex-col gap-5 max-w-[350px] ml-auto pb-6 ">
+      <span className={`text-black font-bold text-[30px] ${rubiks.className}`}>
+        Got A Question for Picsa?
+      </span>
+      <span>
+        If there are questions you want to ask, we will answer all your
+        questions.
+      </span>
+      <div className="flex w-full max-w-sm items-center space-x-2">
+        <Input type="email" placeholder="Email" />
+        <Button type="submit" className="bg-[#000000] hover:bg-[#54d354]">
+          Submit
+        </Button>
+      </div>
+    </div>
   );
 }

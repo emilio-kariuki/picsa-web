@@ -25,7 +25,7 @@ export default function Header() {
   return (
     <nav
       className={cn(
-        "z-30 flex mn-w-[]  w-full items-center bg-[#181a1b]",
+        "z-30 flex mn-w-[] px-3 w-full items-center bg-[#181a1b]",
         "sticky top-0"
       )}
     >
@@ -39,33 +39,41 @@ export default function Header() {
             Picsa
           </h2>
         </Link>
-        <div className="flex flex-row gap-8">
+        <div className="flex flex-row gap-10">
           <Link
             href="/"
-            className="text-white text-[16px] font-semibold hover:text-accent-foreground"
+            className="text-white text-[16px] font-medium hover:text-gray-500"
           >
             Home
           </Link>
           <Link
             href="/about"
-            className="text-white text-[16px] font-semibold hover:text-accent-foreground"
+            className="text-white text-[16px] font-medium hover:text-gray-500"
           >
             About
           </Link>
           <Link
+            href="/about"
+            className="text-white text-[16px] font-medium hover:text-gray-500"
+          >
+            Careers
+          </Link>
+          <Link
             href="/contact"
-            className="text-white text-[16px] font-semibold hover:text-accent-foreground"
+            className="text-white text-[16px] font-medium hover:text-gray-500"
           >
             Contact
           </Link>
         </div>
-
+        <div className=" flex items-center justify-center">
+       
+      </div>
         {session ? (
           <div className="flex flex-row gap-5 items-center">
             <Link
               href="/contact"
               className={
-                "bg-[#54EA53] text-black text-[14px] py-2 px-6 font-semibold border-2 border-[#54EA53] rounded-full"
+                "bg-[#54EA53] text-white text-[14px] py-2 px-6 font-semibold border-2 border-[#54EA53] rounded-full"
               }
             >
               Sign In
