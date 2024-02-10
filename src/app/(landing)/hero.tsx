@@ -57,7 +57,7 @@ export function Hero() {
                   4.8
                 </span>
                 <span className="text-[13px] text-white">
-                  Rating on AppStore
+                  Rating on PlayStore
                 </span>
               </div>
               <div className="flex flex-col  item-start">
