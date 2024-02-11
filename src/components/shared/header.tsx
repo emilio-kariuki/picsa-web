@@ -21,9 +21,23 @@ import { useSession } from "@supabase/auth-helpers-react";
 import { supabase } from "@/lib/supabase";
 import { MobileMenu } from "./mobile";
 import { DesktopMenu } from "./desktop";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   const session = useSession();
+  const path = usePathname();
+  async function loginWithGoogle() {
+    await supabase.auth
+      .signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: path,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+      });
+  }
   return (
     <nav
       className={cn(
@@ -46,40 +60,45 @@ export default function Header() {
         <DesktopMenu />
 
         <div className="hidden item-center space-x-3 md:flex lg:flex">
-        {session ? (
-          <div className="flex flex-row gap-5 items-center">
+          {session ? (
+            <div className="flex flex-row gap-5 items-center">
+              <div
+                onClick={async () => {
+                  await loginWithGoogle().then(() => {
+                    window.location.href = path;
+                  });
+                }}
+                className={
+                  "bg-[#54EA53] text-white text-[14px] py-2 px-6 font-semibold border-2 border-[#54EA53] rounded-full"
+                }
+              >
+                Sign In
+              </div>
+              <Link
+                href="/contact"
+                className={
+                  "bg-transparent text-white text-[14px] py-2 px-6 font-semibold rounded-full border-2 border-[#54EA53]"
+                }
+              >
+                Sign Up
+              </Link>
+            </div>
+          ) : (
             <Link
-              href="/contact"
-              className={
-                "bg-[#54EA53] text-white text-[14px] py-2 px-6 font-semibold border-2 border-[#54EA53] rounded-full"
-              }
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/contact"
+              href="/"
+              onClick={async () => {
+                await supabase.auth.signOut().then(() => {
+                  window.location.href = "/";
+                });
+              }}
               className={
                 "bg-transparent text-white text-[14px] py-2 px-6 font-semibold rounded-full border-2 border-[#54EA53]"
               }
             >
-              Sign Up
+              Sign Out
             </Link>
-          </div>
-        ) : (
-          <Link
-            href="/"
-            onClick={async () => {
-              await supabase.auth.signOut();
-            }}
-            className={
-              "bg-transparent text-white text-[14px] py-2 px-6 font-semibold rounded-full border-2 border-[#54EA53]"
-            }
-          >
-            Sign Out
-          </Link>
-        )}
+          )}
         </div>
-
       </div>
     </nav>
   );

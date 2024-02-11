@@ -50,7 +50,7 @@ export function About() {
         <div className="mx-auto w-full justify-start items-start">
           <div className="flex w-full flex-col items-start justify-start">
             <h1
-              className={`text-5xl sm:text-xl mx-auto max-w-[480px] text-center lg:text-center md:text-center  font-bold text-slate ${quickSand.className} mb-2`}
+              className={`text-5xl sm:text-xl lg:text-5xl md:text-5xl mx-auto max-w-[480px] text-center lg:text-center md:text-center  font-bold text-slate ${quickSand.className} mb-2`}
             >
               We want You to Live Lighter
             </h1>
@@ -85,7 +85,7 @@ function ImagesSection() {
       {memories.map((memory, index) => (
         <div
           key={index}
-          className="flex flex-col items-start py-2 sm:py-5 justify-start bg-transparent rounded-md "
+          className="flex flex-col items-start py-2 sm:py-5 justify-end bg-transparent rounded-md "
         >
           <p
             key={index}
