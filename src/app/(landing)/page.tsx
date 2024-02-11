@@ -1,4 +1,4 @@
-import Header from "@/components/shared/header";
+import Header from "@/components/shared/main-header";
 import { About } from "./about";
 import { Footer } from "./footer";
 import { Hero } from "./hero";

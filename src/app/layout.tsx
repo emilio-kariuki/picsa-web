@@ -4,7 +4,7 @@ import "./styles/globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Providers } from "@/lib/provider";
 import { Toaster } from "@/components/ui/toaster";
-import Header from "@/components/shared/header";
+import Header from "@/components/shared/main-header";
 
 const inter = Inter({ subsets: ["latin"] });
 

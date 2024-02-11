@@ -19,11 +19,12 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useSession } from "@supabase/auth-helpers-react";
 import { supabase } from "@/lib/supabase";
-import { MobileMenu } from "./mobile";
-import { DesktopMenu } from "./desktop";
+import { MobileMenu } from "./mobile-header";
+import { DesktopMenu } from "./desktop-header";
 import { usePathname } from "next/navigation";
 
 export default function Header() {
+  const [signedIn, isSignedIn] = React.useState(false);
   const session = useSession();
   const path = usePathname();
   async function loginWithGoogle() {
@@ -38,6 +39,18 @@ export default function Header() {
         console.log(res);
       });
   }
+
+  React.useEffect(() => {
+    supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        isSignedIn(false);
+        console.log("not signed in");
+      } else {
+        isSignedIn(true);
+        console.log("signed in");
+      }
+    });
+  }, [isSignedIn]);
   return (
     <nav
       className={cn(
@@ -60,12 +73,12 @@ export default function Header() {
         <DesktopMenu />
 
         <div className="hidden item-center space-x-3 md:flex lg:flex">
-          {session ? (
+          {!signedIn ? (
             <div className="flex flex-row gap-5 items-center">
               <div
                 onClick={async () => {
                   await loginWithGoogle().then(() => {
-                    window.location.href = path;
+                    isSignedIn(true);
                   });
                 }}
                 className={
