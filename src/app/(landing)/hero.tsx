@@ -27,7 +27,7 @@ export function Hero() {
               passport to pixel-perfect memories. Join the fun – where every
               click tells a tale!
             </p>
-            <div className="flex flex-row gap-6  items-center">
+            <div className="flex flex-col lg:flex-row md:flex-row gap-6  items-center">
               <Button
                 onClick={() => {
                   window.open(

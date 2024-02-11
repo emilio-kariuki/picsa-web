@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useSession } from "@supabase/auth-helpers-react";
 import { supabase } from "@/lib/supabase";
+import { MobileMenu } from "./mobile";
+import { DesktopMenu } from "./desktop";
 
 export default function Header() {
   const session = useSession();
@@ -39,35 +41,11 @@ export default function Header() {
             Picsa
           </h2>
         </Link>
-        <div className="flex flex-row gap-10">
-          <Link
-            href="/"
-            className="text-white text-[16px] font-medium hover:text-gray-500"
-          >
-            Home
-          </Link>
-          <Link
-            href="/about"
-            className="text-white text-[16px] font-medium hover:text-gray-500"
-          >
-            About
-          </Link>
-          <Link
-            href="/about"
-            className="text-white text-[16px] font-medium hover:text-gray-500"
-          >
-            Careers
-          </Link>
-          <Link
-            href="/contact"
-            className="text-white text-[16px] font-medium hover:text-gray-500"
-          >
-            Contact
-          </Link>
-        </div>
-        <div className=" flex items-center justify-center">
-       
-      </div>
+
+        <MobileMenu />
+        <DesktopMenu />
+
+        <div className="hidden item-center space-x-3 md:flex lg:flex">
         {session ? (
           <div className="flex flex-row gap-5 items-center">
             <Link
@@ -100,6 +78,8 @@ export default function Header() {
             Sign Out
           </Link>
         )}
+        </div>
+
       </div>
     </nav>
   );

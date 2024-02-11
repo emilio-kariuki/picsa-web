@@ -42,7 +42,7 @@ export default function RootLayout({
       <html suppressHydrationWarning lang="en">
         <SpeedInsights />
         <body className={`overscroll-none ${inter.className}`}>
-          {/* <Header /> */}
+          <Header />
           <main>{children}</main>
           <Toaster />
         </body>

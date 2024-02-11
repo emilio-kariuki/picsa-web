@@ -90,7 +90,8 @@ export function Footer() {
       <Container>
         <hr className="bg-gray-600/10" />
       </Container>
-      <Container className="flex flex-col items-center justify-between m-5  md:flex-row">
+      <Container className="flex flex-col items-start
+       justify-between m-5  md:flex-row">
         <Link
           href="/"
           className=" flex flex-row gap-2 items-center justify-center"
@@ -119,8 +120,8 @@ function Questions() {
         questions.
       </span>
       <div className="flex w-full max-w-sm items-center space-x-2">
-        <Input type="email" placeholder="Email" />
-        <Button type="submit" className="bg-[#000000] hover:bg-[#54d354]">
+        <Input type="email" placeholder="Email"  />
+        <Button type="submit" className=" bg-[#54EA53] hover:bg-[#54d354]">
           Submit
         </Button>
       </div>

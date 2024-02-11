@@ -11,7 +11,7 @@ import Image from "next/image";
 const memories = [
   {
     image: Wedding,
-    title: "Wedding",
+    title: "Weddings",
     description:
       "Capture the magic of your special day with Picsa. Share your love with the world.",
     about:
@@ -35,7 +35,7 @@ const memories = [
   },
   {
     image: Gradutation,
-    title: "Graduation",
+    title: "Graduations",
     description:
       "Capture the magic of your special day with Picsa. Share your love with the world.",
     about:
@@ -45,36 +45,35 @@ const memories = [
 
 export function About() {
   return (
-    <section
-      tabIndex={-1}
-      className="relative flex flex-col mx-auto sm:px-15 sm:py-10 lg:px-20 lg:py-20 bg-gray-100 overflow-clip"
-    >
-      <div className="h-[1050px]  justify-start items-start sm:h-[1060px] lg:h-[800px]">
-        <div className="flex flex-col items-start justify-start">
-          <h1
-            className={`text-5xl max-w-[480px] font-bold text-slate ${quickSand.className} mb-2`}
-          >
-            We want You to Live Lighter
-          </h1>
-        </div>
-        <div className="h-[60px]"></div>
-        <ImagesSection />
-      </div>
-      <div className="mt-5 flex items-center justify-center">
-        <button
-          onClick={() => {
-            window.open(
-              "https://play.google.com/store/apps/details?id=com.ecoville.picsa"
-            );
-          }}
-          className="bg-[#54EA53] text-white px-8 py-4 rounded-full hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-slate focus:ring-opacity-50"
-        >
-          <div className="flex flex-row items-center gap-10">
-            <span className="text-base text-black">
-              Download the app from PlayStore
-            </span>
+    <section tabIndex={-1} className="relative">
+      <div className="flex flex-col mx-auto px-8 py-8 sm:px-3 sm:py-3 lg:px-20 lg:py-20 bg-gray-100 overflow-clip ">
+        <div className="mx-auto w-full justify-start items-start">
+          <div className="flex w-full flex-col items-start justify-start">
+            <h1
+              className={`text-5xl sm:text-xl mx-auto max-w-[480px] text-center lg:text-center md:text-center  font-bold text-slate ${quickSand.className} mb-2`}
+            >
+              We want You to Live Lighter
+            </h1>
           </div>
-        </button>
+          <div className="h-[20px]"></div>
+          <ImagesSection />
+        </div>
+        <div className="mt-5 flex items-center justify-center">
+          <button
+            onClick={() => {
+              window.open(
+                "https://play.google.com/store/apps/details?id=com.ecoville.picsa"
+              );
+            }}
+            className="bg-[#54EA53] text-white px-8 py-4 rounded-full hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-slate focus:ring-opacity-50"
+          >
+            <div className="flex flex-row items-center gap-10">
+              <span className="text-base text-black">
+                Download the app from PlayStore
+              </span>
+            </div>
+          </button>
+        </div>
       </div>
     </section>
   );
@@ -86,27 +85,27 @@ function ImagesSection() {
       {memories.map((memory, index) => (
         <div
           key={index}
-          className="flex flex-col items-start justify-start bg-transparent rounded-md "
+          className="flex flex-col items-start py-2 sm:py-5 justify-start bg-transparent rounded-md "
         >
           <p
             key={index}
-            className={` my-6 max-w-1xl  text-[14px] tracking-tight text-start text-gray-500 ${interRegular.className} border-r-[1px] border-l-[1px] border-slate-300 px-3`}
+            className={` my-6 max-w-lg h-18  text-[14px] tracking-tight text-start text-gray-500 ${interRegular.className}`}
           >
             {memory.about}
           </p>
-            <Image
-              src={memory.image}
-              alt={memory.title}
-              width={300}
-              height={100}
-              className="masked-image h-[200px] w-[400px] rounded-[8px] sm:h-[100px] sm:w-[200px] md:h-[250px] md:w-[800px] lg:h-[370px] lg:w-[800px] object-cover"
-            />
+          <Image
+            src={memory.image}
+            alt={memory.title}
+            width={300}
+            height={100}
+            className="masked-image h-[200px] w-[400px] rounded-[8px] sm:h-[100px] sm:w-[200px] md:h-[250px] md:w-[800px] lg:h-[370px] lg:w-[800px] object-cover"
+          />
           <div className="flex flex-col items-start justify-start pt-2 bg-transparent">
             <h2 className={`text-2xl text-slate ${inter.className}`}>
               {memory.title}
             </h2>
             <p
-              className={`mt-2 max-w-[250px] text-[12px] tracking-tight text-start text-black-200 ${interRegular.className}`}
+              className={`mt-2 max-w-lg text-[12px] tracking-tight text-start text-black-200 ${interRegular.className}`}
             >
               {memory.description}
             </p>
