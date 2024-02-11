@@ -110,11 +110,11 @@ export function CarouselSize() {
         align: "start",
         loop: true,
       }}
-      className="w-full max-w-screen-lg"
+      className="w-full flex flex-col max-w-screen-lg "
     >
       <CarouselContent>
         {testimonials.map((testimonial, index) => (
-          <CarouselItem key={index} className="lg:basis-1/3">
+          <CarouselItem key={index} className="lg:basis-1/3 md:basis-1/2 sm:basis-1/1">
             <div className="p-1">
               <Card className="bg-transparent">
                 <TestimonialCard testimonial={testimonial} />
@@ -123,7 +123,7 @@ export function CarouselSize() {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselNext />
+      {/* <CarouselNext /> */}
     </Carousel>
   );
 }
