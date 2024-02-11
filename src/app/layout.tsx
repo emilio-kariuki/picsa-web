@@ -30,6 +30,12 @@ export const metadata: Metadata = {
     type: "website",
     siteName: meta.title,
   },
+  twitter: {
+    card: "summary_large_image",
+    site: "@_emiliokariuki",
+    title: meta.title,
+    description: meta.description,
+  },
 };
 
 export default function RootLayout({
@@ -42,6 +48,7 @@ export default function RootLayout({
       <html suppressHydrationWarning lang="en">
         <SpeedInsights />
         <body className={`overscroll-none ${inter.className}`}>
+        <link rel="shortcut icon" href="/favicon.ico" />
           <Header />
           <main>{children}</main>
           <Toaster />
