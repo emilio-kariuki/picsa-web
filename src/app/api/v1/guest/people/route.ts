@@ -1,18 +1,8 @@
 import { supabase } from "@/lib/supabase";
+import { GuestEvents, User } from "@/types/apis_types";
 import { NextRequest, NextResponse } from "next/server";
 
-type User = {
-  id: string;
-  email: string;
-  name: string;
-  url: string;
-};
 
-type GuestEvents = {
-  id: string;
-  eventId: string;
-  userId: string;
-};
 
 export const GET = async (req: NextRequest, res: NextResponse) => {
   try {

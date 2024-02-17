@@ -1,10 +1,6 @@
 import { supabase } from "@/lib/supabase";
+import { GuestData } from "@/types/apis_types";
 import { NextRequest, NextResponse } from "next/server";
-
-type GuestData = {
-  eventId: string;
-  userId: string;
-};
 
 export const POST = async (req: NextRequest, res: NextResponse) => {
   const data: GuestData = await req.json();

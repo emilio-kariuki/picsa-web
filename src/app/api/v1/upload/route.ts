@@ -4,11 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import prisma from "@/lib/db";
 
-export type UploadData = {
-  image: string;
-  userId: string;
-  eventId: string;
-};
+
 
 export const POST = async (req: NextRequest, res: NextResponse) => {
   const data: UploadData = await req.json();

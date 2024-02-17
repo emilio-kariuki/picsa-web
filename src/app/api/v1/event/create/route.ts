@@ -1,12 +1,8 @@
 import { supabase } from "@/lib/supabase";
+import { EventData } from "@/types/apis_types";
 import { NextRequest, NextResponse } from "next/server";
 
-type EventData = {
-  id: string;
-  name: string;
-  userId: string;
-  url: string;
-};
+
 
 export const POST = async (req: NextRequest, res: NextResponse) => {
   const data: EventData = await req.json();
@@ -22,14 +18,14 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
 
   if (error) {
     return new NextResponse(JSON.stringify({
-        created: false,
+      created: false,
     }),
-    {
+      {
         headers: {
-            "Content-Type": "application/json",
+          "Content-Type": "application/json",
         },
-    });
-    }
+      });
+  }
 
 
   return new NextResponse(JSON.stringify({

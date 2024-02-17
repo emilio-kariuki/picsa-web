@@ -1,18 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { NextRequest, NextResponse } from "next/server";
-import { EventModel } from "../../types";
+import { EventModel, GuestEvents } from "@/types/apis_types";
 
-type GuestData = {
-  eventId: string;
-  userId: string;
-};
-
-type GuestEvents = {
-  id: string;
-  eventId: string;
-  userId: string;
-  createdAt: string;
-};
 
 export const GET = async (req: NextRequest, res: NextResponse) => {
   const id = req.nextUrl.searchParams.get("id");
@@ -38,7 +27,7 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
   }
   if (error) {
     return new NextResponse(JSON.stringify(error));
-  }``
+  } ``
   return new NextResponse(JSON.stringify(events), {
     headers: {
       "Content-Type": "application/json",

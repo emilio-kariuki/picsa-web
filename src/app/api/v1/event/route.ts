@@ -1,5 +1,3 @@
-import { createClient } from "@supabase/supabase-js";
-import { NextApiRequest } from "next";
 import { NextResponse, NextRequest } from "next/server";
 import { supabase } from "@/lib/supabase";
 

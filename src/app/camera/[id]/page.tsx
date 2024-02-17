@@ -1,13 +1,9 @@
 "use client";
-import { MutableRefObject, useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useRef } from "react";
 import Webcam from "react-webcam";
-import { decode } from "base64-arraybuffer";
-import { Play, SwitchCameraIcon, Camera, User } from "lucide-react";
+import { Camera, User } from "lucide-react";
 import axios from "axios";
-import { UploadData } from "@/app/api/v1/upload/route";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import Image from "next/image";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useSession } from "@supabase/auth-helpers-react";
 import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
@@ -16,6 +12,7 @@ import moment from "moment";
 import { ImageModel, EventModel } from "../../../../types";
 import { rubiks } from "@/lib/fonts";
 import { usePathname } from "next/navigation";
+import { UploadData } from "@/types/apis_types";
 
 
 const CameraView = (props: { eventId: string }) => {
@@ -41,7 +38,6 @@ const CameraView = (props: { eventId: string }) => {
 
   const { mutateAsync: takePicture } = useMutation({
     mutationFn: async () => {
-      console.log("Take picture")
       const img = camera.current?.getScreenshot();
       window.navigator.vibrate(200);
       if (img) {
