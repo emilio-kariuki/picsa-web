@@ -15,14 +15,16 @@ import { supabase } from "@/lib/supabase";
 import moment from "moment";
 import { ImageModel, EventModel } from "../../../../types";
 import { rubiks } from "@/lib/fonts";
+import { usePathname } from "next/navigation";
 
-function CaptureComponents(props: {
-  takePicture: () => void;
-  eventId: string;
-}) {
+
+const CameraView = (props: { eventId: string }) => {
+
+  console.log(`the event id is ${props.eventId}`)
+  const camera = useRef<Webcam>(null);
   const session = useSession();
   const { toast } = useToast();
-  const returnToUrl = window.location.href;
+  const returnToUrl = usePathname();
 
   async function loginWithGoogle() {
     await supabase.auth
@@ -37,37 +39,9 @@ function CaptureComponents(props: {
       });
   }
 
-  return (
-    <div className="flex h-16 w-16 border-2 rounded-full border-orange-600 p-1">
-      <div
-        className="h-full w-full bg-slate-400 rounded-full "
-        onClick={async () => {
-          if (!session) {
-            return toast({
-              title: "You are not logged in",
-              description: "You need to be logged in to take a picture",
-              action: (
-                <ToastAction altText="Login" onClick={() => loginWithGoogle()}>
-                  Login
-                </ToastAction>
-              ),
-            });
-          }
-          {
-            props.takePicture;
-          }
-        }}
-      ></div>
-    </div>
-  );
-}
-
-const CameraView = (props: { eventId: string }) => {
-  const camera = useRef<Webcam>(null);
-  const session = useSession();
-
   const { mutateAsync: takePicture } = useMutation({
     mutationFn: async () => {
+      console.log("Take picture")
       const img = camera.current?.getScreenshot();
       window.navigator.vibrate(200);
       if (img) {
@@ -94,17 +68,36 @@ const CameraView = (props: { eventId: string }) => {
           facingMode: "environment",
         }}
       />
-      <CaptureComponents takePicture={takePicture} eventId={props.eventId} />
+      <div className="flex h-16 w-16 border-2 rounded-full border-orange-600 p-1">
+        <div
+          className="h-full w-full bg-slate-400 rounded-full "
+          onClick={async () => {
+            if (!session) {
+              return toast({
+                title: "You are not logged in",
+                description: "You need to be logged in to take a picture",
+                action: (
+                  <ToastAction altText="Login" onClick={() => loginWithGoogle()}>
+                    Login
+                  </ToastAction>
+                ),
+              });
+            }
+            await takePicture();
+
+          }}
+        ></div>
+      </div>
     </div>
   );
 };
 
 function ComponentTitle(props: { eventId: string }) {
   const { data: people, isFetching: loading } = useQuery({
-    queryKey: [props.eventId + "people"],
+    queryKey: [props.eventId + "peoples"],
     queryFn: async () =>
       (await axios
-        .get(`/api/v1/people/?id=${props.eventId}`)
+        .get(`/api/v1/images/user?user=${props.eventId}`)
         .then((res) => res.data)) as ImageModel[],
     staleTime: 6 * 1000,
     refetchInterval: 6 * 1000,
