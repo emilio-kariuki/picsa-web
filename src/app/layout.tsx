@@ -5,6 +5,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Providers } from "@/lib/provider";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/shared/main-header";
+import { ClerkProvider } from "@clerk/nextjs"
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -44,16 +46,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <Providers>
-      <html suppressHydrationWarning lang="en">
-        <SpeedInsights />
-        <body className={`overscroll-none ${inter.className}`}>
-        <link rel="shortcut icon" href="/favicon.ico" />
-          <Header />
-          <main>{children}</main>
-          <Toaster />
-        </body>
-      </html>
-    </Providers>
+    <ClerkProvider>
+      <Providers>
+        <html suppressHydrationWarning lang="en">
+          <SpeedInsights />
+          <body className={`overscroll-none ${inter.className}`}>
+            <link rel="shortcut icon" href="/favicon.ico" />
+            <Header />
+            <main>{children}</main>
+            <Toaster />
+          </body>
+        </html>
+      </Providers>
+    </ClerkProvider>
   );
 }

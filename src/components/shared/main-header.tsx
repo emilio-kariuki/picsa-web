@@ -1,56 +1,24 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { User2, ShoppingCartIcon } from "lucide-react";
-import { buttonVariants } from "../ui/button";
 import { PLogo } from "./logo";
 import Link from "next/link";
 import { rubiks } from "@/lib/fonts";
 import * as React from "react";
 
 import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
   NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { useSession } from "@supabase/auth-helpers-react";
+import { useAuth } from "@clerk/nextjs";
 import { supabase } from "@/lib/supabase";
 import { MobileMenu } from "./mobile-header";
 import { DesktopMenu } from "./desktop-header";
 import { usePathname } from "next/navigation";
 
 export default function Header() {
-  const [signedIn, isSignedIn] = React.useState(false);
-  const session = useSession();
+  const { isLoaded, userId, sessionId, getToken, signOut } = useAuth();
   const path = usePathname();
-  async function loginWithGoogle() {
-    await supabase.auth
-      .signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: path,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-      });
-  }
 
-  React.useEffect(() => {
-    supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
-        isSignedIn(false);
-        console.log("not signed in");
-      } else {
-        isSignedIn(true);
-        console.log("signed in");
-      }
-    });
-  }, [isSignedIn]);
   return (
     <nav
       className={cn(
@@ -73,44 +41,22 @@ export default function Header() {
         <DesktopMenu />
 
         <div className="hidden item-center space-x-3 md:flex lg:flex">
-          {!signedIn ? (
-            <div className="flex flex-row gap-5 items-center">
-              <div
-                onClick={async () => {
-                  await loginWithGoogle().then(() => {
-                    isSignedIn(true);
-                  });
-                }}
-                className={
-                  "bg-[#54EA53] text-white text-[14px] py-2 px-6 font-semibold border-2 border-[#54EA53] rounded-full"
-                }
-              >
-                Sign In
-              </div>
-              <Link
-                href="/contact"
-                className={
-                  "bg-transparent text-white text-[14px] py-2 px-6 font-semibold rounded-full border-2 border-[#54EA53]"
-                }
-              >
-                Sign Up
-              </Link>
-            </div>
-          ) : (
-            <Link
-              href="/"
-              onClick={async () => {
-                await supabase.auth.signOut().then(() => {
-                  window.location.href = "/";
-                });
-              }}
-              className={
-                "bg-transparent text-white text-[14px] py-2 px-6 font-semibold rounded-full border-2 border-[#54EA53]"
+          (<Link
+            href={isLoaded && userId && sessionId ? "/" : "/sign-in"}
+            className={
+              "bg-transparent text-white text-[14px] py-2 px-6 font-semibold rounded-full border-2 border-[#54EA53]"
+            }
+            onClick={async () => {
+              if (isLoaded && userId && sessionId) {
+                signOut()
               }
-            >
-              Sign Out
-            </Link>
-          )}
+            }
+            }
+          >
+            {isLoaded && userId && sessionId ? "Sign Out" : "Sign In"}
+          </Link>)
+
+
         </div>
       </div>
     </nav>

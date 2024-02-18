@@ -3,16 +3,15 @@ import { decode } from "base64-arraybuffer";
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import prisma from "@/lib/db";
+import { UploadData } from "@/types/apis_types";
 
-
-
-export const POST = async (req: NextRequest, res: NextResponse) => {
+export const POST = async (req: NextRequest) => {
   const data: UploadData = await req.json();
   const time: number = new Date().valueOf();
   const imageKey: string = `web/${time}.jpg`;
   const splitImage = data.image.split(",")[1];
   const imageData = decode(splitImage);
-  const { data: uploadData, error: uploadError } = await supabase.storage
+  const { error: uploadError } = await supabase.storage
     .from("picsa")
     .upload(imageKey, imageData, {
       cacheControl: "3600",
