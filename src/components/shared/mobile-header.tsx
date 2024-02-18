@@ -21,9 +21,11 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@clerk/nextjs";
 
 export function MobileMenu() {
   const path = usePathname();
+  const { isLoaded, userId, sessionId, getToken, signOut } = useAuth();
   async function loginWithGoogle() {
     await supabase.auth
       .signInWithOAuth({
@@ -64,18 +66,20 @@ export function MobileMenu() {
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <UserIcon className="mr-2 h-4 w-4" />
-            <div
-              onClick={async () => {
-                await loginWithGoogle().then(() => {
-                  window.location.href = path;
-                });
-              }}
-            >
-              Login
-            </div>
-          </DropdownMenuItem>
+          <Link
+            href={isLoaded && userId && sessionId ? "/" : "/sign-in"}
+            className={
+              "bg-transparent text-white text-[14px] py-2 px-6 font-semibold rounded-full border-2 border-[#54EA53]"
+            }
+            onClick={async () => {
+              if (isLoaded && userId && sessionId) {
+                signOut()
+              }
+            }
+            }
+          >
+            {isLoaded && userId && sessionId ? "Sign Out" : "Sign In"}
+          </Link>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

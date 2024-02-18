@@ -41,7 +41,7 @@ export default function Header() {
         <DesktopMenu />
 
         <div className="hidden item-center space-x-3 md:flex lg:flex">
-          (<Link
+          <Link
             href={isLoaded && userId && sessionId ? "/" : "/sign-in"}
             className={
               "bg-transparent text-white text-[14px] py-2 px-6 font-semibold rounded-full border-2 border-[#54EA53]"
@@ -54,7 +54,7 @@ export default function Header() {
             }
           >
             {isLoaded && userId && sessionId ? "Sign Out" : "Sign In"}
-          </Link>)
+          </Link>
 
 
         </div>

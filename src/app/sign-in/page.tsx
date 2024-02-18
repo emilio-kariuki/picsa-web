@@ -17,7 +17,7 @@ export default function Page() {
           },
         }}
         signUpUrl="/sign-up"
-        afterSignInUrl={pathName === "/sign-in" ? "/" : pathName}
+        afterSignInUrl={pathName === "/sign-in" ? pathName : "/"}
       />
     </div>
   );
