@@ -16,8 +16,10 @@ export default authMiddleware({
     '/api/v1/upload',
     '/api/v1/user',
     '/sign-in',
-    '/sign-up'
+    '/sign-up',
+
   ],
+  signInUrl: '/sign-in'
 })
 
 export const config = {
