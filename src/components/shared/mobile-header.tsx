@@ -69,7 +69,7 @@ export function MobileMenu() {
           <Link
             href={isLoaded && userId && sessionId ? "/" : "/sign-in"}
             className={
-              "bg-transparent text-white text-[14px] py-2 px-6 font-semibold rounded-full border-2 border-[#54EA53]"
+              "text-[14px] py-1 px-6 "
             }
             onClick={async () => {
               if (isLoaded && userId && sessionId) {
