@@ -7,7 +7,6 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
     .from("Insights")
     .select("*")
     .eq("phone", phone)
-    .order("createdAt", { ascending: false });
 
   if (error) {
     return new NextResponse(JSON.stringify(error));

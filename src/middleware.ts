@@ -10,6 +10,7 @@ export default authMiddleware({
     '/api/v1/guest/leave',
     '/api/v1/guest/people',
     '/api/v1/images',
+    '/api/v1/insights',
     '/api/v1/images/event',
     '/api/v1/images/url',
     '/api/v1/images/user',
