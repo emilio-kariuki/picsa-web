@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 export function Hero() {
   return (
     <section className="relative">
-      <div className="w-full sm:h-fit md:h-fit py-8 px-8 sm:px-3 sm:py-3 md:px-[40px] md:py-[40px] lg:px-24 lg:py-32  flex flex-col items-center justify-center bg-[#181a1b]">
+      <div className="w-full sm:h-fit md:h-fit py-8 px-8 sx-3 sm:py-3 md:px-[40px] md:py-[40px] lg:px-24 lg:py-32  flex flex-col items-center justify-center bg-[#181a1b]">
         <div className="flex flex-row item-center gap-1 lg:gap-10">
           <div className="flex flex-col items-center lg:items-start md:items-start justify-center bg-transparent text-white">
             <h1
@@ -78,7 +78,7 @@ export function Hero() {
                   className="rounded-md lg:h-[500px] lg:w-[500px] md:h-[200px] md:w-[200px] sm:h-[0px] sm:w-[0px] object-contain"
                 />
               </div>
-            </div>
+            </div>kk
             <div className="flex flex-col">
               <div className="hidden sm:flex">
                 <Image

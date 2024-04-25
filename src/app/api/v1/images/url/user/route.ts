@@ -12,10 +12,6 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
       url: true,
     },
   });
-
-
-
-
   return new NextResponse(JSON.stringify(urls), {
     headers: {
       "Content-Type": "application/json",

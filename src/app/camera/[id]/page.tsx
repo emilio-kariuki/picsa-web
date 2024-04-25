@@ -15,6 +15,7 @@ import { usePathname } from "next/navigation";
 import { UploadData } from "@/types/apis_types";
 
 
+
 const CameraView = (props: { eventId: string }) => {
 
   console.log(`the event id is ${props.eventId}`)
@@ -94,9 +95,11 @@ function ComponentTitle(props: { eventId: string }) {
     queryFn: async () =>
       (await axios
         .get(`/api/v1/images/user?user=${props.eventId}`)
-        .then((res) => res.data)) as ImageModel[],
+        .then((res) => res.data)) as ImageModel[]
+        ,
     staleTime: 6 * 1000,
     refetchInterval: 6 * 1000,
+    
   });
 
   const { data: images, isFetching: ImagesLoading } = useQuery({
