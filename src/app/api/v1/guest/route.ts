@@ -5,7 +5,7 @@ import prisma from '@/lib/db'
 
 
 export const GET = async (req: NextRequest, res: NextResponse) => {
-  const users = await prisma.GuestEvents.findMany({
+  const users = await prisma.guestEvents.findMany({
     include:{
       Events: true
     }

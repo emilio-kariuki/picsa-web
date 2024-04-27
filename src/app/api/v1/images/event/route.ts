@@ -7,7 +7,7 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
 
   const images = await prisma.images.findMany({
     where:{
-      eventId: id
+      eventId: id!
     },
     include:{
       User: true
