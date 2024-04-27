@@ -1,20 +1,21 @@
 import { supabase } from "@/lib/supabase";
 import { NextResponse, NextRequest } from "next/server";
+import prisma from "@/lib/db";
 
 export const GET = async (req: NextRequest, res: NextResponse) => {
   const id = req.nextUrl.searchParams.get("event");
 
-  const { data: image, error } = await supabase
-    .from("Images")
-    .select("*")
-    .eq("eventId", id)
-    .order("createdAt", { ascending: false })
+  const images = await prisma.images.findMany({
+    where:{
+      eventId: id
+    },
+    include:{
+      User: true
+    }
+  })
 
-  if (error) {
-    return new NextResponse(JSON.stringify(error));
-  }
-
-  return new NextResponse(JSON.stringify(image), {
+  
+  return new NextResponse(JSON.stringify(images), {
     headers: {
       "Content-Type": "application/json",
     },
