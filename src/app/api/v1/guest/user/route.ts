@@ -4,9 +4,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 
 
+
 export const GET = async (req: NextRequest, res: NextResponse) => {
   try {
     const event = req.nextUrl.searchParams.get("event");
+    const user = req.nextUrl.searchParams.get("iser");
 
     const { data: people, error: peopleError } = await supabase
       .from("GuestEvents")
