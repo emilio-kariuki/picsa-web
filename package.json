@@ -8,7 +8,7 @@
     "lint": "next lint",
     "clean": "next clean",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "postinstall": "prisma generate",
+    "postinstall": "pnpx prisma generate",
     "poststart": "pnpx prisma generate"
   },
   "dependencies": {
