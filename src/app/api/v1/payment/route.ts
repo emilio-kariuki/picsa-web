@@ -6,11 +6,11 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
     const data = await req.json();
     const user = await supabase.from('payment').insert(
         {
-            "user_id": data.app_user_id,
-            'amount': data.price,
-            'store': data.store,
-            'environment': data.environment,
-            'type': data.type,
+            "user_id": data.event.app_user_id,
+            'amount': data.event.price,
+            'store': data.event.store,
+            'environment': data.event.environment,
+            'type': data.event.type,
             
         }
     )
