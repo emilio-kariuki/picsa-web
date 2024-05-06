@@ -15,6 +15,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
             
         }
     )
+    console.log(user)
     return new NextResponse(JSON.stringify(data), {
         headers: {
             "Content-Type": "application/json",
