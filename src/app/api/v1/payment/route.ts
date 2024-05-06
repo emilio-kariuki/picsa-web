@@ -4,6 +4,7 @@ import { NextResponse, NextRequest } from "next/server";
 
 export const POST = async (req: NextRequest, res: NextResponse) => {
     const data = await req.json();
+    console.log(data)
     const user = await supabase.from('payment').insert(
         {
             "user_id": data.event.app_user_id,
