@@ -29,6 +29,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
     "payment": {
         "pro" : isPro,
         "title": isPro ? "Premium Plan" :"Free Plan",
+        "environment": data.event.environment,  
         "price":  `${data.event.price_in_purchased_currency}`,
         "expiration": isPro? `${data.event.expiration_at_ms}`: "never",
         "currency": data.event.currency,
