@@ -13,8 +13,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
         "currency": data.event.currency,
         'store': data.event.store,
         'environment': data.event.environment,
-        'created_at': data.event.event_timestamp_ms,
-        "expiration": data.event.expiration_at_ms,
+        "expiration": `${data.event.expiration_at_ms}`,
         "transaction_id":data.event.transaction_id,
         'subscriber':{
             'name': data.event.subscriber_attributes.$displayName.value,
