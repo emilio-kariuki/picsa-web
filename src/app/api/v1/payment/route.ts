@@ -16,8 +16,6 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
     ? false
     : data.event.type == "UNCANCELLATION"
     ? true
-    : data.event.type == "SUBSCRIPTION_PAUSED"
-    ? false
     : data.event.type == "EXPIRATION"
     ? false
     : data.event.type == "BILLING_ISSUE"
@@ -31,7 +29,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
     "payment": {
         "pro" : isPro,
         "title": isPro ? "Premium Plan" :"Free Plan",
-        "price":  `${data.event.price}`,
+        "price":  `${data.event.price_in_purchased_currency}`,
         "expiration": isPro? `${data.event.expiration_at_ms}`: "never",
         "currency": data.event.currency,
         "transactionId": isPro? data.event.transaction_id: "none",
