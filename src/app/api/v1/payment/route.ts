@@ -26,7 +26,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
     : false;
   const user = await supabase.from("User").update({
     "pro": isPro,
-    "token": data.event.subscriber_attributes.$fcmTokens.value,
+    "token": data.event.subscriber_attributes.$fcmTokens.value.split(",")[0],
     "payment": {
       "pro": isPro,
       "title": isPro ? "Premium Plan" : "Free Plan",
@@ -37,8 +37,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
       "transactionId": isPro ? data.event.transaction_id : "none",
     },
   }).eq("id", data.event.app_user_id);
-
-  const response = await axios.post(
+  await axios.post(
     "https://picsa.pro/api/v1/notification",
     {
       "title": data.event.type == "INITIAL_PURCHASE"
