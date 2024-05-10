@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import {admin} from "@/lib/firebase";
 
 export const POST = async(req: NextRequest) =>{
+    
     try {
         const body = await req.json()
+
         const title = body.title;
         const content = body.content;
         const token = body.token;

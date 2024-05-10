@@ -26,7 +26,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
     : false;
   const user = await supabase.from("User").update({
     "pro": isPro,
-    "token": data.event.subscriber_attributes.$fcmTokens.value.split(",")[0],
+    "token": data.event.subscriber_attributes.$fcmTokens.value,
     "payment": {
       "pro": isPro,
       "title": isPro ? "Premium Plan" : "Free Plan",
@@ -74,7 +74,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
         : data.event.type == "SUBSCRIPTION_EXTENDED"
         ? "Your subscription has been extended"
         : " ",
-      "token": data.event.subscriber_attributes.$fcmTokens.value.split(",")[0],
+      "token": data.event.subscriber_attributes.$fcmTokens.value,
     },
   )
   console.log("user payment profile has been updated successfully");
