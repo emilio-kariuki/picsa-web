@@ -74,7 +74,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
         : data.event.type == "SUBSCRIPTION_EXTENDED"
         ? "Your subscription has been extended"
         : " ",
-      "token": data.event.subscriber_attributes.$fcmTokens.value,
+      "token": data.event.subscriber_attributes.$fcmTokens.value.split(",")[0],
     },
   )
   console.log("user payment profile has been updated successfully");
