@@ -3,9 +3,9 @@
     <channel>
         <title>Picsa Pro</title>
         <item>
-            <title>Version 0.0.25</title>
+            <title>Version 0.0.27</title>
             <description>Minor updates and improvements.</description>
-            <pubDate>Sun, 12 Apr 2024 23:30:00 +0000</pubDate>
+            <pubDate>Tue, 14 May 2024 13:10:00 +0000</pubDate>
             <enclosure url="https://play.google.com/store/apps/details?id=com.ecoville.picsa" sparkle:version="2.6.2" sparkle:os="android" />
             <sparkle:minimumSystemVersion>10.0</sparkle:minimumSystemVersion>
         </item>
