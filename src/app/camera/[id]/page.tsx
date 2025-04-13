@@ -14,8 +14,6 @@ import { rubiks } from "@/lib/fonts";
 import { usePathname } from "next/navigation";
 import { UploadData } from "@/types/apis_types";
 
-
-
 const CameraView = (props: { eventId: string }) => {
 
   console.log(`the event id is ${props.eventId}`)
