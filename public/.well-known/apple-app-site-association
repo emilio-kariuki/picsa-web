@@ -1,0 +1,24 @@
+{
+  "applinks": {
+      "details": [
+           {
+             "appIDs": [ "4Q267QMF86.com.ecoville.picsa" ],
+             "components": [
+               {
+                  "/": "/camera/*",
+                  "comment": "Matches any URL with a path that starts with /camera/."
+               }
+               
+             ]
+           }
+       ]
+   },
+   "webcredentials": {
+      "apps": [ "4Q267QMF86.com.ecoville.picsaa" ]
+   },
+
+
+    "appclips": {
+        "apps": ["4Q267QMF86.com.ecoville.picsa.camera"]
+    }
+}
