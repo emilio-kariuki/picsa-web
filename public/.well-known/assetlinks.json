@@ -1,11 +1,15 @@
 [
-    {
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "com.ecoville.picsa",
-        "sha256_cert_fingerprints":
-          ["25:99:CD:49:28:91:21:D7:51:87:E7:D8:62:E2:22:39:C7:4A:BA:3C:51:D7:D2:69:C4:0C:DA:F8:43:F3:B0:50"]
-      }
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.ecoville.picsa",
+      "sha256_cert_fingerprints": [
+        "25:99:CD:49:28:91:21:D7:51:87:E7:D8:62:E2:22:39:C7:4A:BA:3C:51:D7:D2:69:C4:0C:DA:F8:43:F3:B0:50"
+      ]
     }
-  ]
+  }
+]
