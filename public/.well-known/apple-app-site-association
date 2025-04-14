@@ -1,24 +1,40 @@
 {
   "applinks": {
-      "details": [
-           {
-             "appIDs": [ "4Q267QMF86.com.ecoville.picsa" ],
-             "components": [
-               {
-                  "/": "/camera/*",
-                  "comment": "Matches any URL with a path that starts with /camera/."
-               }
-               
-             ]
-           }
-       ]
-   },
-   "webcredentials": {
-      "apps": [ "4Q267QMF86.com.ecoville.picsaa" ]
-   },
-
-
-    "appclips": {
-        "apps": ["4Q267QMF86.com.ecoville.picsa.camera"]
-    }
+    "details": [
+      {
+        "appIDs": [
+          "4Q267QMF86.com.ecoville.picsa"
+        ],
+        "components": [
+          {
+            "#": "no_universal_links",
+            "exclude": true,
+            "comment": "Matches any URL whose fragment equals no_universal_links and instructs the system not to open it as a universal link"
+          },
+          {
+            "/": "/camera/*",
+            "comment": "Matches any URL with a path that starts with /camera/."
+          },
+          {
+            "/": "/event/*",
+            "comment": "Matches any URL with a path that starts with /camera/."
+          },
+          {
+            "/": "/join/*",
+            "comment": "Matches any URL with a path that starts with /camera/."
+          }
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "4Q267QMF86.com.ecoville.picsaa"
+    ]
+  },
+  "appclips": {
+    "apps": [
+      "4Q267QMF86.com.ecoville.picsa.camera"
+    ]
+  }
 }
