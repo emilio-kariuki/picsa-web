@@ -31,13 +31,30 @@ interface AdminApiRequestOptions extends Omit<RequestInit, 'body' | 'headers'> {
   accessToken?: string | null
 }
 
-const DEFAULT_API_BASE_URL = 'https://picsa.ecoville.online/api'
+const DEFAULT_PROD_API_BASE_URL = 'https://api.picsa.pro/api'
+const DEFAULT_LOCAL_API_BASE_URL = 'http://localhost:3000/api'
+
+function isLocalHostname(hostname: string) {
+  return hostname === 'localhost' || hostname === '127.0.0.1' || hostname.endsWith('.localhost')
+}
+
+function getDefaultApiBaseUrl() {
+  if (typeof window !== 'undefined' && isLocalHostname(window.location.hostname.toLowerCase())) {
+    return DEFAULT_LOCAL_API_BASE_URL
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
+    return DEFAULT_LOCAL_API_BASE_URL
+  }
+
+  return DEFAULT_PROD_API_BASE_URL
+}
 
 function normalizeApiBaseUrl(baseUrl: string) {
   const trimmedBaseUrl = baseUrl.trim().replace(/\/$/, '')
 
   if (!trimmedBaseUrl) {
-    return DEFAULT_API_BASE_URL
+    return getDefaultApiBaseUrl()
   }
 
   try {
@@ -62,7 +79,7 @@ export function getAdminApiBaseUrl() {
   const configuredBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.trim()
 
   if (!configuredBaseUrl) {
-    return normalizeApiBaseUrl(DEFAULT_API_BASE_URL)
+    return normalizeApiBaseUrl(getDefaultApiBaseUrl())
   }
 
   return normalizeApiBaseUrl(configuredBaseUrl)
