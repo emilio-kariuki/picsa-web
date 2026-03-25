@@ -1,7 +1,7 @@
 'use client'
 
 import Script from 'next/script'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AlertCircleIcon } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
@@ -28,16 +28,17 @@ declare global {
 }
 
 export function ClientGoogleSignIn({
+  clientId,
   onCredential,
   disabled,
 }: {
+  clientId: string
   onCredential: (token: string) => void
   disabled?: boolean
 }) {
   const buttonRef = useRef<HTMLDivElement | null>(null)
   const [scriptReady, setScriptReady] = useState(false)
   const [buttonRendered, setButtonRendered] = useState(false)
-  const clientId = useMemo(() => process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID?.trim() ?? '203502494436-bq8sq1o8o41c4mri5puo1ho0qj309fbm.apps.googleusercontent.com', [])
 
   useEffect(() => {
     if (!scriptReady || !clientId || !buttonRef.current || buttonRendered || !window.google?.accounts?.id) {

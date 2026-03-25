@@ -15,10 +15,11 @@ import { ApiError, isApiError } from '@/lib/api'
 import { useClientAuth } from '@/hooks/use-client-auth'
 
 interface ClientLoginPageContentProps {
+  googleClientId: string
   nextPath: string
 }
 
-export function ClientLoginPageContent({ nextPath }: ClientLoginPageContentProps) {
+export function ClientLoginPageContent({ googleClientId, nextPath }: ClientLoginPageContentProps) {
   const router = useRouter()
   const { bootstrapStatus, isAuthenticated, signInWithGoogle, reactivateAccount } = useClientAuth()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -159,7 +160,11 @@ export function ClientLoginPageContent({ nextPath }: ClientLoginPageContentProps
               </div>
             </CardHeader>
             <CardContent className="space-y-5">
-              <ClientGoogleSignIn onCredential={handleCredential} disabled={isSubmitting || isReactivating} />
+              <ClientGoogleSignIn
+                clientId={googleClientId}
+                onCredential={handleCredential}
+                disabled={isSubmitting || isReactivating}
+              />
 
               {errorMessage ? (
                 <Alert variant="destructive" className="rounded-2xl">
