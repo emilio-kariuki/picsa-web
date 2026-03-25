@@ -3,8 +3,10 @@ import { NextResponse } from 'next/server'
 
 const INTERNAL_PREFIX = '/_sites'
 const ADMIN_HOST = 'admin.picsa.pro'
+const CLIENT_HOST = 'app.picsa.pro'
 const MARKETING_HOST = 'picsa.pro'
 const LOCAL_ADMIN_HOST = 'admin.localhost'
+const LOCAL_CLIENT_HOST = 'app.localhost'
 const LOCAL_MARKETING_HOSTS = new Set(['localhost', '127.0.0.1'])
 const MARKETING_ONLY_PATHS = new Set(['/privacy-policy', '/terms-of-service'])
 
@@ -27,11 +29,29 @@ function isAdminHost(hostname: string) {
   return hostname === ADMIN_HOST || hostname === LOCAL_ADMIN_HOST
 }
 
-function isAdminPath(pathname: string) {
-  return pathname === '/login' || pathname === '/dashboard' || pathname.startsWith('/dashboard/')
+function isClientHost(hostname: string) {
+  return hostname === CLIENT_HOST || hostname === LOCAL_CLIENT_HOST
 }
 
-function buildSitePath(site: 'admin' | 'marketing', pathname: string) {
+function isAdminPath(pathname: string) {
+  return pathname === '/dashboard' || pathname.startsWith('/dashboard/')
+}
+
+function isClientPath(pathname: string) {
+  return (
+    pathname === '/login' ||
+    pathname === '/events' ||
+    pathname.startsWith('/events/') ||
+    pathname === '/images' ||
+    pathname.startsWith('/images/') ||
+    pathname === '/notifications' ||
+    pathname.startsWith('/notifications/') ||
+    pathname === '/settings' ||
+    pathname.startsWith('/settings/')
+  )
+}
+
+function buildSitePath(site: 'admin' | 'marketing' | 'client', pathname: string) {
   return pathname === '/' ? `${INTERNAL_PREFIX}/${site}` : `${INTERNAL_PREFIX}/${site}${pathname}`
 }
 
@@ -62,8 +82,24 @@ function proxy(request: NextRequest) {
     return NextResponse.rewrite(url)
   }
 
+  if (isClientHost(hostname)) {
+    if (MARKETING_ONLY_PATHS.has(pathname)) {
+      const targetHost = hostname === LOCAL_CLIENT_HOST ? 'localhost' : MARKETING_HOST
+      return redirectToHost(request, targetHost)
+    }
+
+    const url = request.nextUrl.clone()
+    url.pathname = buildSitePath('client', pathname)
+    return NextResponse.rewrite(url)
+  }
+
   if (isAdminPath(pathname)) {
     const targetHost = isLocalHost(hostname) ? LOCAL_ADMIN_HOST : ADMIN_HOST
+    return redirectToHost(request, targetHost)
+  }
+
+  if (isClientPath(pathname)) {
+    const targetHost = isLocalHost(hostname) ? LOCAL_CLIENT_HOST : CLIENT_HOST
     return redirectToHost(request, targetHost)
   }
 

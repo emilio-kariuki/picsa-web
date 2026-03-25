@@ -1,12 +1,13 @@
 # Picsa Frontend Deployment
 
-This app serves both the public marketing site and the admin app from a single Next.js container.
+This app serves the public marketing site, the client organizer app, and the admin app from a single Next.js container.
 
 Coolify should build from the repository root using the root-level [Dockerfile](/Users/mac/projects/picsa/Dockerfile).
 
 ## Domains
 
 - `picsa.pro` routes to the marketing experience.
+- `app.picsa.pro` routes to the client workspace.
 - `admin.picsa.pro` routes to the admin experience.
 
 Both domains should point to the same container or VM service.
@@ -18,16 +19,18 @@ If `admin.picsa.pro` shows a certificate authority error, the problem is in the 
 Use a single Coolify frontend resource for this repo-root Docker build and attach both domains to that same resource:
 
 - `https://picsa.pro`
+- `https://app.picsa.pro`
 - `https://admin.picsa.pro`
 
 Checklist:
 
-- Ensure the DNS record for `admin.picsa.pro` points to the same server or load balancer as `picsa.pro`.
+- Ensure the DNS records for `app.picsa.pro` and `admin.picsa.pro` point to the same server or load balancer as `picsa.pro`.
 - Remove `admin.picsa.pro` from any old or duplicate Coolify resource before attaching it here.
-- Enable HTTPS certificate generation for both domains on the same frontend resource.
+- Remove `app.picsa.pro` from any old or duplicate Coolify resource before attaching it here.
+- Enable HTTPS certificate generation for all three domains on the same frontend resource.
 - Redeploy after the domains are attached so the proxy can request or refresh certificates.
 
-If the proxy only has a certificate for `picsa.pro`, browsers will reject `admin.picsa.pro` before the app middleware can route the request.
+If the proxy only has a certificate for `picsa.pro`, browsers will reject `app.picsa.pro` or `admin.picsa.pro` before the app middleware can route the request.
 
 ## Docker
 
@@ -35,8 +38,13 @@ Build the frontend image from `/Users/mac/projects/picsa`:
 
 ```bash
 docker build -t picsa-frontend .
-docker run --rm -p 3000:3000 --env NEXT_PUBLIC_API_BASE_URL=https://api.picsa.pro picsa-frontend
+docker run --rm -p 3000:3000 \
+  --env NEXT_PUBLIC_API_BASE_URL=https://api.picsa.pro \
+  --env NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-web-client-id \
+  picsa-frontend
 ```
+
+The frontend requires `NEXT_PUBLIC_GOOGLE_CLIENT_ID` so the client workspace at `app.picsa.pro` can sign users in with Google. It must match the backend `GOOGLE_CLIENT_ID` audience.
 
 ## Reverse proxy
 
@@ -47,7 +55,7 @@ Example Nginx upstream:
 ```nginx
 server {
     listen 80;
-    server_name picsa.pro admin.picsa.pro;
+    server_name picsa.pro app.picsa.pro admin.picsa.pro;
 
     location / {
         proxy_pass http://127.0.0.1:3000;
@@ -62,12 +70,16 @@ server {
 
 ## Local development
 
-Run the app locally from `/Users/mac/projects/picsa/admin` and map these hosts to `127.0.0.1` in your hosts file:
+Run the app locally from `/Users/mac/projects/picsa/web` and map these hosts to `127.0.0.1` in your hosts file:
 
 - `localhost`
+- `app.localhost`
 - `admin.localhost`
 
 Then start the app with `pnpm dev` and visit:
 
-- `http://localhost:3000` for marketing
-- `http://admin.localhost:3000` for admin
+- `http://localhost:3002` for marketing
+- `http://app.localhost:3002/login` for the client workspace
+- `http://admin.localhost:3002/login` for admin
+
+If you need to run the frontend on a different local port, set `NEXT_PUBLIC_LOCAL_WEB_PORT` before starting Next so the generated subdomain links stay aligned with your dev server.

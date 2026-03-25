@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Check, Crown } from 'lucide-react'
-import { ADMIN_LOGIN_URL } from '@/lib/site-urls'
+import { CLIENT_CREATE_EVENT_PATH } from '@/lib/site-urls'
 
 const plans = [
   {
@@ -127,7 +127,7 @@ export function Pricing() {
                     : 'border-border hover:bg-secondary'
                 }`}
               >
-                <a href={ADMIN_LOGIN_URL}>
+                <a href={CLIENT_CREATE_EVENT_PATH}>
                   {plan.cta}
                 </a>
               </Button>

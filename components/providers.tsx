@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Provider as JotaiProvider } from 'jotai'
 import { ThemeProvider } from 'next-themes'
 import { useState, type ReactNode } from 'react'
-import { AdminAuthBootstrap } from '@/components/auth/admin-auth-bootstrap'
 
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(
@@ -28,7 +27,6 @@ export function Providers({ children }: { children: ReactNode }) {
           enableSystem
           disableTransitionOnChange
         >
-          <AdminAuthBootstrap />
           {children}
         </ThemeProvider>
       </JotaiProvider>

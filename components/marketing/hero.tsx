@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Play } from 'lucide-react'
-import { ADMIN_LOGIN_URL } from '@/lib/site-urls'
+import { CLIENT_CREATE_EVENT_PATH } from '@/lib/site-urls'
 
 export function Hero() {
   return (
@@ -43,7 +43,7 @@ export function Hero() {
               size="lg"
               className="bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200 rounded-full px-8 text-base font-semibold group"
             >
-              <a href={ADMIN_LOGIN_URL}>
+              <a href={CLIENT_CREATE_EVENT_PATH}>
                 Start an Event
                 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </a>

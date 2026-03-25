@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
-import { ADMIN_LOGIN_URL } from '@/lib/site-urls'
+import { CLIENT_CREATE_EVENT_PATH } from '@/lib/site-urls'
 
 export function CtaSection() {
   return (
@@ -43,7 +43,7 @@ export function CtaSection() {
                 size="lg"
                 className="bg-accent text-accent-foreground hover:bg-accent/90 rounded-full px-10 text-base font-semibold group"
               >
-                <a href={ADMIN_LOGIN_URL}>
+                <a href={CLIENT_CREATE_EVENT_PATH}>
                   Start an Event — It&apos;s Free
                   <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </a>

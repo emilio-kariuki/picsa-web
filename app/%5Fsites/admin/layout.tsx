@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { AdminAuthBootstrap } from '@/components/auth/admin-auth-bootstrap'
 import { Providers } from '@/components/providers'
 
 export const metadata: Metadata = {
@@ -17,6 +18,7 @@ export default function AdminSiteLayout({
   return (
     <Providers>
       <div data-site="admin" className="min-h-screen bg-background text-foreground font-sans">
+        <AdminAuthBootstrap />
         {children}
       </div>
     </Providers>

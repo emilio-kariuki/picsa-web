@@ -1,6 +1,7 @@
 import { atom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import { adminAuthStorage, type AdminAuthSession } from '@/lib/auth'
+import { clientAuthStorage, type ClientAuthSession } from '@/lib/client-auth'
 import type { Notification } from './types'
 
 // Sidebar state
@@ -53,4 +54,21 @@ export const isAuthenticatedAtom = atom((get) => {
       currentUser?.active &&
       currentUser.role === 'admin',
   )
+})
+
+export const clientAuthSessionAtom = atomWithStorage<ClientAuthSession | null>(
+  'client-auth-session',
+  null,
+  clientAuthStorage,
+)
+
+export const clientAuthBootstrapStatusAtom = atom<'idle' | 'loading' | 'ready'>('idle')
+
+export const clientCurrentUserAtom = atom((get) => get(clientAuthSessionAtom)?.currentUser ?? null)
+
+export const isClientAuthenticatedAtom = atom((get) => {
+  const session = get(clientAuthSessionAtom)
+  const currentUser = get(clientCurrentUserAtom)
+
+  return Boolean(session?.accessToken && session.refreshToken && currentUser?.active)
 })

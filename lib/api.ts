@@ -11,14 +11,14 @@ export interface ApiErrorResponse {
   errors?: string[]
 }
 
-export class AdminApiError extends Error {
+export class ApiError extends Error {
   status: number
   code?: string
   errors?: string[]
 
   constructor(message: string, options?: { status?: number; code?: string; errors?: string[] }) {
     super(message)
-    this.name = 'AdminApiError'
+    this.name = 'ApiError'
     this.status = options?.status ?? 500
     this.code = options?.code
     this.errors = options?.errors
@@ -26,7 +26,7 @@ export class AdminApiError extends Error {
 }
 
 interface AdminApiRequestOptions extends Omit<RequestInit, 'body' | 'headers'> {
-  body?: BodyInit | Record<string, unknown> | null
+  body?: BodyInit | object | null
   headers?: HeadersInit
   accessToken?: string | null
 }
@@ -88,7 +88,7 @@ async function parseApiResponse<T>(response: Response): Promise<T> {
   const payload = text ? (JSON.parse(text) as ApiSuccessResponse<T> | ApiErrorResponse) : null
 
   if (!response.ok || payload?.success === false) {
-    throw new AdminApiError(payload?.message ?? 'Request failed', {
+    throw new ApiError(payload?.message ?? 'Request failed', {
       status: response.status,
       code: payload && 'code' in payload ? payload.code : undefined,
       errors: payload && 'errors' in payload ? payload.errors : undefined,
@@ -96,7 +96,7 @@ async function parseApiResponse<T>(response: Response): Promise<T> {
   }
 
   if (!payload || payload.success !== true) {
-    throw new AdminApiError('Invalid response from server', {
+    throw new ApiError('Invalid response from server', {
       status: response.status,
     })
   }
@@ -104,7 +104,7 @@ async function parseApiResponse<T>(response: Response): Promise<T> {
   return payload as T
 }
 
-export async function adminApiRequest<T>(
+export async function apiRequest<T>(
   path: string,
   options: AdminApiRequestOptions = {},
 ) {
@@ -119,6 +119,19 @@ export async function adminApiRequest<T>(
   return parseApiResponse<T>(response)
 }
 
-export function isAdminApiError(error: unknown): error is AdminApiError {
-  return error instanceof AdminApiError
+export function adminApiRequest<T>(
+  path: string,
+  options: AdminApiRequestOptions = {},
+) {
+  return apiRequest<T>(path, options)
+}
+
+export function isApiError(error: unknown): error is ApiError {
+  return error instanceof ApiError
+}
+
+export const AdminApiError = ApiError
+
+export function isAdminApiError(error: unknown): error is ApiError {
+  return isApiError(error)
 }
