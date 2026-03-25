@@ -21,11 +21,11 @@ RUN pnpm build
 FROM base AS runner
 
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=4029
 ENV HOSTNAME=0.0.0.0
 
 COPY --from=builder /app ./
 
-EXPOSE 3000
+EXPOSE 4029
 
 CMD ["pnpm", "start"]
