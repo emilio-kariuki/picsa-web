@@ -123,7 +123,7 @@ export function AppSidebar() {
                 sideOffset={4}
               >
                 <DropdownMenuLabel className="text-xs text-muted-foreground">
-                  {currentUser?.email ?? 'admin@picsa.pro'}
+                  {currentUser?.email ?? 'No email on file'}
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>

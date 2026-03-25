@@ -33,15 +33,15 @@ import {
 } from 'lucide-react'
 import { useAdminAuth } from '@/hooks/use-admin-auth'
 import { getAdminDisplayName, getAdminInitials } from '@/lib/auth'
-import { notifications as mockNotifications } from '@/lib/mock-data'
 import { currentUserAtom } from '@/lib/store'
+import type { Notification } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
 export function Header() {
   const { resolvedTheme, setTheme } = useTheme()
   const currentUser = useAtomValue(currentUserAtom)
   const { logout } = useAdminAuth()
-  const [notifications, setNotifications] = useState(mockNotifications)
+  const [notifications, setNotifications] = useState<Notification[]>([])
   const unreadCount = notifications.filter((n) => !n.read).length
 
   const markAsRead = (id: string) => {
@@ -199,7 +199,7 @@ export function Header() {
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">{displayName}</p>
                 <p className="text-xs leading-none text-muted-foreground">
-                  {currentUser?.email ?? 'admin@picsa.pro'}
+                  {currentUser?.email ?? 'No email on file'}
                 </p>
               </div>
             </DropdownMenuLabel>

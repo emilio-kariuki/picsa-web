@@ -87,7 +87,7 @@ export function LoginPageContent({ nextPath }: LoginPageContentProps) {
                 autoComplete="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                placeholder="admin@picsa.pro"
+                placeholder="name@example.com"
                 required
               />
             </div>

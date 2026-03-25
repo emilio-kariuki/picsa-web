@@ -1,8 +1,11 @@
 'use client'
 
+import Link from 'next/link'
 import { useState } from 'react'
+import { useAtomValue } from 'jotai'
 import { PageHeader } from '@/components/common/page-header'
 import { StatusBadge } from '@/components/common/status-badge'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -11,52 +14,108 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { getAdminDisplayName, getAdminInitials } from '@/lib/auth'
+import { adminAuthSessionAtom, currentUserAtom } from '@/lib/store'
 import { cn } from '@/lib/utils'
-import { teamMembers, apiKeys, invoices } from '@/lib/mock-data'
 import {
-  PlusIcon,
-  CopyIcon,
-  TrashIcon,
-  EyeIcon,
-  EyeOffIcon,
-  DownloadIcon,
-  ShieldIcon,
-  BuildingIcon,
-  UsersIcon,
-  CreditCardIcon,
-  LockIcon,
-  KeyIcon,
+  ArrowRightIcon,
   BellIcon,
+  BuildingIcon,
+  CreditCardIcon,
+  KeyIcon,
+  LockIcon,
+  ShieldIcon,
+  UsersIcon,
 } from 'lucide-react'
-import { toast } from 'sonner'
 
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString('en-US', {
+function formatDate(
+  value: string | null | undefined,
+  options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
+  },
+) {
+  if (!value) {
+    return 'Not available'
+  }
+
+  const parsed = new Date(value)
+
+  if (Number.isNaN(parsed.getTime())) {
+    return 'Not available'
+  }
+
+  return new Intl.DateTimeFormat('en-US', {
+    ...options,
+    timeZone: 'UTC',
+  }).format(parsed)
+}
+
+function formatDateTime(value: string | null | undefined) {
+  const formatted = formatDate(value, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
   })
+
+  return formatted === 'Not available' ? formatted : `${formatted} UTC`
+}
+
+function formatRole(value: string | null | undefined) {
+  if (!value) {
+    return 'Not available'
+  }
+
+  return value.charAt(0).toUpperCase() + value.slice(1)
+}
+
+function ReadOnlyField({
+  label,
+  value,
+  className,
+}: {
+  label: string
+  value: string
+  className?: string
+}) {
+  return (
+    <div className="space-y-2">
+      <Label>{label}</Label>
+      <Input readOnly value={value} className={cn('bg-muted/35', className)} />
+    </div>
+  )
+}
+
+function LinkedInfoCard({
+  title,
+  description,
+  href,
+  cta,
+}: {
+  title: string
+  description: string
+  href: string
+  cta: string
+}) {
+  return (
+    <div className="rounded-xl border border-dashed bg-muted/20 p-5">
+      <div className="space-y-2">
+        <h3 className="font-semibold">{title}</h3>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
+      <Button asChild variant="outline" className="mt-4">
+        <Link href={href}>
+          {cta}
+          <ArrowRightIcon className="ml-2 h-4 w-4" />
+        </Link>
+      </Button>
+    </div>
+  )
 }
 
 const navItems = [
@@ -70,40 +129,27 @@ const navItems = [
 
 export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState('general')
-  const [showApiKey, setShowApiKey] = useState<string | null>(null)
-  const [isInviteOpen, setIsInviteOpen] = useState(false)
-  const [isCreateKeyOpen, setIsCreateKeyOpen] = useState(false)
+  const currentUser = useAtomValue(currentUserAtom)
+  const authSession = useAtomValue(adminAuthSessionAtom)
 
-  const handleCopyApiKey = (key: string) => {
-    navigator.clipboard.writeText(key)
-    toast.success('API key copied to clipboard')
-  }
-
-  const handleInviteTeamMember = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsInviteOpen(false)
-    toast.success('Invitation sent successfully')
-  }
-
-  const handleCreateApiKey = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsCreateKeyOpen(false)
-    toast.success('API key created successfully')
-  }
-
-  const handleSaveChanges = () => {
-    toast.success('Settings saved successfully')
-  }
+  const displayName = getAdminDisplayName(currentUser)
+  const initials = getAdminInitials(currentUser)
+  const email = currentUser?.email ?? 'No email on file'
+  const createdAt = formatDate(currentUser?.createdAt)
+  const lastLoginAt = formatDateTime(currentUser?.lastLoginAt)
+  const emailVerifiedAt = formatDateTime(currentUser?.emailVerifiedAt)
+  const accessTokenExpiresAt = formatDateTime(authSession?.accessTokenExpiresAt)
+  const refreshTokenExpiresAt = formatDateTime(authSession?.refreshTokenExpiresAt)
+  const accountStatus = currentUser?.active ? 'active' : 'inactive'
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Settings"
-        description="Manage your account and application settings"
+        description="Review live admin account details and the settings surfaces connected in this build."
       />
 
       <div className="flex gap-8">
-        {/* Settings Sidebar */}
         <aside className="w-56 shrink-0">
           <nav className="flex flex-col gap-1">
             {navItems.map((item) => {
@@ -113,10 +159,10 @@ export default function SettingsPage() {
                   key={item.id}
                   onClick={() => setActiveSection(item.id)}
                   className={cn(
-                    'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors text-left',
+                    'flex items-center gap-3 rounded-md px-3 py-2 text-left text-sm font-medium transition-colors',
                     activeSection === item.id
                       ? 'bg-accent text-accent-foreground'
-                      : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
+                      : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground',
                   )}
                 >
                   <Icon className="h-4 w-4 shrink-0" />
@@ -127,482 +173,253 @@ export default function SettingsPage() {
           </nav>
         </aside>
 
-        {/* Settings Content */}
         <div className="min-w-0 flex-1 space-y-6">
-
-          {/* General */}
           {activeSection === 'general' && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Company Information</CardTitle>
-                <CardDescription>
-                  Update your company details and branding
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="company-name">Company Name</Label>
-                    <Input id="company-name" defaultValue="Acme Inc" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="company-email">Company Email</Label>
-                    <Input id="company-email" type="email" defaultValue="hello@acme.com" />
-                  </div>
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="company-website">Website</Label>
-                    <Input id="company-website" defaultValue="https://acme.com" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="company-phone">Phone</Label>
-                    <Input id="company-phone" defaultValue="+1 (555) 123-4567" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="company-address">Address</Label>
-                  <Input id="company-address" defaultValue="123 Business Street, San Francisco, CA 94105" />
-                </div>
-                <div className="flex justify-end">
-                  <Button onClick={handleSaveChanges}>Save Changes</Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Team */}
-          {activeSection === 'team' && (
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle>Team Members</CardTitle>
-                  <CardDescription>
-                    Manage your team and their permissions
-                  </CardDescription>
-                </div>
-                <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <PlusIcon className="mr-2 h-4 w-4" />
-                      Invite Member
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <form onSubmit={handleInviteTeamMember}>
-                      <DialogHeader>
-                        <DialogTitle>Invite Team Member</DialogTitle>
-                        <DialogDescription>
-                          Send an invitation to join your team.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="grid gap-4 py-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="invite-email">Email Address</Label>
-                          <Input
-                            id="invite-email"
-                            type="email"
-                            placeholder="colleague@company.com"
-                            required
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="invite-role">Role</Label>
-                          <Input id="invite-role" placeholder="e.g., Editor" />
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => setIsInviteOpen(false)}>
-                          Cancel
-                        </Button>
-                        <Button type="submit">Send Invitation</Button>
-                      </DialogFooter>
-                    </form>
-                  </DialogContent>
-                </Dialog>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Member</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Joined</TableHead>
-                      <TableHead></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {teamMembers.map((member) => (
-                      <TableRow key={member.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <Avatar className="h-8 w-8">
-                              <AvatarImage src={member.avatar} />
-                              <AvatarFallback>
-                                {member.name.split(' ').map(n => n[0]).join('')}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <p className="font-medium">{member.name}</p>
-                              <p className="text-sm text-muted-foreground">{member.email}</p>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>{member.role}</TableCell>
-                        <TableCell>
-                          <StatusBadge status={member.status} />
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {formatDate(member.joinedAt)}
-                        </TableCell>
-                        <TableCell>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <TrashIcon className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Billing */}
-          {activeSection === 'billing' && (
             <>
               <Card>
                 <CardHeader>
-                  <CardTitle>Current Plan</CardTitle>
+                  <CardTitle>Admin Account</CardTitle>
                   <CardDescription>
-                    You are currently on the Enterprise plan
+                    These values come from the current authenticated admin session.
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between p-4 rounded-lg border">
-                    <div>
-                      <h3 className="font-semibold text-lg">Enterprise</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Unlimited users, priority support, custom integrations
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold">$299<span className="text-sm font-normal text-muted-foreground">/month</span></p>
-                      <Button variant="outline" className="mt-2">Change Plan</Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Payment Method</CardTitle>
-                  <CardDescription>
-                    Manage your payment information
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between p-4 rounded-lg border">
+                <CardContent className="space-y-6">
+                  <div className="flex flex-col gap-4 rounded-xl border bg-muted/15 p-5 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="h-10 w-16 rounded bg-muted flex items-center justify-center text-xs font-medium">
-                        VISA
-                      </div>
-                      <div>
-                        <p className="font-medium">Visa ending in 4242</p>
-                        <p className="text-sm text-muted-foreground">Expires 12/2027</p>
+                      <Avatar className="h-14 w-14">
+                        <AvatarImage src={currentUser?.url ?? undefined} />
+                        <AvatarFallback>{initials}</AvatarFallback>
+                      </Avatar>
+                      <div className="space-y-1">
+                        <p className="text-lg font-semibold">{displayName}</p>
+                        <p className="text-sm text-muted-foreground">{email}</p>
+                        <p className="text-sm text-muted-foreground">
+                          User ID: {currentUser?.id ?? 'Not available'}
+                        </p>
                       </div>
                     </div>
-                    <Button variant="outline">Update</Button>
+                    <StatusBadge status={accountStatus} />
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <ReadOnlyField label="Display name" value={displayName} />
+                    <ReadOnlyField label="Email" value={email} />
+                    <ReadOnlyField label="Role" value={formatRole(currentUser?.role)} />
+                    <ReadOnlyField label="Member since" value={createdAt} />
+                    <ReadOnlyField label="Last login" value={lastLoginAt} />
+                    <ReadOnlyField label="Email verified" value={emailVerifiedAt} />
                   </div>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Invoice History</CardTitle>
+                  <CardTitle>Editing Availability</CardTitle>
                   <CardDescription>
-                    Download your past invoices
+                    This settings screen is intentionally read-only until a dedicated admin settings API exists.
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Invoice</TableHead>
-                        <TableHead>Amount</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead></TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {invoices.map((invoice) => (
-                        <TableRow key={invoice.id}>
-                          <TableCell className="font-medium">{invoice.invoiceNumber}</TableCell>
-                          <TableCell>${invoice.amount.toFixed(2)}</TableCell>
-                          <TableCell>
-                            <StatusBadge status={invoice.status} />
-                          </TableCell>
-                          <TableCell className="text-muted-foreground">
-                            {formatDate(invoice.date)}
-                          </TableCell>
-                          <TableCell>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <DownloadIcon className="h-4 w-4" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                <CardContent className="grid gap-4 lg:grid-cols-2">
+                  <LinkedInfoCard
+                    title="Review live billing activity"
+                    description="Subscriptions, transactions, and revenue metrics already come from the real admin payments API."
+                    href="/dashboard/payments"
+                    cta="Open Payments"
+                  />
+                  <LinkedInfoCard
+                    title="Manage notification batches"
+                    description="Broadcast creation and delivery history are live on the notifications page."
+                    href="/dashboard/notifications"
+                    cta="Open Notifications"
+                  />
                 </CardContent>
               </Card>
             </>
           )}
 
-          {/* Security */}
+          {activeSection === 'team' && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Team Access</CardTitle>
+                <CardDescription>
+                  The authenticated admin user is the only live team record exposed in this app today.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex flex-col gap-4 rounded-xl border p-5 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-4">
+                    <Avatar className="h-12 w-12">
+                      <AvatarImage src={currentUser?.url ?? undefined} />
+                      <AvatarFallback>{initials}</AvatarFallback>
+                    </Avatar>
+                    <div className="space-y-1">
+                      <p className="font-semibold">{displayName}</p>
+                      <p className="text-sm text-muted-foreground">{email}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Joined {createdAt}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <StatusBadge status={accountStatus} />
+                    <span className="text-sm text-muted-foreground">
+                      {formatRole(currentUser?.role)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-dashed bg-muted/20 p-5">
+                  <h3 className="font-semibold">Team management is not connected yet</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Invite flows, role changes, and multi-admin access controls were previously sample data only.
+                    They now stay hidden until there is a real backend endpoint to power them.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {activeSection === 'billing' && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Billing</CardTitle>
+                <CardDescription>
+                  Live billing data is available in the payments dashboard instead of this read-only settings view.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <LinkedInfoCard
+                  title="Open the live payments workspace"
+                  description="Use the payments page to review subscriptions, transactions, and revenue trends from the real admin API."
+                  href="/dashboard/payments"
+                  cta="Go to Payments"
+                />
+
+                <div className="rounded-xl border border-dashed bg-muted/20 p-5">
+                  <h3 className="font-semibold">No billing editor is wired here</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Plan changes, payment method updates, and invoice downloads were mock content before. They remain
+                    unavailable in this page until a writable billing settings endpoint is added.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {activeSection === 'security' && (
             <>
               <Card>
                 <CardHeader>
-                  <CardTitle>Password</CardTitle>
+                  <CardTitle>Session Security</CardTitle>
                   <CardDescription>
-                    Update your password regularly to keep your account secure
+                    Current security details from the active admin session.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="current-password">Current Password</Label>
-                    <Input id="current-password" type="password" />
+                <CardContent className="space-y-6">
+                  <div className="grid gap-4 md:grid-cols-3">
+                    <div className="rounded-xl border bg-muted/15 p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="rounded-lg bg-emerald-100 p-2 text-emerald-700">
+                          <ShieldIcon className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground">Account status</p>
+                          <p className="font-semibold capitalize">{accountStatus}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="rounded-xl border bg-muted/15 p-4">
+                      <p className="text-sm text-muted-foreground">Email verification</p>
+                      <p className="mt-1 font-semibold">
+                        {currentUser?.emailVerifiedAt ? 'Verified' : 'Pending'}
+                      </p>
+                    </div>
+                    <div className="rounded-xl border bg-muted/15 p-4">
+                      <p className="text-sm text-muted-foreground">Permission level</p>
+                      <p className="mt-1 font-semibold">{formatRole(currentUser?.role)}</p>
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="new-password">New Password</Label>
-                    <Input id="new-password" type="password" />
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <ReadOnlyField label="Last login" value={lastLoginAt} />
+                    <ReadOnlyField label="Email verified at" value={emailVerifiedAt} />
+                    <ReadOnlyField label="Access token expires" value={accessTokenExpiresAt} />
+                    <ReadOnlyField label="Refresh token expires" value={refreshTokenExpiresAt} />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="confirm-password">Confirm New Password</Label>
-                    <Input id="confirm-password" type="password" />
-                  </div>
-                  <Button onClick={handleSaveChanges}>Update Password</Button>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Two-Factor Authentication</CardTitle>
+                  <CardTitle>Credential Controls</CardTitle>
                   <CardDescription>
-                    Add an extra layer of security to your account
+                    Password reset, two-factor enrollment, and device session management need dedicated backend support.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100">
-                        <ShieldIcon className="h-5 w-5 text-emerald-600" />
-                      </div>
-                      <div>
-                        <p className="font-medium">Two-Factor Authentication</p>
-                        <p className="text-sm text-muted-foreground">
-                          Protect your account with 2FA
-                        </p>
-                      </div>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Active Sessions</CardTitle>
-                  <CardDescription>
-                    Manage your active sessions across devices
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between p-4 rounded-lg border">
-                    <div>
-                      <p className="font-medium">Chrome on macOS</p>
-                      <p className="text-sm text-muted-foreground">San Francisco, CA - Current session</p>
-                    </div>
-                    <span className="text-sm text-emerald-600">Active</span>
-                  </div>
-                  <div className="flex items-center justify-between p-4 rounded-lg border">
-                    <div>
-                      <p className="font-medium">Safari on iPhone</p>
-                      <p className="text-sm text-muted-foreground">San Francisco, CA - 2 hours ago</p>
-                    </div>
-                    <Button variant="outline" size="sm">Revoke</Button>
+                  <div className="rounded-xl border border-dashed bg-muted/20 p-5">
+                    <p className="text-sm text-muted-foreground">
+                      Those controls were previously rendered with sample fields and made it look like changes were
+                      possible. They are now hidden until the underlying auth workflows are exposed in the admin API.
+                    </p>
                   </div>
                 </CardContent>
               </Card>
             </>
           )}
 
-          {/* API */}
           {activeSection === 'api' && (
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle>API Keys</CardTitle>
-                  <CardDescription>
-                    Manage your API keys for external integrations
-                  </CardDescription>
-                </div>
-                <Dialog open={isCreateKeyOpen} onOpenChange={setIsCreateKeyOpen}>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <PlusIcon className="mr-2 h-4 w-4" />
-                      Create Key
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <form onSubmit={handleCreateApiKey}>
-                      <DialogHeader>
-                        <DialogTitle>Create API Key</DialogTitle>
-                        <DialogDescription>
-                          Create a new API key for your application.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="grid gap-4 py-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="key-name">Key Name</Label>
-                          <Input
-                            id="key-name"
-                            placeholder="e.g., Production API Key"
-                            required
-                          />
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => setIsCreateKeyOpen(false)}>
-                          Cancel
-                        </Button>
-                        <Button type="submit">Create Key</Button>
-                      </DialogFooter>
-                    </form>
-                  </DialogContent>
-                </Dialog>
+              <CardHeader>
+                <CardTitle>API Access</CardTitle>
+                <CardDescription>
+                  This admin surface uses session-based authentication and does not expose self-service API key
+                  management.
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Key</TableHead>
-                      <TableHead>Last Used</TableHead>
-                      <TableHead>Created</TableHead>
-                      <TableHead></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {apiKeys.map((apiKey) => (
-                      <TableRow key={apiKey.id}>
-                        <TableCell className="font-medium">{apiKey.name}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <code className="text-sm bg-muted px-2 py-1 rounded">
-                              {showApiKey === apiKey.id
-                                ? apiKey.key
-                                : `${apiKey.key.slice(0, 12)}${'•'.repeat(20)}`}
-                            </code>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-6 w-6"
-                              onClick={() => setShowApiKey(showApiKey === apiKey.id ? null : apiKey.id)}
-                            >
-                              {showApiKey === apiKey.id ? (
-                                <EyeOffIcon className="h-3 w-3" />
-                              ) : (
-                                <EyeIcon className="h-3 w-3" />
-                              )}
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-6 w-6"
-                              onClick={() => handleCopyApiKey(apiKey.key)}
-                            >
-                              <CopyIcon className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {apiKey.lastUsed ? formatDate(apiKey.lastUsed) : 'Never'}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {formatDate(apiKey.createdAt)}
-                        </TableCell>
-                        <TableCell>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
-                            <TrashIcon className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+              <CardContent className="space-y-4">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <ReadOnlyField label="Authenticated user ID" value={currentUser?.id ?? 'Not available'} className="font-mono text-xs" />
+                  <ReadOnlyField label="Authenticated role" value={formatRole(currentUser?.role)} />
+                </div>
+
+                <div className="rounded-xl border border-dashed bg-muted/20 p-5">
+                  <h3 className="font-semibold">No live API key registry</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    The old sample keys have been removed. Once the backend exposes real admin API key management, this
+                    section can show creation, rotation, and last-used data without inventing records.
+                  </p>
+                </div>
               </CardContent>
             </Card>
           )}
 
-          {/* Notifications */}
           {activeSection === 'notifications' && (
-            <>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Email Notifications</CardTitle>
-                  <CardDescription>
-                    Choose what emails you want to receive
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {[
-                    { label: 'New subscriptions', description: 'Get notified when users subscribe or upgrade' },
-                    { label: 'New users', description: 'Get notified when new users sign up' },
-                    { label: 'Support tickets', description: 'Get notified about new support tickets' },
-                    { label: 'Weekly reports', description: 'Receive weekly analytics reports' },
-                    { label: 'Product updates', description: 'Get notified about new features and updates' },
-                  ].map((item, index) => (
-                    <div key={index} className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">{item.label}</p>
-                        <p className="text-sm text-muted-foreground">{item.description}</p>
-                      </div>
-                      <Switch defaultChecked={index < 3} />
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Notifications</CardTitle>
+                <CardDescription>
+                  Broadcast management is live, but per-admin notification preferences are not connected in this page.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <LinkedInfoCard
+                  title="Open live notification batches"
+                  description="Create broadcasts, review delivery metrics, and inspect batch activity from the notifications workspace."
+                  href="/dashboard/notifications"
+                  cta="Go to Notifications"
+                />
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Push Notifications</CardTitle>
-                  <CardDescription>
-                    Configure in-app notifications
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {[
-                    { label: 'Desktop notifications', description: 'Show notifications on your desktop' },
-                    { label: 'Sound alerts', description: 'Play a sound for new notifications' },
-                    { label: 'Badge count', description: 'Show unread count in browser tab' },
-                  ].map((item, index) => (
-                    <div key={index} className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">{item.label}</p>
-                        <p className="text-sm text-muted-foreground">{item.description}</p>
-                      </div>
-                      <Switch defaultChecked={index === 0} />
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </>
+                <div className="rounded-xl border border-dashed bg-muted/20 p-5">
+                  <h3 className="font-semibold">Preference toggles removed</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Email and push toggles were mock UI only. They now stay out of the way until the backend returns
+                    real per-admin preferences that this page can save.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           )}
-
         </div>
       </div>
     </div>
