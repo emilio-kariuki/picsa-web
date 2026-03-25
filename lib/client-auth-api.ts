@@ -5,6 +5,11 @@ export interface GoogleLoginInput {
   idToken: string
 }
 
+export interface AppleLoginInput {
+  idToken: string
+  name?: string | null
+}
+
 export type ClientAuthResponse = ApiSuccessResponse<ClientAuthResponseData>
 
 export type ClientMeResponse = ApiSuccessResponse<{
@@ -18,8 +23,22 @@ export async function loginWithGoogle(input: GoogleLoginInput) {
   })
 }
 
+export async function loginWithApple(input: AppleLoginInput) {
+  return apiRequest<ClientAuthResponse>('/auth/apple', {
+    method: 'POST',
+    body: input,
+  })
+}
+
 export async function reactivateWithGoogle(input: GoogleLoginInput) {
   return apiRequest<ClientAuthResponse>('/auth/reactivate/google', {
+    method: 'POST',
+    body: input,
+  })
+}
+
+export async function reactivateWithApple(input: AppleLoginInput) {
+  return apiRequest<ClientAuthResponse>('/auth/reactivate/apple', {
     method: 'POST',
     body: input,
   })

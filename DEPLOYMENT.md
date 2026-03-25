@@ -41,12 +41,15 @@ docker build -t picsa-frontend .
 docker run --rm -p 3000:3000 \
   --env NEXT_PUBLIC_API_BASE_URL=https://api.picsa.pro \
   --env NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-web-client-id \
+  --env APPLE_CLIENT_ID=your-apple-services-id \
   picsa-frontend
 ```
 
 The frontend requires `NEXT_PUBLIC_GOOGLE_CLIENT_ID` so the client workspace at `app.picsa.pro` can sign users in with Google. It must match the backend `GOOGLE_CLIENT_ID` audience.
 
 The login page resolves the Google client id on the server at request time, so setting `NEXT_PUBLIC_GOOGLE_CLIENT_ID` on the running container is enough after a redeploy or restart. If your deployment already provides `GOOGLE_CLIENT_ID`, the web app will also accept that as a fallback.
+
+For iPhone and iPad users, the client login page can also show Sign in with Apple. Set `APPLE_CLIENT_ID` or `NEXT_PUBLIC_APPLE_CLIENT_ID` to your Apple Services ID. It must match the backend `APPLE_CLIENT_ID`, and the Apple web auth configuration should include `app.picsa.pro` with `https://app.picsa.pro/login` as a return URL.
 
 ## Reverse proxy
 

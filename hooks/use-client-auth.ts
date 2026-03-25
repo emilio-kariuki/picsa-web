@@ -11,10 +11,13 @@ import {
 } from '@/lib/client-auth'
 import {
   fetchAuthenticatedClient,
+  loginWithApple,
   loginWithGoogle,
   logoutClientSession,
+  reactivateWithApple,
   reactivateWithGoogle,
   refreshClientSession,
+  type ClientAuthResponse,
 } from '@/lib/client-auth-api'
 import {
   clientAuthBootstrapStatusAtom,
@@ -39,6 +42,28 @@ export function useClientAuth() {
       return nextSession
     },
     [setSession],
+  )
+
+  const commitAuthenticatedResponse = useCallback(
+    async (response: ClientAuthResponse) => {
+      const nextSession = buildClientAuthSession(response.data)
+
+      if (!isActiveClientUser(nextSession.currentUser)) {
+        try {
+          await logoutClientSession(nextSession.refreshToken)
+        } catch {}
+
+        hydrateSession(null)
+        throw new ApiError('Active account required', {
+          status: 403,
+        })
+      }
+
+      hydrateSession(nextSession)
+      setBootstrapStatus('ready')
+      return nextSession
+    },
+    [hydrateSession, setBootstrapStatus],
   )
 
   const bootstrap = useCallback(async () => {
@@ -119,43 +144,33 @@ export function useClientAuth() {
   const signInWithGoogle = useCallback(
     async (idToken: string) => {
       const response = await loginWithGoogle({ idToken })
-      const nextSession = buildClientAuthSession(response.data)
-
-      if (!isActiveClientUser(nextSession.currentUser)) {
-        try {
-          await logoutClientSession(nextSession.refreshToken)
-        } catch {}
-
-        hydrateSession(null)
-        throw new ApiError('Active account required', {
-          status: 403,
-        })
-      }
-
-      hydrateSession(nextSession)
-      setBootstrapStatus('ready')
-      return nextSession
+      return commitAuthenticatedResponse(response)
     },
-    [hydrateSession, setBootstrapStatus],
+    [commitAuthenticatedResponse],
+  )
+
+  const signInWithApple = useCallback(
+    async (idToken: string, name?: string | null) => {
+      const response = await loginWithApple({ idToken, name })
+      return commitAuthenticatedResponse(response)
+    },
+    [commitAuthenticatedResponse],
   )
 
   const reactivateAccount = useCallback(
     async (idToken: string) => {
       const response = await reactivateWithGoogle({ idToken })
-      const nextSession = buildClientAuthSession(response.data)
-
-      if (!isActiveClientUser(nextSession.currentUser)) {
-        hydrateSession(null)
-        throw new ApiError('Unable to reactivate account', {
-          status: 403,
-        })
-      }
-
-      hydrateSession(nextSession)
-      setBootstrapStatus('ready')
-      return nextSession
+      return commitAuthenticatedResponse(response)
     },
-    [hydrateSession, setBootstrapStatus],
+    [commitAuthenticatedResponse],
+  )
+
+  const reactivateWithAppleAccount = useCallback(
+    async (idToken: string, name?: string | null) => {
+      const response = await reactivateWithApple({ idToken, name })
+      return commitAuthenticatedResponse(response)
+    },
+    [commitAuthenticatedResponse],
   )
 
   const logout = useCallback(async () => {
@@ -258,7 +273,9 @@ export function useClientAuth() {
     bootstrapStatus,
     bootstrap,
     signInWithGoogle,
+    signInWithApple,
     reactivateAccount,
+    reactivateWithApple: reactivateWithAppleAccount,
     logout,
     clearSession,
     performAuthenticatedRequest,

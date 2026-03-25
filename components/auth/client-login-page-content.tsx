@@ -10,22 +10,44 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
+import { ClientAppleSignIn } from '@/components/client/client-apple-sign-in'
 import { ClientGoogleSignIn } from '@/components/client/client-google-sign-in'
 import { ApiError, isApiError } from '@/lib/api'
 import { useClientAuth } from '@/hooks/use-client-auth'
 
 interface ClientLoginPageContentProps {
+  appleClientId: string
   googleClientId: string
   nextPath: string
 }
 
-export function ClientLoginPageContent({ googleClientId, nextPath }: ClientLoginPageContentProps) {
+type SocialProvider = 'apple' | 'google'
+
+interface SocialCredential {
+  idToken: string
+  name?: string | null
+  provider: SocialProvider
+}
+
+export function ClientLoginPageContent({
+  appleClientId,
+  googleClientId,
+  nextPath,
+}: ClientLoginPageContentProps) {
   const router = useRouter()
-  const { bootstrapStatus, isAuthenticated, signInWithGoogle, reactivateAccount } = useClientAuth()
+  const {
+    bootstrapStatus,
+    isAuthenticated,
+    signInWithApple,
+    signInWithGoogle,
+    reactivateAccount,
+    reactivateWithApple,
+  } = useClientAuth()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [inactiveToken, setInactiveToken] = useState<string | null>(null)
+  const [inactiveCredential, setInactiveCredential] = useState<SocialCredential | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isReactivating, setIsReactivating] = useState(false)
+  const [isIosPlatform, setIsIosPlatform] = useState(false)
 
   useEffect(() => {
     if (bootstrapStatus === 'ready' && isAuthenticated) {
@@ -33,19 +55,39 @@ export function ClientLoginPageContent({ googleClientId, nextPath }: ClientLogin
     }
   }, [bootstrapStatus, isAuthenticated, nextPath, router])
 
-  async function handleCredential(idToken: string) {
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    const { userAgent, platform, maxTouchPoints } = window.navigator
+    const isIosDevice =
+      /iPad|iPhone|iPod/i.test(userAgent) || (platform === 'MacIntel' && maxTouchPoints > 1)
+
+    setIsIosPlatform(isIosDevice)
+  }, [])
+
+  async function handleCredential(credential: SocialCredential) {
     setIsSubmitting(true)
     setErrorMessage(null)
-    setInactiveToken(null)
+    setInactiveCredential(null)
 
     try {
-      await signInWithGoogle(idToken)
+      if (credential.provider === 'apple') {
+        await signInWithApple(credential.idToken, credential.name)
+      } else {
+        await signInWithGoogle(credential.idToken)
+      }
       toast.success('Welcome back to Picsa')
       router.replace(nextPath)
     } catch (error) {
       if (isApiError(error) && error.code === 'AUTH_ACCOUNT_INACTIVE') {
-        setInactiveToken(idToken)
-        setErrorMessage('Your account is inactive. Reactivate it with the same Google account to continue.')
+        setInactiveCredential(credential)
+        setErrorMessage(
+          `Your account is inactive. Reactivate it with the same ${
+            credential.provider === 'apple' ? 'Apple' : 'Google'
+          } account to continue.`,
+        )
         return
       }
 
@@ -60,14 +102,18 @@ export function ClientLoginPageContent({ googleClientId, nextPath }: ClientLogin
   }
 
   async function handleReactivate() {
-    if (!inactiveToken) {
+    if (!inactiveCredential) {
       return
     }
 
     setIsReactivating(true)
 
     try {
-      await reactivateAccount(inactiveToken)
+      if (inactiveCredential.provider === 'apple') {
+        await reactivateWithApple(inactiveCredential.idToken, inactiveCredential.name)
+      } else {
+        await reactivateAccount(inactiveCredential.idToken)
+      }
       toast.success('Your account is active again')
       router.replace(nextPath)
     } catch (error) {
@@ -76,6 +122,9 @@ export function ClientLoginPageContent({ googleClientId, nextPath }: ClientLogin
       setIsReactivating(false)
     }
   }
+
+  const showAppleSignIn = isIosPlatform && Boolean(appleClientId)
+  const inactiveProviderLabel = inactiveCredential?.provider === 'apple' ? 'Apple' : 'Google'
 
   if (bootstrapStatus !== 'ready') {
     return (
@@ -150,19 +199,45 @@ export function ClientLoginPageContent({ googleClientId, nextPath }: ClientLogin
           <Card className="rounded-[2rem] border-border/70 bg-card/92 shadow-[0_24px_80px_rgba(35,30,27,0.10)]">
             <CardHeader className="space-y-3">
               <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border/70 bg-secondary/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-accent">
-                Google sign-in
+                Secure sign-in
               </div>
               <div className="space-y-2">
                 <CardTitle className="font-serif text-3xl font-semibold tracking-tight">Enter your Picsa workspace</CardTitle>
                 <CardDescription className="text-base leading-7">
-                  For now, client access runs through Google. If it is your first time, your account is created automatically.
+                  Google is available everywhere, and on iPhone or iPad you will also see Sign in with Apple. If it is your first time, your account is created automatically.
                 </CardDescription>
               </div>
             </CardHeader>
             <CardContent className="space-y-5">
+              {showAppleSignIn ? (
+                <div className="space-y-4">
+                  <ClientAppleSignIn
+                    clientId={appleClientId}
+                    onCredential={(credential) =>
+                      void handleCredential({
+                        ...credential,
+                        provider: 'apple',
+                      })
+                    }
+                    disabled={isSubmitting || isReactivating}
+                  />
+
+                  <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+                    <span className="h-px flex-1 bg-border/70" />
+                    Continue with Google
+                    <span className="h-px flex-1 bg-border/70" />
+                  </div>
+                </div>
+              ) : null}
+
               <ClientGoogleSignIn
                 clientId={googleClientId}
-                onCredential={handleCredential}
+                onCredential={(idToken) =>
+                  void handleCredential({
+                    idToken,
+                    provider: 'google',
+                  })
+                }
                 disabled={isSubmitting || isReactivating}
               />
 
@@ -173,7 +248,7 @@ export function ClientLoginPageContent({ googleClientId, nextPath }: ClientLogin
                 </Alert>
               ) : null}
 
-              {inactiveToken ? (
+              {inactiveCredential ? (
                 <Button
                   variant="outline"
                   className="w-full rounded-full border-border/80 bg-background/60"
@@ -181,7 +256,7 @@ export function ClientLoginPageContent({ googleClientId, nextPath }: ClientLogin
                   disabled={isReactivating}
                 >
                   <RefreshCcwIcon className="mr-2 h-4 w-4" />
-                  {isReactivating ? 'Reactivating...' : 'Reactivate with Google'}
+                  {isReactivating ? 'Reactivating...' : `Reactivate with ${inactiveProviderLabel}`}
                 </Button>
               ) : null}
             </CardContent>
