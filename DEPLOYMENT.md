@@ -2,6 +2,8 @@
 
 This app serves both the public marketing site and the admin app from a single Next.js container.
 
+Coolify should build from the repository root using the root-level [Dockerfile](/Users/mac/projects/picsa/Dockerfile).
+
 ## Domains
 
 - `picsa.pro` routes to the marketing experience.
@@ -11,10 +13,10 @@ Both domains should point to the same container or VM service.
 
 ## Docker
 
-Build the frontend image from `/Users/mac/projects/picsa/admin`:
+Build the frontend image from `/Users/mac/projects/picsa`:
 
 ```bash
-docker build -f dockerfile -t picsa-frontend .
+docker build -t picsa-frontend .
 docker run --rm -p 3000:3000 --env NEXT_PUBLIC_API_BASE_URL=https://your-backend.example/api picsa-frontend
 ```
 
