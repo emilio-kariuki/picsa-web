@@ -33,14 +33,39 @@ interface AdminApiRequestOptions extends Omit<RequestInit, 'body' | 'headers'> {
 
 const DEFAULT_API_BASE_URL = 'https://picsa.ecoville.online/api'
 
+function normalizeApiBaseUrl(baseUrl: string) {
+  const trimmedBaseUrl = baseUrl.trim().replace(/\/$/, '')
+
+  if (!trimmedBaseUrl) {
+    return DEFAULT_API_BASE_URL
+  }
+
+  try {
+    const url = new URL(trimmedBaseUrl)
+    const normalizedPathname = url.pathname.replace(/\/$/, '')
+
+    if (!normalizedPathname || normalizedPathname === '/') {
+      url.pathname = '/api'
+    }
+
+    return url.toString().replace(/\/$/, '')
+  } catch {
+    if (trimmedBaseUrl.endsWith('/api')) {
+      return trimmedBaseUrl
+    }
+
+    return `${trimmedBaseUrl}/api`
+  }
+}
+
 export function getAdminApiBaseUrl() {
   const configuredBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.trim()
 
   if (!configuredBaseUrl) {
-    return DEFAULT_API_BASE_URL
+    return normalizeApiBaseUrl(DEFAULT_API_BASE_URL)
   }
 
-  return configuredBaseUrl.replace(/\/$/, '')
+  return normalizeApiBaseUrl(configuredBaseUrl)
 }
 
 function buildRequestBody(body: AdminApiRequestOptions['body']) {
@@ -109,12 +134,24 @@ export async function apiRequest<T>(
   options: AdminApiRequestOptions = {},
 ) {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`
-  const response = await fetch(`${getAdminApiBaseUrl()}${normalizedPath}`, {
-    ...options,
-    cache: 'no-store',
-    headers: buildRequestHeaders(options.body, options.accessToken, options.headers),
-    body: buildRequestBody(options.body),
-  })
+
+  let response: Response
+
+  try {
+    response = await fetch(`${getAdminApiBaseUrl()}${normalizedPath}`, {
+      ...options,
+      cache: 'no-store',
+      headers: buildRequestHeaders(options.body, options.accessToken, options.headers),
+      body: buildRequestBody(options.body),
+    })
+  } catch {
+    throw new ApiError(
+      'Unable to reach the API. Check NEXT_PUBLIC_API_BASE_URL and make sure the backend allows requests from this web app.',
+      {
+        status: 0,
+      },
+    )
+  }
 
   return parseApiResponse<T>(response)
 }
