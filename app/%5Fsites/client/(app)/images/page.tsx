@@ -46,18 +46,6 @@ function imageBadgeClass(image: ClientImage) {
   return 'border-emerald-300 bg-emerald-500/10 text-emerald-700 dark:border-emerald-400/30 dark:text-emerald-300'
 }
 
-function getImageAspectRatio(image: ClientImage) {
-  if (image.width && image.height && image.height > 0) {
-    return image.width / image.height
-  }
-
-  return 1.25
-}
-
-function getImageTileAspectRatio(image: ClientImage) {
-  return Math.min(Math.max(getImageAspectRatio(image), 0.72), 1.85)
-}
-
 export default function ClientImagesPage() {
   const queryClient = useQueryClient()
   const { performAuthenticatedRequest } = useClientAuth()
@@ -174,10 +162,10 @@ export default function ClientImagesPage() {
         description="Scan the full collection as a dense visual grid, then open the 3-dot dialog on any image when you want to share it, review it, or remove it."
       />
 
-      <ClientSurface>
+      <ClientSurface className="rounded-[1.2rem] border-border/60 bg-card/88 p-4 sm:p-5">
         {images.length ? (
           <>
-            <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-2xl">
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Personal media</p>
                 <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -204,25 +192,26 @@ export default function ClientImagesPage() {
               </div>
             </div>
 
-            <div className="columns-2 gap-3 sm:columns-2 lg:columns-3 xl:columns-4">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
               {images.map((image) => (
                 <div
                   key={image.id}
-                  className="group relative mb-3 break-inside-avoid overflow-hidden rounded-[1.4rem] border border-border/60 bg-secondary/20 shadow-[0_16px_40px_rgba(35,30,27,0.07)]"
-                  style={{ aspectRatio: `${getImageTileAspectRatio(image)}` }}
+                  className="group relative overflow-hidden rounded-[0.78rem] border border-border/45 bg-secondary/20 shadow-[0_10px_24px_rgba(35,30,27,0.08)]"
                 >
-                  {image.accessUrl ? (
-                    <img
-                      src={image.accessUrl}
-                      alt={eventNameById.get(image.eventId) ?? 'Event image'}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(255,210,166,0.45),_transparent_55%),linear-gradient(180deg,rgba(61,41,30,0.95),rgba(26,20,17,0.92))] p-6 text-center text-sm text-white/80">
-                      {getImageStatusLabel(image)}
-                    </div>
-                  )}
+                  <div className="aspect-[4/5]">
+                    {image.accessUrl ? (
+                      <img
+                        src={image.accessUrl}
+                        alt={eventNameById.get(image.eventId) ?? 'Event image'}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(255,210,166,0.45),_transparent_55%),linear-gradient(180deg,rgba(61,41,30,0.95),rgba(26,20,17,0.92))] p-6 text-center text-sm text-white/80">
+                        {getImageStatusLabel(image)}
+                      </div>
+                    )}
+                  </div>
 
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/52 via-black/6 to-black/10" />
 
@@ -230,7 +219,7 @@ export default function ClientImagesPage() {
                     <Badge
                       variant="outline"
                       className={cn(
-                        'rounded-full border-white/25 bg-black/38 px-2.5 py-1 text-[10px] text-white backdrop-blur-md',
+                        'rounded-[0.65rem] border-white/18 bg-black/34 px-2.5 py-1 text-[10px] text-white shadow-sm backdrop-blur-md',
                         imageBadgeClass(image),
                       )}
                     >
@@ -241,7 +230,7 @@ export default function ClientImagesPage() {
                       type="button"
                       size="icon-sm"
                       variant="secondary"
-                      className="pointer-events-auto rounded-full border border-white/20 bg-black/42 text-white shadow-lg backdrop-blur-md hover:bg-black/60 hover:text-white"
+                      className="pointer-events-auto rounded-[0.65rem] border border-white/18 bg-black/42 text-white shadow-lg backdrop-blur-md hover:bg-black/60 hover:text-white"
                       onClick={() => setActiveImageId(image.id)}
                       aria-label="Open image actions"
                     >
@@ -250,7 +239,7 @@ export default function ClientImagesPage() {
                   </div>
 
                   <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-2.5">
-                    <div className="min-w-0 rounded-full border border-white/16 bg-black/38 px-2.5 py-1.5 text-[11px] text-white shadow-lg backdrop-blur-md">
+                    <div className="min-w-0 max-w-[74%] rounded-[0.65rem] border border-white/12 bg-black/28 px-2.5 py-1.5 text-[11px] text-white shadow-lg backdrop-blur-sm">
                       <p className="truncate font-medium">
                         {eventNameById.get(image.eventId) ?? `Event ${image.eventId.slice(0, 8)}`}
                       </p>
@@ -261,12 +250,12 @@ export default function ClientImagesPage() {
 
                     <div className="flex shrink-0 gap-2">
                       {image.isPrivate ? (
-                        <span className="rounded-full border border-white/16 bg-black/38 px-2.5 py-2 text-[11px] text-white/80 backdrop-blur-md">
+                        <span className="rounded-[0.65rem] border border-white/12 bg-black/28 px-2.5 py-2 text-[11px] text-white/80 backdrop-blur-sm">
                           <LockIcon className="h-3.5 w-3.5" />
                         </span>
                       ) : null}
                       {image.hd ? (
-                        <span className="rounded-full border border-white/16 bg-black/38 px-2.5 py-2 text-[11px] text-white/80 backdrop-blur-md">
+                        <span className="rounded-[0.65rem] border border-white/12 bg-black/28 px-2.5 py-2 text-[11px] text-white/80 backdrop-blur-sm">
                           <SparklesIcon className="h-3.5 w-3.5" />
                         </span>
                       ) : null}
@@ -291,9 +280,9 @@ export default function ClientImagesPage() {
 
             <Dialog open={Boolean(activeImage)} onOpenChange={(open) => !open && setActiveImageId(null)}>
               {activeImage ? (
-                <DialogContent className="max-h-[92vh] max-w-5xl overflow-hidden rounded-[2rem] border-border/70 bg-background p-0 shadow-[0_36px_120px_rgba(18,12,9,0.36)]">
-                  <div className="grid max-h-[92vh] overflow-y-auto md:grid-cols-[1.18fr_0.82fr]">
-                    <div className="relative min-h-[340px] bg-muted md:min-h-[560px]">
+                <DialogContent className="max-h-[92vh] max-w-3xl overflow-hidden rounded-[0.95rem] border-border/60 bg-background p-0 shadow-[0_30px_90px_rgba(18,12,9,0.3)]">
+                  <div className="max-h-[92vh] overflow-y-auto">
+                    <div className="relative aspect-[4/3] bg-muted sm:aspect-[16/9]">
                       {activeImage.accessUrl ? (
                         <img
                           src={activeImage.accessUrl}
@@ -306,35 +295,23 @@ export default function ClientImagesPage() {
                         </div>
                       )}
 
-                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/10" />
+                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/38 via-transparent to-transparent" />
 
-                      <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
-                        <div className="max-w-lg rounded-[1.5rem] border border-white/14 bg-black/38 px-4 py-4 text-white shadow-xl backdrop-blur-md">
-                          <p className="text-xs uppercase tracking-[0.24em] text-white/62">Selected frame</p>
-                          <h3 className="mt-2 font-serif text-2xl font-semibold tracking-tight">
-                            {activeEventName}
-                          </h3>
-                          <p className="mt-1 text-sm text-white/72">
-                            Uploaded {formatRelativeTime(activeImage.createdAt)} by{' '}
-                            {activeImage.uploader.name ?? activeImage.uploader.email ?? 'Uploader'}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-6 p-6 md:p-7">
-                      <DialogHeader className="space-y-3 text-left">
+                      <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-4">
                         <div className="flex flex-wrap gap-2">
                           <Badge
                             variant="outline"
-                            className={cn('rounded-full px-3 py-1', imageBadgeClass(activeImage))}
+                            className={cn(
+                              'rounded-[0.65rem] border-white/16 bg-black/32 px-2.5 py-1 text-[10px] text-white backdrop-blur-md',
+                              imageBadgeClass(activeImage),
+                            )}
                           >
                             {getImageStatusLabel(activeImage)}
                           </Badge>
                           {activeImage.isPrivate ? (
                             <Badge
                               variant="outline"
-                              className="rounded-full border-border/70 bg-secondary/45 px-3 py-1"
+                              className="rounded-[0.65rem] border-white/16 bg-black/32 px-2.5 py-1 text-[10px] text-white backdrop-blur-md"
                             >
                               <LockIcon className="h-3.5 w-3.5" />
                               Private
@@ -343,35 +320,42 @@ export default function ClientImagesPage() {
                           {activeImage.hd ? (
                             <Badge
                               variant="outline"
-                              className="rounded-full border-border/70 bg-secondary/45 px-3 py-1"
+                              className="rounded-[0.65rem] border-white/16 bg-black/32 px-2.5 py-1 text-[10px] text-white backdrop-blur-md"
                             >
                               <SparklesIcon className="h-3.5 w-3.5" />
                               HD
                             </Badge>
                           ) : null}
                         </div>
+                      </div>
+
+                    </div>
+
+                    <div className="space-y-5 p-5 sm:p-6">
+                      <DialogHeader className="space-y-3 border-b border-border/60 pb-5 text-left">
                         <div className="space-y-2">
-                          <DialogTitle className="font-serif text-3xl font-semibold tracking-tight">
-                            Image actions
+                          <DialogTitle className="font-serif text-2xl font-semibold tracking-tight sm:text-3xl">
+                            Image details
                           </DialogTitle>
                           <DialogDescription className="text-sm leading-6">
-                            Open the event, share this frame, or handle moderation from one place without leaving the gallery wall.
+                            {activeEventName}. Uploaded {formatRelativeTime(activeImage.createdAt)} by{' '}
+                            {activeImage.uploader.name ?? activeImage.uploader.email ?? 'Uploader'}.
                           </DialogDescription>
                         </div>
                       </DialogHeader>
 
                       <div className="grid gap-3 sm:grid-cols-2">
-                        <div className="rounded-[1.35rem] border border-border/70 bg-secondary/30 p-4">
+                        <div className="rounded-[0.78rem] border border-border/60 bg-secondary/25 p-4">
                           <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Event</p>
                           <p className="mt-2 text-sm font-medium text-foreground">{activeEventName}</p>
                         </div>
-                        <div className="rounded-[1.35rem] border border-border/70 bg-secondary/30 p-4">
+                        <div className="rounded-[0.78rem] border border-border/60 bg-secondary/25 p-4">
                           <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Uploaded</p>
                           <p className="mt-2 text-sm font-medium text-foreground">
                             {formatDateTime(activeImage.createdAt)}
                           </p>
                         </div>
-                        <div className="rounded-[1.35rem] border border-border/70 bg-secondary/30 p-4">
+                        <div className="rounded-[0.78rem] border border-border/60 bg-secondary/25 p-4">
                           <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Image size</p>
                           <p className="mt-2 text-sm font-medium text-foreground">
                             {formatBytes(activeImage.sizeBytes)}
@@ -382,7 +366,7 @@ export default function ClientImagesPage() {
                             </p>
                           ) : null}
                         </div>
-                        <div className="rounded-[1.35rem] border border-border/70 bg-secondary/30 p-4">
+                        <div className="rounded-[0.78rem] border border-border/60 bg-secondary/25 p-4">
                           <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Uploader</p>
                           <p className="mt-2 text-sm font-medium text-foreground">
                             {activeImage.uploader.name ?? activeImage.uploader.email ?? 'Uploader'}
@@ -390,20 +374,20 @@ export default function ClientImagesPage() {
                         </div>
                       </div>
 
-                      <div className="space-y-3">
+                      <div className="grid gap-3 sm:grid-cols-2">
                         <Button
                           asChild
                           variant="outline"
-                          className="h-auto w-full justify-start rounded-[1.35rem] border-border/70 bg-background/80 px-4 py-4"
+                          className="h-auto w-full justify-start rounded-[0.78rem] border-border/60 bg-background/80 px-4 py-3.5"
                         >
                           <Link href={`/events/${activeImage.eventId}`}>
-                            <span className="flex size-10 items-center justify-center rounded-full bg-secondary text-foreground">
+                            <span className="flex size-10 items-center justify-center rounded-[0.7rem] bg-secondary text-foreground">
                               <CalendarDaysIcon className="h-4 w-4" />
                             </span>
                             <span className="flex flex-col items-start">
                               <span className="text-sm font-medium">Open event</span>
                               <span className="text-xs text-muted-foreground">
-                                Jump to the full event workspace for this image.
+                                Jump to the event workspace for this image.
                               </span>
                             </span>
                           </Link>
@@ -413,11 +397,11 @@ export default function ClientImagesPage() {
                           <Button
                             type="button"
                             variant="outline"
-                            className="h-auto w-full justify-start rounded-[1.35rem] border-border/70 bg-background/80 px-4 py-4"
+                            className="h-auto w-full justify-start rounded-[0.78rem] border-border/60 bg-background/80 px-4 py-3.5"
                             onClick={() => shareImageMutation.mutate(activeImage.id)}
                             disabled={shareImageMutation.isPending}
                           >
-                            <span className="flex size-10 items-center justify-center rounded-full bg-secondary text-foreground">
+                            <span className="flex size-10 items-center justify-center rounded-[0.7rem] bg-secondary text-foreground">
                               <Link2Icon className="h-4 w-4" />
                             </span>
                             <span className="flex flex-col items-start">
@@ -434,18 +418,19 @@ export default function ClientImagesPage() {
                         {activeImage.viewerCanApprove ? (
                           <Button
                             type="button"
-                            className="h-auto w-full justify-start rounded-[1.35rem] bg-primary px-4 py-4 text-primary-foreground hover:bg-accent hover:text-accent-foreground"
+                            variant="outline"
+                            className="h-auto w-full justify-start rounded-[0.78rem] border-emerald-200 bg-emerald-500/8 px-4 py-3.5 text-emerald-700 hover:bg-emerald-500/12 hover:text-emerald-700 dark:border-emerald-400/30 dark:text-emerald-300"
                             onClick={() => approveImageMutation.mutate(activeImage.id)}
                             disabled={approveImageMutation.isPending}
                           >
-                            <span className="flex size-10 items-center justify-center rounded-full bg-white/14 text-current">
+                            <span className="flex size-10 items-center justify-center rounded-[0.7rem] bg-emerald-500/12 text-current dark:bg-emerald-400/14">
                               <CheckIcon className="h-4 w-4" />
                             </span>
                             <span className="flex flex-col items-start">
                               <span className="text-sm font-medium">
                                 {approveImageMutation.isPending ? 'Approving image...' : 'Approve image'}
                               </span>
-                              <span className="text-xs text-primary-foreground/78">
+                              <span className="text-xs text-current/75">
                                 Mark this frame ready for the event gallery.
                               </span>
                             </span>
@@ -456,11 +441,11 @@ export default function ClientImagesPage() {
                           <Button
                             type="button"
                             variant="outline"
-                            className="h-auto w-full justify-start rounded-[1.35rem] border-border/70 bg-background/80 px-4 py-4"
+                            className="h-auto w-full justify-start rounded-[0.78rem] border-border/60 bg-background/80 px-4 py-3.5"
                             onClick={() => rejectImageMutation.mutate(activeImage.id)}
                             disabled={rejectImageMutation.isPending}
                           >
-                            <span className="flex size-10 items-center justify-center rounded-full bg-secondary text-foreground">
+                            <span className="flex size-10 items-center justify-center rounded-[0.7rem] bg-secondary text-foreground">
                               <XIcon className="h-4 w-4" />
                             </span>
                             <span className="flex flex-col items-start">
@@ -477,19 +462,19 @@ export default function ClientImagesPage() {
                         {activeImage.viewerCanDelete ? (
                           <Button
                             type="button"
-                            variant="destructive"
-                            className="h-auto w-full justify-start rounded-[1.35rem] px-4 py-4"
+                            variant="outline"
+                            className="h-auto w-full justify-start rounded-[0.78rem] border-rose-200 bg-rose-500/8 px-4 py-3.5 text-rose-700 hover:bg-rose-500/12 hover:text-rose-700 dark:border-rose-400/30 dark:text-rose-300"
                             onClick={() => deleteImageMutation.mutate(activeImage.id)}
                             disabled={deleteImageMutation.isPending}
                           >
-                            <span className="flex size-10 items-center justify-center rounded-full bg-white/14 text-current">
+                            <span className="flex size-10 items-center justify-center rounded-[0.7rem] bg-rose-500/12 text-current dark:bg-rose-400/14">
                               <Trash2Icon className="h-4 w-4" />
                             </span>
                             <span className="flex flex-col items-start">
                               <span className="text-sm font-medium">
                                 {deleteImageMutation.isPending ? 'Deleting image...' : 'Delete image'}
                               </span>
-                              <span className="text-xs text-white/80">
+                              <span className="text-xs text-current/75">
                                 Remove this frame permanently from the collection.
                               </span>
                             </span>
