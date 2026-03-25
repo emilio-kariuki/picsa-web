@@ -54,31 +54,8 @@ function getImageAspectRatio(image: ClientImage) {
   return 1.25
 }
 
-function getImageTileSpanClass(image: ClientImage, index: number) {
-  const aspectRatio = getImageAspectRatio(image)
-  const pattern = index % 12
-
-  if (aspectRatio >= 1.75) {
-    return pattern === 0 || pattern === 7
-      ? 'col-span-2 row-span-2 md:col-span-5 md:row-span-3 xl:col-span-6 xl:row-span-3'
-      : 'col-span-2 row-span-1 md:col-span-4 md:row-span-2 xl:col-span-4 xl:row-span-2'
-  }
-
-  if (aspectRatio >= 1.2) {
-    return pattern === 3 || pattern === 8
-      ? 'col-span-2 row-span-2 md:col-span-4 md:row-span-3 xl:col-span-5 xl:row-span-3'
-      : 'col-span-1 row-span-1 md:col-span-3 md:row-span-2 xl:col-span-3 xl:row-span-2'
-  }
-
-  if (aspectRatio >= 0.9) {
-    return pattern === 1 || pattern === 10
-      ? 'col-span-2 row-span-2 md:col-span-4 md:row-span-3 xl:col-span-4 xl:row-span-3'
-      : 'col-span-1 row-span-1 md:col-span-3 md:row-span-2 xl:col-span-3 xl:row-span-2'
-  }
-
-  return pattern === 5 || pattern === 11
-    ? 'col-span-1 row-span-2 md:col-span-3 md:row-span-4 xl:col-span-3 xl:row-span-4'
-    : 'col-span-1 row-span-2 md:col-span-2 md:row-span-3 xl:col-span-2 xl:row-span-3'
+function getImageTileAspectRatio(image: ClientImage) {
+  return Math.min(Math.max(getImageAspectRatio(image), 0.72), 1.85)
 }
 
 export default function ClientImagesPage() {
@@ -227,14 +204,12 @@ export default function ClientImagesPage() {
               </div>
             </div>
 
-            <div className="grid auto-rows-[96px] grid-cols-2 gap-3 sm:auto-rows-[108px] md:grid-cols-8 md:auto-rows-[96px] xl:grid-cols-12 xl:auto-rows-[110px]">
-              {images.map((image, index) => (
+            <div className="columns-2 gap-3 sm:columns-2 lg:columns-3 xl:columns-4">
+              {images.map((image) => (
                 <div
                   key={image.id}
-                  className={cn(
-                    'group relative overflow-hidden rounded-[1.65rem] border border-border/70 bg-secondary/25 shadow-[0_18px_48px_rgba(35,30,27,0.08)]',
-                    getImageTileSpanClass(image, index),
-                  )}
+                  className="group relative mb-3 break-inside-avoid overflow-hidden rounded-[1.4rem] border border-border/60 bg-secondary/20 shadow-[0_16px_40px_rgba(35,30,27,0.07)]"
+                  style={{ aspectRatio: `${getImageTileAspectRatio(image)}` }}
                 >
                   {image.accessUrl ? (
                     <img
@@ -249,13 +224,13 @@ export default function ClientImagesPage() {
                     </div>
                   )}
 
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/58 via-black/8 to-black/12" />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/52 via-black/6 to-black/10" />
 
-                  <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-3">
+                  <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-2.5">
                     <Badge
                       variant="outline"
                       className={cn(
-                        'rounded-full border-white/25 bg-black/40 px-3 py-1 text-[11px] text-white backdrop-blur-md',
+                        'rounded-full border-white/25 bg-black/38 px-2.5 py-1 text-[10px] text-white backdrop-blur-md',
                         imageBadgeClass(image),
                       )}
                     >
@@ -274,12 +249,12 @@ export default function ClientImagesPage() {
                     </Button>
                   </div>
 
-                  <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-3">
-                    <div className="min-w-0 rounded-full border border-white/16 bg-black/38 px-3 py-2 text-xs text-white shadow-lg backdrop-blur-md">
+                  <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-2.5">
+                    <div className="min-w-0 rounded-full border border-white/16 bg-black/38 px-2.5 py-1.5 text-[11px] text-white shadow-lg backdrop-blur-md">
                       <p className="truncate font-medium">
                         {eventNameById.get(image.eventId) ?? `Event ${image.eventId.slice(0, 8)}`}
                       </p>
-                      <p className="mt-0.5 truncate text-[11px] text-white/72">
+                      <p className="mt-0.5 truncate text-[10px] text-white/72">
                         {formatRelativeTime(image.createdAt)}
                       </p>
                     </div>
