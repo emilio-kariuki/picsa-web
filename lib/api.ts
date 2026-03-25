@@ -31,7 +31,7 @@ interface AdminApiRequestOptions extends Omit<RequestInit, 'body' | 'headers'> {
   accessToken?: string | null
 }
 
-const DEFAULT_API_BASE_URL = 'https://picsa.ecoville.online/api'
+const DEFAULT_API_BASE_URL = 'https://api.picsa.pro'
 
 export function getAdminApiBaseUrl() {
   const configuredBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.trim()

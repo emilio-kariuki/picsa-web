@@ -35,7 +35,7 @@ Build the frontend image from `/Users/mac/projects/picsa`:
 
 ```bash
 docker build -t picsa-frontend .
-docker run --rm -p 3000:3000 --env NEXT_PUBLIC_API_BASE_URL=https://your-backend.example/api picsa-frontend
+docker run --rm -p 3000:3000 --env NEXT_PUBLIC_API_BASE_URL=https://api.picsa.pro picsa-frontend
 ```
 
 ## Reverse proxy
