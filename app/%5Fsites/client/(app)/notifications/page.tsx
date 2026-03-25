@@ -17,6 +17,7 @@ import {
   markNotificationRead,
 } from '@/lib/client-api'
 import { formatRelativeTime, getNotificationTypeLabel } from '@/lib/client-view'
+import { cn } from '@/lib/utils'
 
 export default function ClientNotificationsPage() {
   const queryClient = useQueryClient()
@@ -110,44 +111,52 @@ export default function ClientNotificationsPage() {
         </ClientSurface>
       </div>
 
-      <ClientSurface>
+      <ClientSurface className="rounded-[1.2rem] border-border/60 bg-card/88 p-4 sm:p-5">
         {notifications.length ? (
-          <div className="space-y-4">
+          <div className="space-y-2.5">
             {notifications.map((notification) => (
               <div
                 key={notification.id}
-                className={`rounded-[1.5rem] border p-5 transition-colors ${
+                className={cn(
+                  'relative rounded-[0.95rem] border px-4 py-3.5 transition-colors',
                   notification.readAt
-                    ? 'border-border/70 bg-secondary/35'
-                    : 'border-accent/30 bg-accent/10'
-                }`}
+                    ? 'border-border/60 bg-secondary/18'
+                    : 'border-accent/20 bg-[linear-gradient(180deg,rgba(199,104,66,0.09),rgba(199,104,66,0.04))]',
+                )}
               >
-                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                  <div className="space-y-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="min-w-0 space-y-2">
                     <div className="flex flex-wrap items-center gap-2">
-                      <Badge variant="outline" className="rounded-full border-border/70 bg-background/80 px-3 py-1">
+                      <Badge
+                        variant="outline"
+                        className="rounded-full border-border/60 bg-background/75 px-2.5 py-0.5 text-[11px]"
+                      >
                         {getNotificationTypeLabel(notification.type)}
                       </Badge>
                       {!notification.readAt ? (
-                        <Badge className="rounded-full bg-accent px-3 py-1 text-accent-foreground">Unread</Badge>
+                        <Badge className="rounded-full bg-accent px-2.5 py-0.5 text-[11px] text-accent-foreground">
+                          Unread
+                        </Badge>
                       ) : null}
+                      <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                        {formatRelativeTime(notification.createdAt)}
+                      </p>
                     </div>
-                    <div>
-                      <p className="font-medium text-foreground">{notification.title}</p>
-                      <p className="mt-2 text-sm leading-6 text-muted-foreground">{notification.body}</p>
+
+                    <div className="space-y-1">
+                      <p className="text-[15px] font-medium leading-5 text-foreground">{notification.title}</p>
+                      <p className="text-sm leading-5 text-muted-foreground">{notification.body}</p>
                     </div>
-                    <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">
-                      {formatRelativeTime(notification.createdAt)}
-                    </p>
                   </div>
 
                   {!notification.readAt ? (
                     <Button
                       size="sm"
-                      className="rounded-full bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground"
+                      variant="outline"
+                      className="h-9 shrink-0 rounded-full border-border/60 bg-background/85 px-3.5 text-foreground hover:bg-background"
                       onClick={() => markReadMutation.mutate(notification.id)}
                     >
-                      <CheckIcon className="mr-2 h-4 w-4" />
+                      <CheckIcon className="mr-2 h-3.5 w-3.5" />
                       Mark read
                     </Button>
                   ) : null}

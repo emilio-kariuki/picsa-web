@@ -7,6 +7,7 @@ const footerLinks = [
   { label: 'How it works', href: '/#how-it-works' },
   { label: 'Pricing', href: '/#pricing' },
   { label: 'Log in', href: CLIENT_LOGIN_PATH },
+  { label: 'Delete Account', href: '/delete-account' },
   { label: 'Privacy Policy', href: '/privacy-policy' },
   { label: 'Terms', href: '/terms-of-service' },
 ]

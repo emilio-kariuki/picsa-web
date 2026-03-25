@@ -8,7 +8,11 @@ const MARKETING_HOST = 'picsa.pro'
 const LOCAL_ADMIN_HOST = 'admin.localhost'
 const LOCAL_CLIENT_HOST = 'app.localhost'
 const LOCAL_MARKETING_HOSTS = new Set(['localhost', '127.0.0.1'])
-const MARKETING_ONLY_PATHS = new Set(['/privacy-policy', '/terms-of-service'])
+const MARKETING_ONLY_PATHS = new Set([
+  '/delete-account',
+  '/privacy-policy',
+  '/terms-of-service',
+])
 
 function getHostname(request: NextRequest) {
   const forwardedHost = request.headers.get('x-forwarded-host')
