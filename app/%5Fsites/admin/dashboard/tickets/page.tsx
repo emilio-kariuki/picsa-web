@@ -23,6 +23,7 @@ import {
   assignAdminTicket,
   getAdminTicketById,
   getAdminTicketOverview,
+  handleAdminAccountDeletionRequest,
   listAdminTicketAgents,
   listAdminTickets,
   type AdminTicketAgent,
@@ -30,6 +31,7 @@ import {
   type AdminTicketSortBy,
   type AdminTicketStatusValue,
   type AdminTicketSummary,
+  type AdminTicketTypeValue,
   type AdminTicketsQueryInput,
   updateAdminTicketStatus,
 } from '@/lib/admin-tickets-api'
@@ -43,9 +45,11 @@ import {
   adminTicketsSortByAtom,
   adminTicketsSortOrderAtom,
   adminTicketsStatusFilterAtom,
+  adminTicketsTypeFilterAtom,
   type TicketAssignmentFilterValue,
   type TicketPriorityFilterValue,
   type TicketStatusFilterValue,
+  type TicketTypeFilterValue,
 } from '@/lib/tickets-page-state'
 import { cn } from '@/lib/utils'
 import { currentUserAtom } from '@/lib/store'
@@ -125,6 +129,14 @@ const priorityOptions: Array<{
   { value: 'low', label: 'Low' },
 ]
 
+const typeOptions: Array<{
+  value: AdminTicketTypeValue
+  label: string
+}> = [
+  { value: 'account-deletion-request', label: 'Account deletion' },
+  { value: 'general', label: 'General support' },
+]
+
 const sortOptions: Array<{
   value: AdminTicketSortBy
   label: string
@@ -189,10 +201,15 @@ function getStatusLabel(status: AdminTicketStatusValue) {
   return statusOptions.find((option) => option.value === status)?.label ?? status
 }
 
+function getTicketTypeLabel(type: AdminTicketTypeValue) {
+  return typeOptions.find((option) => option.value === type)?.label ?? type
+}
+
 function buildTicketsQueryInput(query: {
   page: number
   limit: number
   search: string
+  type: TicketTypeFilterValue
   status: TicketStatusFilterValue
   priority: TicketPriorityFilterValue
   assignment: TicketAssignmentFilterValue
@@ -205,6 +222,7 @@ function buildTicketsQueryInput(query: {
     search: query.search || undefined,
     sortBy: query.sortBy,
     sortOrder: query.sortOrder,
+    type: query.type === 'all' ? undefined : query.type,
     status: query.status === 'all' ? undefined : query.status,
     priority: query.priority === 'all' ? undefined : query.priority,
     assigned:
@@ -218,33 +236,53 @@ interface TicketDetailContentProps {
   ticket: AdminTicketSummary
   agents: AdminTicketAgent[]
   replyDraft: string
+  deletionDecisionNote: string
   canReply: boolean
   isSendingReply: boolean
   isUpdatingStatus: boolean
   isUpdatingAssignment: boolean
+  isHandlingDeletion: boolean
   onReplyDraftChange: (value: string) => void
+  onDeletionDecisionNoteChange: (value: string) => void
   onReply: () => void
   onStatusChange: (status: AdminTicketStatusValue) => void
   onAssignmentChange: (agentId: string | null) => void
+  onHandleAccountDeletion: (decision: 'approve' | 'reject') => void
 }
 
 function TicketDetailContent({
   ticket,
   agents,
   replyDraft,
+  deletionDecisionNote,
   canReply,
   isSendingReply,
   isUpdatingStatus,
   isUpdatingAssignment,
+  isHandlingDeletion,
   onReplyDraftChange,
+  onDeletionDecisionNoteChange,
   onReply,
   onStatusChange,
   onAssignmentChange,
+  onHandleAccountDeletion,
 }: TicketDetailContentProps) {
+  const isDeletionRequest = ticket.type === 'account-deletion-request'
+  const hasLinkedAccount = Boolean(ticket.customer.linkedUserId)
+  const accountIsActive = ticket.customer.isActive === true
+
   return (
     <div className="space-y-6 pb-6">
       <div className="rounded-2xl border border-border/70 bg-muted/20 p-5">
         <div className="flex flex-wrap items-center gap-2">
+          {isDeletionRequest && (
+            <Badge
+              variant="secondary"
+              className="bg-rose-100 text-rose-900 hover:bg-rose-100"
+            >
+              {getTicketTypeLabel(ticket.type)}
+            </Badge>
+          )}
           <StatusBadge status={ticket.priority} />
           <StatusBadge status={ticket.status} />
           {ticket.awaitingStaffResponse && (
@@ -353,6 +391,71 @@ function TicketDetailContent({
         </Card>
       </div>
 
+      {isDeletionRequest && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">Deletion request</CardTitle>
+            <CardDescription>
+              Approving this request deactivates the linked Picsa account and closes the ticket.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="outline">
+                {hasLinkedAccount ? 'Linked to a Picsa account' : 'No linked Picsa account'}
+              </Badge>
+              {hasLinkedAccount && (
+                <Badge
+                  variant="secondary"
+                  className={
+                    accountIsActive
+                      ? 'bg-emerald-100 text-emerald-900 hover:bg-emerald-100'
+                      : 'bg-muted text-muted-foreground hover:bg-muted'
+                  }
+                >
+                  {accountIsActive ? 'Account active' : 'Account already inactive'}
+                </Badge>
+              )}
+            </div>
+
+            <div className="rounded-xl border border-dashed border-border/80 bg-muted/15 px-4 py-3 text-sm text-muted-foreground">
+              {hasLinkedAccount
+                ? accountIsActive
+                  ? 'Approving will deactivate this user account and close the request.'
+                  : 'The linked account is already inactive. Approving will close the request without changing account access.'
+                : 'This request came in without a linked Picsa account, so approval is disabled until support verifies the customer manually.'}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="ticket-deletion-note">Resolution note (optional)</Label>
+              <Textarea
+                id="ticket-deletion-note"
+                rows={3}
+                placeholder="Add context for the audit trail or the support team."
+                value={deletionDecisionNote}
+                onChange={(event) => onDeletionDecisionNoteChange(event.target.value)}
+              />
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+              <Button
+                variant="outline"
+                onClick={() => onHandleAccountDeletion('reject')}
+                disabled={isHandlingDeletion}
+              >
+                Reject request
+              </Button>
+              <Button
+                onClick={() => onHandleAccountDeletion('approve')}
+                disabled={isHandlingDeletion || !hasLinkedAccount}
+              >
+                {accountIsActive ? 'Approve & deactivate' : 'Approve & close'}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Conversation</CardTitle>
@@ -448,6 +551,7 @@ export default function TicketsPage() {
   const [searchInput, setSearchInput] = useAtom(adminTicketsSearchInputAtom)
   const deferredSearch = useDeferredValue(searchInput.trim())
   const [page, setPage] = useAtom(adminTicketsPageAtom)
+  const [typeFilter, setTypeFilter] = useAtom(adminTicketsTypeFilterAtom)
   const [statusFilter, setStatusFilter] = useAtom(adminTicketsStatusFilterAtom)
   const [priorityFilter, setPriorityFilter] = useAtom(adminTicketsPriorityFilterAtom)
   const [assignmentFilter, setAssignmentFilter] = useAtom(adminTicketsAssignmentFilterAtom)
@@ -455,13 +559,15 @@ export default function TicketsPage() {
   const [sortOrder, setSortOrder] = useAtom(adminTicketsSortOrderAtom)
   const [selectedTicketId, setSelectedTicketId] = useAtom(adminTicketsSelectedTicketIdAtom)
   const [replyDraft, setReplyDraft] = useState('')
+  const [deletionDecisionNote, setDeletionDecisionNote] = useState('')
 
   useEffect(() => {
     setPage(1)
-  }, [assignmentFilter, deferredSearch, priorityFilter, setPage, sortBy, sortOrder, statusFilter])
+  }, [assignmentFilter, deferredSearch, priorityFilter, setPage, sortBy, sortOrder, statusFilter, typeFilter])
 
   useEffect(() => {
     setReplyDraft('')
+    setDeletionDecisionNote('')
   }, [selectedTicketId])
 
   const queryInput = useMemo(
@@ -470,13 +576,14 @@ export default function TicketsPage() {
         page,
         limit: TICKETS_PAGE_SIZE,
         search: deferredSearch,
+        type: typeFilter,
         status: statusFilter,
         priority: priorityFilter,
         assignment: assignmentFilter,
         sortBy,
         sortOrder,
       }),
-    [assignmentFilter, deferredSearch, page, priorityFilter, sortBy, sortOrder, statusFilter],
+    [assignmentFilter, deferredSearch, page, priorityFilter, sortBy, sortOrder, statusFilter, typeFilter],
   )
 
   const ticketsQuery = useQuery({
@@ -585,6 +692,32 @@ export default function TicketsPage() {
     },
   })
 
+  const deletionDecisionMutation = useMutation({
+    mutationFn: async (input: {
+      ticketId: string
+      decision: 'approve' | 'reject'
+      note?: string
+    }) =>
+      performAuthenticatedRequest((accessToken) =>
+        handleAdminAccountDeletionRequest(accessToken, input.ticketId, {
+          decision: input.decision,
+          note: input.note,
+        }),
+      ),
+    onSuccess: async (_, variables) => {
+      await invalidateTicketData(variables.ticketId)
+      setDeletionDecisionNote('')
+      toast.success(
+        variables.decision === 'approve'
+          ? 'Deletion request approved and account access updated'
+          : 'Deletion request rejected',
+      )
+    },
+    onError: (error) => {
+      toast.error(getErrorMessage(error, 'Unable to handle deletion request'))
+    },
+  })
+
   const tickets = ticketsQuery.data?.data.items ?? []
   const overview = overviewQuery.data?.data.overview
   const agents = agentsQuery.data?.data.agents ?? []
@@ -606,6 +739,7 @@ export default function TicketsPage() {
 
   const activeFilterCount = [
     deferredSearch.length > 0,
+    typeFilter !== 'all',
     statusFilter !== 'all',
     priorityFilter !== 'all',
     assignmentFilter !== 'all',
@@ -629,6 +763,7 @@ export default function TicketsPage() {
 
   const clearFilters = () => {
     setSearchInput('')
+    setTypeFilter('all')
     setStatusFilter('all')
     setPriorityFilter('all')
     setAssignmentFilter('all')
@@ -648,6 +783,22 @@ export default function TicketsPage() {
         content: replyDraft.trim(),
       })
       setReplyDraft('')
+    } catch {}
+  }
+
+  const handleDeletionDecision = async (
+    decision: 'approve' | 'reject',
+  ) => {
+    if (!selectedTicket) {
+      return
+    }
+
+    try {
+      await deletionDecisionMutation.mutateAsync({
+        ticketId: selectedTicket.id,
+        decision,
+        note: deletionDecisionNote.trim() || undefined,
+      })
     } catch {}
   }
 
@@ -673,7 +824,7 @@ export default function TicketsPage() {
         )}
       />
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         <KPICard
           title="Open"
           value={overview?.openCount ?? '—'}
@@ -693,6 +844,11 @@ export default function TicketsPage() {
           title="Awaiting Reply"
           value={overview?.awaitingStaffResponseCount ?? '—'}
           icon={<MessageSquareIcon className="h-5 w-5 text-emerald-600" />}
+        />
+        <KPICard
+          title="Deletion Requests"
+          value={overview?.deletionRequestCount ?? '—'}
+          icon={<AlertCircleIcon className="h-5 w-5 text-rose-600" />}
         />
       </div>
 
@@ -720,7 +876,7 @@ export default function TicketsPage() {
             </div>
           </div>
 
-          <div className="grid gap-3 xl:grid-cols-[minmax(0,1.5fr)_180px_180px_180px_180px_160px]">
+          <div className="grid gap-3 xl:grid-cols-7">
             <div className="relative xl:col-span-2">
               <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
@@ -730,6 +886,23 @@ export default function TicketsPage() {
                 className="pl-9"
               />
             </div>
+
+            <Select
+              value={typeFilter}
+              onValueChange={(value) => setTypeFilter(value as TicketTypeFilterValue)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All types</SelectItem>
+                {typeOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as TicketStatusFilterValue)}>
               <SelectTrigger>
@@ -877,6 +1050,14 @@ export default function TicketsPage() {
                             </p>
                           </div>
                           <div className="flex flex-wrap items-center gap-2">
+                            {ticket.type === 'account-deletion-request' && (
+                              <Badge
+                                variant="secondary"
+                                className="bg-rose-100 text-rose-900 hover:bg-rose-100"
+                              >
+                                {getTicketTypeLabel(ticket.type)}
+                              </Badge>
+                            )}
                             {ticket.awaitingStaffResponse && (
                               <Badge
                                 variant="secondary"
@@ -1081,11 +1262,14 @@ export default function TicketsPage() {
                 ticket={selectedTicket}
                 agents={agents}
                 replyDraft={replyDraft}
+                deletionDecisionNote={deletionDecisionNote}
                 canReply={canReply}
                 isSendingReply={replyMutation.isPending}
                 isUpdatingStatus={statusMutation.isPending}
                 isUpdatingAssignment={assignmentMutation.isPending}
+                isHandlingDeletion={deletionDecisionMutation.isPending}
                 onReplyDraftChange={setReplyDraft}
+                onDeletionDecisionNoteChange={setDeletionDecisionNote}
                 onReply={() => void handleReply()}
                 onStatusChange={(status) =>
                   statusMutation.mutate({
@@ -1098,6 +1282,9 @@ export default function TicketsPage() {
                     ticketId: selectedTicket.id,
                     agentId,
                   })
+                }
+                onHandleAccountDeletion={(decision) =>
+                  void handleDeletionDecision(decision)
                 }
               />
             </div>

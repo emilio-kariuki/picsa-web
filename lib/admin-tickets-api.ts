@@ -2,6 +2,7 @@ import { adminApiRequest, type ApiSuccessResponse } from '@/lib/api'
 
 export type AdminTicketStatusValue = 'open' | 'in-progress' | 'resolved' | 'closed'
 export type AdminTicketPriorityValue = 'low' | 'medium' | 'high' | 'urgent'
+export type AdminTicketTypeValue = 'general' | 'account-deletion-request'
 export type AdminTicketSortBy = 'createdAt' | 'updatedAt' | 'priority' | 'status'
 export type AdminTicketSortOrder = 'ASC' | 'DESC'
 
@@ -11,6 +12,7 @@ export interface AdminTicketsQueryInput {
   search?: string
   sortBy?: AdminTicketSortBy
   sortOrder?: AdminTicketSortOrder
+  type?: AdminTicketTypeValue
   status?: AdminTicketStatusValue
   priority?: AdminTicketPriorityValue
   assigned?: boolean
@@ -43,13 +45,16 @@ export interface AdminTicketSummary {
   ticketNumber: string
   subject: string
   description: string
+  type: AdminTicketTypeValue
   priority: AdminTicketPriorityValue
   status: AdminTicketStatusValue
   customer: {
     id: string
+    linkedUserId: string | null
     name: string
     email: string
     avatar?: string
+    isActive: boolean | null
   }
   assignedTo?: {
     id: string
@@ -73,6 +78,7 @@ export interface AdminTicketOverview {
   unassignedCount: number
   awaitingStaffResponseCount: number
   resolvedCount: number
+  deletionRequestCount: number
 }
 
 export interface AdminPaginatedData<T> {
@@ -97,6 +103,11 @@ export interface AssignAdminTicketInput {
 
 export interface AddAdminTicketCommentInput {
   content: string
+}
+
+export interface HandleAdminAccountDeletionRequestInput {
+  decision: 'approve' | 'reject'
+  note?: string
 }
 
 function buildTicketsQueryString(query: AdminTicketsQueryInput) {
@@ -182,6 +193,21 @@ export async function addAdminTicketComment(
     accessToken,
     body: {
       content: input.content,
+    },
+  })
+}
+
+export async function handleAdminAccountDeletionRequest(
+  accessToken: string,
+  ticketId: string,
+  input: HandleAdminAccountDeletionRequestInput,
+) {
+  return adminApiRequest<AdminTicketResponse>(`/admin/tickets/${ticketId}/account-deletion`, {
+    method: 'POST',
+    accessToken,
+    body: {
+      decision: input.decision,
+      note: input.note,
     },
   })
 }
