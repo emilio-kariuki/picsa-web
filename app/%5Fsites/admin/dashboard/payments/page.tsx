@@ -70,7 +70,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 const PAYMENTS_SUBSCRIPTIONS_QUERY_KEY = 'admin-payments-subscriptions'
 const PAYMENTS_TRANSACTIONS_QUERY_KEY = 'admin-payments-transactions'
 const PAYMENTS_OVERVIEW_QUERY_KEY = 'admin-payments-overview'
-const PAYMENTS_PAGE_LIMIT = 200
+const PAYMENTS_PAGE_LIMIT = 100
 
 const storeLabel: Record<string, string> = {
   app_store: 'App Store',
