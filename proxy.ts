@@ -13,6 +13,7 @@ const MARKETING_ONLY_PATHS = new Set([
   '/privacy-policy',
   '/terms-of-service',
 ])
+const DIRECT_ROUTE_PATHS = new Set(['/apple-app-site-association'])
 
 function getHostname(request: NextRequest) {
   const forwardedHost = request.headers.get('x-forwarded-host')
@@ -55,6 +56,15 @@ function isClientPath(pathname: string) {
   )
 }
 
+function isMarketingOnlyPath(pathname: string) {
+  return (
+    MARKETING_ONLY_PATHS.has(pathname) ||
+    DIRECT_ROUTE_PATHS.has(pathname) ||
+    pathname === '/join' ||
+    pathname.startsWith('/join/')
+  )
+}
+
 function buildSitePath(site: 'admin' | 'marketing' | 'client', pathname: string) {
   return pathname === '/' ? `${INTERNAL_PREFIX}/${site}` : `${INTERNAL_PREFIX}/${site}${pathname}`
 }
@@ -75,8 +85,12 @@ function proxy(request: NextRequest) {
     return new NextResponse('Not found', { status: 404 })
   }
 
+  if (DIRECT_ROUTE_PATHS.has(pathname)) {
+    return NextResponse.next()
+  }
+
   if (isAdminHost(hostname)) {
-    if (MARKETING_ONLY_PATHS.has(pathname)) {
+    if (isMarketingOnlyPath(pathname)) {
       const targetHost = hostname === LOCAL_ADMIN_HOST ? 'localhost' : MARKETING_HOST
       return redirectToHost(request, targetHost)
     }
@@ -87,7 +101,7 @@ function proxy(request: NextRequest) {
   }
 
   if (isClientHost(hostname)) {
-    if (MARKETING_ONLY_PATHS.has(pathname)) {
+    if (isMarketingOnlyPath(pathname)) {
       const targetHost = hostname === LOCAL_CLIENT_HOST ? 'localhost' : MARKETING_HOST
       return redirectToHost(request, targetHost)
     }
