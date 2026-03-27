@@ -215,8 +215,10 @@ export interface ClientAppConfigLinks {
 }
 
 export interface ClientAppConfigUpdates {
-  recommendedVersion: string | null
-  minimumSupportedVersion: string | null
+  iosRecommendedVersion: string | null
+  iosMinimumSupportedVersion: string | null
+  androidRecommendedVersion: string | null
+  androidMinimumSupportedVersion: string | null
   iosStoreUrl: string | null
   androidStoreUrl: string | null
   title: string | null

@@ -80,8 +80,10 @@ interface AppConfigDraft {
     supportPhone: string
   }
   updates: {
-    recommendedVersion: string
-    minimumSupportedVersion: string
+    iosRecommendedVersion: string
+    iosMinimumSupportedVersion: string
+    androidRecommendedVersion: string
+    androidMinimumSupportedVersion: string
     iosStoreUrl: string
     androidStoreUrl: string
     title: string
@@ -217,8 +219,11 @@ function buildAppConfigDraft(config: ClientAppConfig): AppConfigDraft {
       supportPhone: config.links.supportPhone ?? '',
     },
     updates: {
-      recommendedVersion: config.updates.recommendedVersion ?? '',
-      minimumSupportedVersion: config.updates.minimumSupportedVersion ?? '',
+      iosRecommendedVersion: config.updates.iosRecommendedVersion ?? '',
+      iosMinimumSupportedVersion: config.updates.iosMinimumSupportedVersion ?? '',
+      androidRecommendedVersion: config.updates.androidRecommendedVersion ?? '',
+      androidMinimumSupportedVersion:
+        config.updates.androidMinimumSupportedVersion ?? '',
       iosStoreUrl: config.updates.iosStoreUrl ?? '',
       androidStoreUrl: config.updates.androidStoreUrl ?? '',
       title: config.updates.title ?? '',
@@ -302,26 +307,64 @@ function buildEditableAppConfigPayload(
     errors.push('Support email must be a valid email address.')
   }
 
-  const recommendedVersion = toOptionalText(draft.updates.recommendedVersion)
-  const minimumSupportedVersion = toOptionalText(draft.updates.minimumSupportedVersion)
+  const iosRecommendedVersion = toOptionalText(draft.updates.iosRecommendedVersion)
+  const iosMinimumSupportedVersion = toOptionalText(draft.updates.iosMinimumSupportedVersion)
+  const androidRecommendedVersion = toOptionalText(draft.updates.androidRecommendedVersion)
+  const androidMinimumSupportedVersion = toOptionalText(
+    draft.updates.androidMinimumSupportedVersion,
+  )
 
-  const parsedRecommendedVersion = parseSemanticVersion(recommendedVersion)
-  const parsedMinimumSupportedVersion = parseSemanticVersion(minimumSupportedVersion)
+  const parsedIosRecommendedVersion = parseSemanticVersion(iosRecommendedVersion)
+  const parsedIosMinimumSupportedVersion = parseSemanticVersion(
+    iosMinimumSupportedVersion,
+  )
+  const parsedAndroidRecommendedVersion = parseSemanticVersion(
+    androidRecommendedVersion,
+  )
+  const parsedAndroidMinimumSupportedVersion = parseSemanticVersion(
+    androidMinimumSupportedVersion,
+  )
 
-  if (recommendedVersion && !parsedRecommendedVersion) {
-    errors.push('Recommended version must use semantic versioning like 1.0.35.')
+  if (iosRecommendedVersion && !parsedIosRecommendedVersion) {
+    errors.push('iOS recommended version must use semantic versioning like 1.0.35.')
   }
 
-  if (minimumSupportedVersion && !parsedMinimumSupportedVersion) {
-    errors.push('Minimum supported version must use semantic versioning like 1.0.35.')
+  if (iosMinimumSupportedVersion && !parsedIosMinimumSupportedVersion) {
+    errors.push('iOS minimum supported version must use semantic versioning like 1.0.35.')
   }
 
   if (
-    parsedRecommendedVersion &&
-    parsedMinimumSupportedVersion &&
-    compareSemanticVersions(parsedRecommendedVersion, parsedMinimumSupportedVersion) < 0
+    parsedIosRecommendedVersion &&
+    parsedIosMinimumSupportedVersion &&
+    compareSemanticVersions(
+      parsedIosRecommendedVersion,
+      parsedIosMinimumSupportedVersion,
+    ) < 0
   ) {
-    errors.push('Recommended version cannot be lower than minimum supported version.')
+    errors.push('iOS recommended version cannot be lower than the iOS minimum supported version.')
+  }
+
+  if (androidRecommendedVersion && !parsedAndroidRecommendedVersion) {
+    errors.push('Android recommended version must use semantic versioning like 1.0.35.')
+  }
+
+  if (androidMinimumSupportedVersion && !parsedAndroidMinimumSupportedVersion) {
+    errors.push(
+      'Android minimum supported version must use semantic versioning like 1.0.35.',
+    )
+  }
+
+  if (
+    parsedAndroidRecommendedVersion &&
+    parsedAndroidMinimumSupportedVersion &&
+    compareSemanticVersions(
+      parsedAndroidRecommendedVersion,
+      parsedAndroidMinimumSupportedVersion,
+    ) < 0
+  ) {
+    errors.push(
+      'Android recommended version cannot be lower than the Android minimum supported version.',
+    )
   }
 
   if (
@@ -361,8 +404,10 @@ function buildEditableAppConfigPayload(
         supportPhone: toOptionalText(draft.links.supportPhone),
       },
       updates: {
-        recommendedVersion,
-        minimumSupportedVersion,
+        iosRecommendedVersion,
+        iosMinimumSupportedVersion,
+        androidRecommendedVersion,
+        androidMinimumSupportedVersion,
         iosStoreUrl: toOptionalText(draft.updates.iosStoreUrl),
         androidStoreUrl: toOptionalText(draft.updates.androidStoreUrl),
         title: toOptionalText(draft.updates.title),
@@ -882,38 +927,68 @@ export default function SettingsPage() {
                 <>
                   <EditableSectionCard
                     title="Updates"
-                    description="Control recommended and minimum supported versions, store links, and the copy used in update prompts."
+                    description="Control iOS and Android version policy separately, alongside store links and the copy used in update prompts."
                   >
                     <div className="grid gap-4 lg:grid-cols-2">
                       <EditableField
-                        label="Recommended version"
-                        value={appConfigDraft.updates.recommendedVersion}
+                        label="iOS recommended version"
+                        value={appConfigDraft.updates.iosRecommendedVersion}
                         onChange={(value) =>
                           updateDraft((current) => ({
                             ...current,
                             updates: {
                               ...current.updates,
-                              recommendedVersion: value,
+                              iosRecommendedVersion: value,
                             },
                           }))
                         }
                         placeholder="1.0.35"
-                        description="Optional. Used for a dismissible upgrade prompt."
+                        description="Optional. Used for the dismissible iOS upgrade prompt."
                       />
                       <EditableField
-                        label="Minimum supported version"
-                        value={appConfigDraft.updates.minimumSupportedVersion}
+                        label="iOS minimum supported version"
+                        value={appConfigDraft.updates.iosMinimumSupportedVersion}
                         onChange={(value) =>
                           updateDraft((current) => ({
                             ...current,
                             updates: {
                               ...current.updates,
-                              minimumSupportedVersion: value,
+                              iosMinimumSupportedVersion: value,
                             },
                           }))
                         }
                         placeholder="1.0.34"
-                        description="Optional. Older builds below this version should be blocked."
+                        description="Optional. Older iOS builds below this version should be blocked."
+                      />
+                      <EditableField
+                        label="Android recommended version"
+                        value={appConfigDraft.updates.androidRecommendedVersion}
+                        onChange={(value) =>
+                          updateDraft((current) => ({
+                            ...current,
+                            updates: {
+                              ...current.updates,
+                              androidRecommendedVersion: value,
+                            },
+                          }))
+                        }
+                        placeholder="1.0.35"
+                        description="Optional. Used for the dismissible Android upgrade prompt."
+                      />
+                      <EditableField
+                        label="Android minimum supported version"
+                        value={appConfigDraft.updates.androidMinimumSupportedVersion}
+                        onChange={(value) =>
+                          updateDraft((current) => ({
+                            ...current,
+                            updates: {
+                              ...current.updates,
+                              androidMinimumSupportedVersion: value,
+                            },
+                          }))
+                        }
+                        placeholder="1.0.34"
+                        description="Optional. Older Android builds below this version should be blocked."
                       />
                       <EditableField
                         label="iOS store URL"
