@@ -214,9 +214,21 @@ export interface ClientAppConfigLinks {
   supportPhone: string | null
 }
 
+export interface ClientAppConfigUpdates {
+  recommendedVersion: string | null
+  minimumSupportedVersion: string | null
+  iosStoreUrl: string | null
+  androidStoreUrl: string | null
+  title: string | null
+  message: string | null
+  releaseNotes: string | null
+  remindAfterHours: number
+}
+
 export interface ClientAppConfig {
   version: string
   plan: ClientAppConfigPlan
   uploads: ClientAppConfigUploads
   links: ClientAppConfigLinks
+  updates: ClientAppConfigUpdates
 }
