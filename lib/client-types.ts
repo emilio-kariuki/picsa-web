@@ -215,6 +215,7 @@ export interface ClientAppConfigLinks {
 }
 
 export interface ClientAppConfigUpdates {
+  androidInAppUpdatesEnabled: boolean
   iosRecommendedVersion: string | null
   iosMinimumSupportedVersion: string | null
   androidRecommendedVersion: string | null

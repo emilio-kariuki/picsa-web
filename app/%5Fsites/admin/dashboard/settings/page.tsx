@@ -80,6 +80,7 @@ interface AppConfigDraft {
     supportPhone: string
   }
   updates: {
+    androidInAppUpdatesEnabled: boolean
     iosRecommendedVersion: string
     iosMinimumSupportedVersion: string
     androidRecommendedVersion: string
@@ -219,6 +220,7 @@ function buildAppConfigDraft(config: ClientAppConfig): AppConfigDraft {
       supportPhone: config.links.supportPhone ?? '',
     },
     updates: {
+      androidInAppUpdatesEnabled: config.updates.androidInAppUpdatesEnabled,
       iosRecommendedVersion: config.updates.iosRecommendedVersion ?? '',
       iosMinimumSupportedVersion: config.updates.iosMinimumSupportedVersion ?? '',
       androidRecommendedVersion: config.updates.androidRecommendedVersion ?? '',
@@ -313,6 +315,7 @@ function buildEditableAppConfigPayload(
   const androidMinimumSupportedVersion = toOptionalText(
     draft.updates.androidMinimumSupportedVersion,
   )
+  const androidInAppUpdatesEnabled = draft.updates.androidInAppUpdatesEnabled
 
   const parsedIosRecommendedVersion = parseSemanticVersion(iosRecommendedVersion)
   const parsedIosMinimumSupportedVersion = parseSemanticVersion(
@@ -344,17 +347,26 @@ function buildEditableAppConfigPayload(
     errors.push('iOS recommended version cannot be lower than the iOS minimum supported version.')
   }
 
-  if (androidRecommendedVersion && !parsedAndroidRecommendedVersion) {
+  if (
+    !androidInAppUpdatesEnabled &&
+    androidRecommendedVersion &&
+    !parsedAndroidRecommendedVersion
+  ) {
     errors.push('Android recommended version must use semantic versioning like 1.0.35.')
   }
 
-  if (androidMinimumSupportedVersion && !parsedAndroidMinimumSupportedVersion) {
+  if (
+    !androidInAppUpdatesEnabled &&
+    androidMinimumSupportedVersion &&
+    !parsedAndroidMinimumSupportedVersion
+  ) {
     errors.push(
       'Android minimum supported version must use semantic versioning like 1.0.35.',
     )
   }
 
   if (
+    !androidInAppUpdatesEnabled &&
     parsedAndroidRecommendedVersion &&
     parsedAndroidMinimumSupportedVersion &&
     compareSemanticVersions(
@@ -404,6 +416,7 @@ function buildEditableAppConfigPayload(
         supportPhone: toOptionalText(draft.links.supportPhone),
       },
       updates: {
+        androidInAppUpdatesEnabled,
         iosRecommendedVersion,
         iosMinimumSupportedVersion,
         androidRecommendedVersion,
@@ -480,6 +493,7 @@ function EditableField({
   description,
   textarea = false,
   inputMode,
+  disabled = false,
 }: {
   label: string
   value: string
@@ -488,6 +502,7 @@ function EditableField({
   description?: string
   textarea?: boolean
   inputMode?: HTMLAttributes<HTMLInputElement>['inputMode']
+  disabled?: boolean
 }) {
   return (
     <div className="space-y-2">
@@ -500,16 +515,19 @@ function EditableField({
       {textarea ? (
         <Textarea
           value={value}
+          disabled={disabled}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
-          className="min-h-28"
+          className="min-h-28 disabled:cursor-not-allowed disabled:opacity-60"
         />
       ) : (
         <Input
           value={value}
+          disabled={disabled}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
           inputMode={inputMode}
+          className="disabled:cursor-not-allowed disabled:opacity-60"
         />
       )}
     </div>
@@ -929,6 +947,21 @@ export default function SettingsPage() {
                     title="Updates"
                     description="Control iOS and Android version policy separately, alongside store links and the copy used in update prompts."
                   >
+                    <ToggleField
+                      label="Enable Android Play in-app updates"
+                      description="When enabled, Android checks Google Play for flexible or immediate updates instead of using the manual Android version thresholds below."
+                      checked={appConfigDraft.updates.androidInAppUpdatesEnabled}
+                      onCheckedChange={(checked) =>
+                        updateDraft((current) => ({
+                          ...current,
+                          updates: {
+                            ...current.updates,
+                            androidInAppUpdatesEnabled: checked,
+                          },
+                        }))
+                      }
+                    />
+
                     <div className="grid gap-4 lg:grid-cols-2">
                       <EditableField
                         label="iOS recommended version"
@@ -963,6 +996,7 @@ export default function SettingsPage() {
                       <EditableField
                         label="Android recommended version"
                         value={appConfigDraft.updates.androidRecommendedVersion}
+                        disabled={appConfigDraft.updates.androidInAppUpdatesEnabled}
                         onChange={(value) =>
                           updateDraft((current) => ({
                             ...current,
@@ -973,11 +1007,16 @@ export default function SettingsPage() {
                           }))
                         }
                         placeholder="1.0.35"
-                        description="Optional. Used for the dismissible Android upgrade prompt."
+                        description={
+                          appConfigDraft.updates.androidInAppUpdatesEnabled
+                            ? 'Disabled while Android Play in-app updates are enabled.'
+                            : 'Optional. Used for the dismissible Android upgrade prompt.'
+                        }
                       />
                       <EditableField
                         label="Android minimum supported version"
                         value={appConfigDraft.updates.androidMinimumSupportedVersion}
+                        disabled={appConfigDraft.updates.androidInAppUpdatesEnabled}
                         onChange={(value) =>
                           updateDraft((current) => ({
                             ...current,
@@ -988,7 +1027,11 @@ export default function SettingsPage() {
                           }))
                         }
                         placeholder="1.0.34"
-                        description="Optional. Older Android builds below this version should be blocked."
+                        description={
+                          appConfigDraft.updates.androidInAppUpdatesEnabled
+                            ? 'Disabled while Android Play in-app updates are enabled.'
+                            : 'Optional. Older Android builds below this version should be blocked.'
+                        }
                       />
                       <EditableField
                         label="iOS store URL"
