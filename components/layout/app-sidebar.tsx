@@ -60,52 +60,35 @@ export function AppSidebar() {
   const initials = getAdminInitials(currentUser)
 
   return (
-    <Sidebar
-      collapsible="icon"
-      variant="floating"
-      className="[--sidebar-width:18.75rem] [--sidebar-width-icon:4.75rem]"
-    >
-      <SidebarHeader className="px-3 pt-5 pb-4">
-        <SidebarMenu className="gap-3">
+    <Sidebar collapsible="icon">
+      <SidebarHeader>
+        <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              size="lg"
-              asChild
-              className="h-14 rounded-[1.35rem] border border-white/6 bg-[linear-gradient(180deg,rgba(20,27,48,0.96),rgba(10,14,27,0.92))] px-4 text-white shadow-[0_18px_45px_rgba(0,0,0,0.28)] hover:bg-[linear-gradient(180deg,rgba(24,33,58,0.98),rgba(12,17,31,0.94))] data-[active=true]:bg-[linear-gradient(180deg,rgba(24,33,58,0.98),rgba(12,17,31,0.94))]"
-            >
+            <SidebarMenuButton size="lg" asChild>
               <Link href="/dashboard">
-                <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white/10 text-white ring-1 ring-white/10">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                   <SparklesIcon className="h-4 w-4" />
                 </div>
-                <div className="flex flex-col gap-1 leading-none">
-                  <span className="text-[0.95rem] font-semibold tracking-[-0.02em]">
-                    Picsa
-                  </span>
-                  <span className="text-[0.72rem] uppercase tracking-[0.28em] text-white/45">
-                    Admin Console
-                  </span>
+                <div className="flex flex-col gap-0.5 leading-none">
+                  <span className="font-semibold">Picsa</span>
+                  <span className="text-xs text-muted-foreground">Admin</span>
                 </div>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent className="px-3 pb-4">
-        <SidebarMenu className="gap-2.5">
+      <SidebarContent>
+        <SidebarMenu>
           {navigation.map((item) => (
             <SidebarMenuItem key={item.name}>
               <SidebarMenuButton
                 asChild
-                isActive={
-                  item.href === '/dashboard'
-                    ? pathname === item.href
-                    : pathname.startsWith(item.href)
-                }
+                isActive={pathname === item.href}
                 tooltip={item.name}
-                className="h-12 rounded-[1.15rem] px-4 text-[0.96rem] font-medium tracking-[-0.02em] text-white/58 hover:bg-white/[0.045] hover:text-white data-[active=true]:border data-[active=true]:border-white/6 data-[active=true]:bg-[linear-gradient(180deg,rgba(18,25,46,0.96),rgba(12,16,30,0.92))] data-[active=true]:text-white data-[active=true]:shadow-[0_10px_28px_rgba(0,0,0,0.22)] [&>svg]:size-[1.05rem] [&>svg]:text-white/56 data-[active=true]:[&>svg]:text-white"
               >
                 <Link href={item.href}>
-                  <item.icon />
+                  <item.icon className="h-4 w-4" />
                   <span>{item.name}</span>
                 </Link>
               </SidebarMenuButton>
@@ -113,26 +96,24 @@ export function AppSidebar() {
           ))}
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter className="mt-auto px-3 pb-4 pt-3">
-        <SidebarMenu className="gap-3">
+      <SidebarFooter>
+        <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
                   size="lg"
-                  className="h-14 rounded-[1.25rem] border border-white/6 bg-white/[0.035] px-4 text-white/88 hover:bg-white/[0.055] data-[state=open]:bg-white/[0.065] data-[state=open]:text-white"
+                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
-                  <Avatar className="h-9 w-9 ring-1 ring-white/10">
+                  <Avatar className="h-8 w-8">
                     <AvatarImage src={currentUser?.url ?? undefined} />
                     <AvatarFallback>{initials}</AvatarFallback>
                   </Avatar>
-                  <div className="flex flex-col gap-1 leading-none">
-                    <span className="font-medium tracking-[-0.02em]">{displayName}</span>
-                    <span className="text-[0.72rem] uppercase tracking-[0.24em] text-white/40">
-                      Admin
-                    </span>
+                  <div className="flex flex-col gap-0.5 leading-none">
+                    <span className="font-medium">{displayName}</span>
+                    <span className="text-xs text-muted-foreground">Admin</span>
                   </div>
-                  <ChevronsUpDownIcon className="ml-auto h-4 w-4 text-white/45" />
+                  <ChevronsUpDownIcon className="ml-auto h-4 w-4" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
