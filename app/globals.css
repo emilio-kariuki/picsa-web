@@ -191,6 +191,7 @@ html.dark [data-site='marketing'] {
 }
 
 [data-site='client'] {
+  --client-radius: 5px;
   --site-font-sans: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
   --site-font-serif: var(--font-fraunces), 'Fraunces', serif;
   --site-font-mono: var(--font-geist-mono), 'Geist Mono', monospace;
@@ -218,7 +219,7 @@ html.dark [data-site='marketing'] {
   --chart-3: oklch(0.56 0.12 50);
   --chart-4: oklch(0.77 0.09 82);
   --chart-5: oklch(0.46 0.08 36);
-  --radius: 1rem;
+  --radius: var(--client-radius);
   --sidebar: oklch(0.97 0.01 80);
   --sidebar-foreground: oklch(0.18 0.01 60);
   --sidebar-primary: oklch(0.18 0.01 60);
@@ -262,6 +263,10 @@ html.dark [data-site='client'] {
   --sidebar-accent-foreground: oklch(0.96 0.008 80);
   --sidebar-border: oklch(0.28 0.012 60);
   --sidebar-ring: oklch(0.64 0.16 35);
+}
+
+[data-site='client'] :where([class*='rounded']) {
+  border-radius: var(--client-radius) !important;
 }
 
 @theme inline {

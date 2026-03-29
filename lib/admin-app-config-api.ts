@@ -2,6 +2,7 @@ import { adminApiRequest, type ApiSuccessResponse } from '@/lib/api'
 import type {
   ClientAppConfig,
   ClientAppConfigLinks,
+  ClientAppConfigPayments,
   ClientAppConfigPlan,
   ClientAppConfigUpdates,
   ClientAppConfigUploads,
@@ -11,6 +12,7 @@ export interface EditableAdminAppConfig {
   plan: ClientAppConfigPlan
   uploads: ClientAppConfigUploads
   links: ClientAppConfigLinks
+  payments: ClientAppConfigPayments
   updates: ClientAppConfigUpdates
 }
 

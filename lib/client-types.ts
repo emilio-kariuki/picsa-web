@@ -287,6 +287,10 @@ export interface ClientAppConfigLinks {
   supportPhone: string | null
 }
 
+export interface ClientAppConfigPayments {
+  mobileDodoEventPassEnabled: boolean
+}
+
 export interface ClientAppConfigUpdates {
   androidInAppUpdatesEnabled: boolean
   iosRecommendedVersion: string | null
@@ -306,5 +310,6 @@ export interface ClientAppConfig {
   plan: ClientAppConfigPlan
   uploads: ClientAppConfigUploads
   links: ClientAppConfigLinks
+  payments: ClientAppConfigPayments
   updates: ClientAppConfigUpdates
 }

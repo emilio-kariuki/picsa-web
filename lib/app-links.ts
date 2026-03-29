@@ -27,7 +27,7 @@ const DEFAULT_ANDROID_PACKAGE_NAME = 'com.ecoville.picsa'
 const DEFAULT_ANDROID_SHA256_CERT_FINGERPRINTS = [
   '2B:79:7E:06:EE:D7:1F:BD:85:75:04:5F:48:C3:82:19:2D:E8:B6:B3:31:1E:5B:71:72:1C:80:DA:54:9C:2D:14',
 ]
-const UNIVERSAL_LINK_PATHS = ['/join/*', '/event/*', '/camera/*']
+const UNIVERSAL_LINK_PATHS = ['/join/*', '/event/*', '/camera/*', '/payments/*']
 
 function readEnvValue(key: string, fallback: string) {
   const value = process.env[key]?.trim()

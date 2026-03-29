@@ -79,6 +79,9 @@ interface AppConfigDraft {
     supportEmail: string
     supportPhone: string
   }
+  payments: {
+    mobileDodoEventPassEnabled: boolean
+  }
   updates: {
     androidInAppUpdatesEnabled: boolean
     iosRecommendedVersion: string
@@ -218,6 +221,9 @@ function buildAppConfigDraft(config: ClientAppConfig): AppConfigDraft {
       twitterUrl: config.links.twitterUrl,
       supportEmail: config.links.supportEmail ?? '',
       supportPhone: config.links.supportPhone ?? '',
+    },
+    payments: {
+      mobileDodoEventPassEnabled: config.payments.mobileDodoEventPassEnabled,
     },
     updates: {
       androidInAppUpdatesEnabled: config.updates.androidInAppUpdatesEnabled,
@@ -414,6 +420,9 @@ function buildEditableAppConfigPayload(
         twitterUrl: draft.links.twitterUrl.trim(),
         supportEmail,
         supportPhone: toOptionalText(draft.links.supportPhone),
+      },
+      payments: {
+        mobileDodoEventPassEnabled: draft.payments.mobileDodoEventPassEnabled,
       },
       updates: {
         androidInAppUpdatesEnabled,
@@ -943,6 +952,26 @@ export default function SettingsPage() {
 
               {appConfigDraft ? (
                 <>
+                  <EditableSectionCard
+                    title="Payments"
+                    description="Choose whether mobile event-pass purchases should go through the hosted Dodo checkout flow or stay on the native RevenueCat store flow."
+                  >
+                    <ToggleField
+                      label="Enable Dodo event-pass checkout on mobile"
+                      description="When enabled, iOS and Android use Dodo hosted checkout for event-pass purchases. When disabled, mobile falls back to RevenueCat."
+                      checked={appConfigDraft.payments.mobileDodoEventPassEnabled}
+                      onCheckedChange={(checked) =>
+                        updateDraft((current) => ({
+                          ...current,
+                          payments: {
+                            ...current.payments,
+                            mobileDodoEventPassEnabled: checked,
+                          },
+                        }))
+                      }
+                    />
+                  </EditableSectionCard>
+
                   <EditableSectionCard
                     title="Updates"
                     description="Control iOS and Android version policy separately, alongside store links and the copy used in update prompts."
