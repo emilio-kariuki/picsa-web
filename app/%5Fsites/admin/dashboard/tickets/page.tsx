@@ -396,7 +396,7 @@ function TicketDetailContent({
           <CardHeader className="pb-3">
             <CardTitle className="text-base">Deletion request</CardTitle>
             <CardDescription>
-              Approving this request deactivates the linked Picsa account and closes the ticket.
+              Approving this request permanently deletes the linked Picsa account and its data, then closes the ticket.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -413,16 +413,14 @@ function TicketDetailContent({
                       : 'bg-muted text-muted-foreground hover:bg-muted'
                   }
                 >
-                  {accountIsActive ? 'Account active' : 'Account already inactive'}
+                  {accountIsActive ? 'Account active' : 'Account access locked'}
                 </Badge>
               )}
             </div>
 
             <div className="rounded-xl border border-dashed border-border/80 bg-muted/15 px-4 py-3 text-sm text-muted-foreground">
               {hasLinkedAccount
-                ? accountIsActive
-                  ? 'Approving will deactivate this user account and close the request.'
-                  : 'The linked account is already inactive. Approving will close the request without changing account access.'
+                ? 'Approving will permanently delete this user account and all associated data. Rejecting will restore access to the account.'
                 : 'This request came in without a linked Picsa account, so approval is disabled until support verifies the customer manually.'}
             </div>
 
@@ -449,7 +447,7 @@ function TicketDetailContent({
                 onClick={() => onHandleAccountDeletion('approve')}
                 disabled={isHandlingDeletion || !hasLinkedAccount}
               >
-                {accountIsActive ? 'Approve & deactivate' : 'Approve & close'}
+                Approve & permanently delete
               </Button>
             </div>
           </CardContent>

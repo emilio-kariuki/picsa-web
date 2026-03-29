@@ -307,6 +307,26 @@ export async function fetchAppConfig() {
   return response.data
 }
 
+export async function requestClientAccountDeletion(
+  accessToken: string,
+  reason?: string,
+) {
+  const response = await apiRequest<
+    ApiSuccessResponse<{ expectedResponseTimeHours: number }>
+  >(
+    '/support/account-deletion-requests/me',
+    {
+      method: 'POST',
+      accessToken,
+      body: {
+        reason,
+      },
+    },
+  )
+
+  return response.data
+}
+
 export async function deactivateClientAccount(accessToken: string, reason?: string) {
   return apiRequest<ApiSuccessResponse<Record<string, never>>>('/auth/deactivate', {
     method: 'POST',

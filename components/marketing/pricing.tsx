@@ -32,7 +32,7 @@ const plans = [
     features: [
       'Unlock one event for $12',
       'Up to 100 guests for that event',
-      'Up to 500 photo uploads for that event',
+      'Up to 2500 photo uploads for that event',
       'HD uploads for that event',
       'Private image uploads for that event',
       'Image sharing for that event',

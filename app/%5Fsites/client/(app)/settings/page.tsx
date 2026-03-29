@@ -22,7 +22,7 @@ import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { ClientMetricCard, ClientPageHeader, ClientSurface } from '@/components/client/client-page-chrome'
 import { useClientAuth } from '@/hooks/use-client-auth'
-import { fetchAppConfig, fetchUserConfig, updateUserConfig, deactivateClientAccount } from '@/lib/client-api'
+import { fetchAppConfig, fetchUserConfig, requestClientAccountDeletion, updateUserConfig } from '@/lib/client-api'
 import { clientCurrentUserAtom } from '@/lib/store'
 import { formatDateShort } from '@/lib/client-view'
 
@@ -31,8 +31,8 @@ export default function ClientSettingsPage() {
   const queryClient = useQueryClient()
   const { logout, performAuthenticatedRequest } = useClientAuth()
   const currentUser = useAtomValue(clientCurrentUserAtom)
-  const [deactivateReason, setDeactivateReason] = useState('')
-  const [deactivateOpen, setDeactivateOpen] = useState(false)
+  const [deletionReason, setDeletionReason] = useState('')
+  const [deletionRequestOpen, setDeletionRequestOpen] = useState(false)
 
   const userConfigQuery = useQuery({
     queryKey: ['client', 'user-config'],
@@ -56,17 +56,25 @@ export default function ClientSettingsPage() {
     },
   })
 
-  const deactivateMutation = useMutation({
+  const deletionRequestMutation = useMutation({
     mutationFn: () =>
-      performAuthenticatedRequest((token) => deactivateClientAccount(token, deactivateReason.trim() || undefined)),
-    onSuccess: async () => {
-      toast.success('Account deactivated')
-      setDeactivateOpen(false)
+      performAuthenticatedRequest((token) =>
+        requestClientAccountDeletion(token, deletionReason.trim() || undefined),
+      ),
+    onSuccess: async (response) => {
+      toast.success(
+        `Deletion request submitted. You have been signed out while we review it${
+          response.expectedResponseTimeHours
+            ? ` and we will respond within ${response.expectedResponseTimeHours} hours.`
+            : '.'
+        }`,
+      )
+      setDeletionRequestOpen(false)
       await logout()
       router.replace('/login')
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : 'Unable to deactivate account')
+      toast.error(error instanceof Error ? error.message : 'Unable to submit account deletion request')
     },
   })
 
@@ -216,32 +224,32 @@ export default function ClientSettingsPage() {
 
           <ClientSurface className="border-rose-300/60 bg-rose-500/5">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-rose-600 dark:text-rose-300">Danger zone</p>
-            <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight">Deactivate account</h2>
+            <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight">Request account deletion</h2>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              You can return later through Google reactivation, but this pauses your account immediately.
+              Submitting this request signs you out right away and locks the account while support reviews it. If approved, your account and all associated data are permanently deleted.
             </p>
 
-            <Dialog open={deactivateOpen} onOpenChange={setDeactivateOpen}>
+            <Dialog open={deletionRequestOpen} onOpenChange={setDeletionRequestOpen}>
               <DialogTrigger asChild>
                 <Button variant="destructive" className="mt-5 rounded-full">
                   <ShieldAlertIcon className="mr-2 h-4 w-4" />
-                  Deactivate account
+                  Request deletion
                 </Button>
               </DialogTrigger>
               <DialogContent className="rounded-[1.5rem] border-border/70">
                 <DialogHeader>
-                  <DialogTitle>Deactivate your account?</DialogTitle>
+                  <DialogTitle>Request permanent account deletion?</DialogTitle>
                   <DialogDescription>
-                    Share a brief reason if you want. You can reactivate later with Google.
+                    Share a brief reason if you want. Once you submit this request, you will be logged out immediately and will not be able to access the account again unless support declines the request.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-3">
-                  <Label htmlFor="deactivate-reason">Reason</Label>
+                  <Label htmlFor="account-deletion-reason">Reason</Label>
                   <Textarea
-                    id="deactivate-reason"
-                    value={deactivateReason}
-                    onChange={(event) => setDeactivateReason(event.target.value)}
-                    placeholder="Tell us what led to the pause, if you'd like."
+                    id="account-deletion-reason"
+                    value={deletionReason}
+                    onChange={(event) => setDeletionReason(event.target.value)}
+                    placeholder="Tell us what led to the deletion request, if you'd like."
                     rows={5}
                     className="rounded-2xl"
                   />
@@ -250,17 +258,17 @@ export default function ClientSettingsPage() {
                   <Button
                     variant="outline"
                     className="rounded-full border-border/80 bg-background/70"
-                    onClick={() => setDeactivateOpen(false)}
+                    onClick={() => setDeletionRequestOpen(false)}
                   >
                     Cancel
                   </Button>
                   <Button
                     variant="destructive"
                     className="rounded-full"
-                    disabled={deactivateMutation.isPending}
-                    onClick={() => deactivateMutation.mutate()}
+                    disabled={deletionRequestMutation.isPending}
+                    onClick={() => deletionRequestMutation.mutate()}
                   >
-                    {deactivateMutation.isPending ? 'Deactivating...' : 'Deactivate'}
+                    {deletionRequestMutation.isPending ? 'Submitting...' : 'Request deletion'}
                   </Button>
                 </DialogFooter>
               </DialogContent>

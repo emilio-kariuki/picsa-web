@@ -1130,7 +1130,7 @@ export default function SettingsPage() {
 
                   <EditableSectionCard
                     title="Plan"
-                    description="Set free and pro event limits plus the free-tier capability flags used by the clients."
+                    description="Set free and pro event limits plus the free-tier capability flags used by the clients. Saved values here override the env defaults in the live app config."
                   >
                     <div className="grid gap-4 lg:grid-cols-2">
                       <EditableField
@@ -1190,7 +1190,7 @@ export default function SettingsPage() {
                             },
                           }))
                         }
-                        placeholder="500"
+                        placeholder="2500"
                         inputMode="numeric"
                       />
                     </div>
