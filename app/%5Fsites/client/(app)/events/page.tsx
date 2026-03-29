@@ -58,14 +58,14 @@ export default function ClientEventsPage() {
         eyebrow="Hosted events"
         title="All the gatherings you are running"
         description="Track active events, keep an eye on guest counts, and jump into the gallery or people management without losing the landing-page warmth."
-        actions={
-          <Button asChild className="rounded-full bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground">
-            <Link href="/events/new">
-              <PlusIcon className="mr-2 h-4 w-4" />
-              New event
-            </Link>
-          </Button>
-        }
+        // actions={
+          // <Button asChild className="rounded-full bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground">
+          //   <Link href="/events/new">
+          //     <PlusIcon className="mr-2 h-4 w-4" />
+          //     New event
+          //   </Link>
+          // </Button>
+        // }
       />
 
       <div className="grid gap-4 md:grid-cols-3">

@@ -30,6 +30,10 @@ function isLocalHost(hostname: string) {
   return hostname.endsWith('.localhost') || LOCAL_MARKETING_HOSTS.has(hostname)
 }
 
+function isLocalMarketingHost(hostname: string) {
+  return LOCAL_MARKETING_HOSTS.has(hostname)
+}
+
 function isAdminHost(hostname: string) {
   return hostname === ADMIN_HOST || hostname === LOCAL_ADMIN_HOST
 }
@@ -89,6 +93,10 @@ function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
+  if (hostname === LOCAL_CLIENT_HOST) {
+    return redirectToHost(request, 'localhost')
+  }
+
   if (isAdminHost(hostname)) {
     if (isMarketingOnlyPath(pathname)) {
       const targetHost = hostname === LOCAL_ADMIN_HOST ? 'localhost' : MARKETING_HOST
@@ -117,6 +125,12 @@ function proxy(request: NextRequest) {
   }
 
   if (isClientPath(pathname)) {
+    if (isLocalMarketingHost(hostname)) {
+      const url = request.nextUrl.clone()
+      url.pathname = buildSitePath('client', pathname)
+      return NextResponse.rewrite(url)
+    }
+
     const targetHost = isLocalHost(hostname) ? LOCAL_CLIENT_HOST : CLIENT_HOST
     return redirectToHost(request, targetHost)
   }

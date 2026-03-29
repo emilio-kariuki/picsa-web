@@ -14,7 +14,7 @@ export const ADMIN_APP_URL = isDevelopment
   : 'https://admin.picsa.pro'
 
 export const CLIENT_APP_URL = isDevelopment
-  ? buildLocalUrl('app.localhost')
+  ? buildLocalUrl('localhost')
   : 'https://app.picsa.pro'
 
 export const ADMIN_LOGIN_PATH = '/login'

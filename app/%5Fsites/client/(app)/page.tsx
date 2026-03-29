@@ -102,7 +102,7 @@ export default function ClientDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <ClientPageHeader
+      {/* <ClientPageHeader
         eyebrow=""
         title=''
         // title="Your event command center"
@@ -115,28 +115,28 @@ export default function ClientDashboardPage() {
             </Link>
           </Button>
         }
-      />
+      /> */}
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 mt-5">
         <ClientMetricCard
           label="Hosted events"
           value={String(hostedEventsQuery.data?.length ?? 0)}
-          helper="Every active event under your care."
+          // helper="Every active event under your care."
         />
         <ClientMetricCard
           label="Guests"
           value={String(totalGuests)}
-          helper="People currently inside your hosted spaces."
+          // helper="People currently inside your hosted spaces."
         />
         <ClientMetricCard
           label="Pending joins"
           value={String(pendingRequestsQuery.data?.length ?? 0)}
-          helper="Requests that still need a host decision."
+          // helper="Requests that still need a host decision."
         />
         <ClientMetricCard
           label="Recent uploads"
           value={String(recentUploadsQuery.data?.images.length ?? 0)}
-          helper="A snapshot of your latest gallery activity."
+          // helper="A snapshot of your latest gallery activity."
         />
       </div>
 
