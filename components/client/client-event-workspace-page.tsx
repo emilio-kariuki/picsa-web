@@ -481,16 +481,16 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
 
       <Tabs defaultValue="overview" className="gap-4">
         <TabsList className="h-auto w-full justify-start rounded-[1.25rem] bg-secondary/60 p-1">
-          <TabsTrigger value="overview" className="rounded-[1rem] px-4 py-2">Overview</TabsTrigger>
-          <TabsTrigger value="gallery" className="rounded-[1rem] px-4 py-2">Gallery</TabsTrigger>
-          <TabsTrigger value="people" className="rounded-[1rem] px-4 py-2">People</TabsTrigger>
-          <TabsTrigger value="settings" className="rounded-[1rem] px-4 py-2">Settings</TabsTrigger>
+          <TabsTrigger value="overview" className="rounded-2xl px-4 py-2">Overview</TabsTrigger>
+          <TabsTrigger value="gallery" className="rounded-2xl px-4 py-2">Gallery</TabsTrigger>
+          <TabsTrigger value="people" className="rounded-2xl px-4 py-2">People</TabsTrigger>
+          <TabsTrigger value="settings" className="rounded-2xl px-4 py-2">Settings</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
           <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
             <ClientSurface className="overflow-hidden p-0">
-              <div className="relative aspect-[16/9] bg-secondary/50">
+              <div className="relative aspect-video bg-secondary/50">
                 {event.displayPictureUrl ? (
                   <img src={event.displayPictureUrl} alt={event.name} className="h-full w-full object-cover" />
                 ) : (
@@ -648,10 +648,10 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
                 return (
                   <article
                     key={image.id}
-                    className="group relative mb-3 break-inside-avoid overflow-hidden rounded-[1rem] border border-border/60 bg-[#17110e] shadow-[0_18px_38px_rgba(0,0,0,0.2)]"
+                    className="group relative mb-3 break-inside-avoid overflow-hidden rounded-2xl border border-border/60 bg-[#17110e] shadow-[0_18px_38px_rgba(0,0,0,0.2)]"
                   >
                     <div
-                      className={`relative bg-[#120c09] ${galleryImageStyle ? '' : 'aspect-[4/5]'}`}
+                      className={`relative bg-[#120c09] ${galleryImageStyle ? '' : 'aspect-4/5'}`}
                       style={galleryImageStyle}
                     >
                     {image.accessUrl ? (
@@ -662,13 +662,13 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
                         loading="lazy"
                       />
                     ) : (
-                      <div className="aspect-[4/5] flex h-full items-center justify-center px-5 text-center text-sm text-white/72">
+                      <div className="aspect-4/5 flex h-full items-center justify-center px-5 text-center text-sm text-white/72">
                         {getImageStatusLabel(image)}
                       </div>
                     )}
 
-                    <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/72 via-black/18 to-transparent" />
-                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/90 via-black/42 to-transparent" />
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-linear-to-b from-black/72 via-black/18 to-transparent" />
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-linear-to-t from-black/90 via-black/42 to-transparent" />
 
                     <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-3">
                       <Badge
@@ -762,7 +762,7 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
             </div>
 
             {!galleryImages.length ? (
-              <Empty className="mt-6 rounded-[1.5rem] border-border/70 bg-secondary/35 p-8">
+              <Empty className="mt-6 rounded-3xl border-border/70 bg-secondary/35 p-8">
                 <EmptyHeader>
                   <EmptyMedia variant="icon">
                     <ImageIcon className="h-6 w-6" />
@@ -842,7 +842,7 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
                     </div>
                   ))
                 ) : (
-                  <Empty className="rounded-[1.5rem] border-border/70 bg-secondary/35 p-8">
+                  <Empty className="rounded-3xl border-border/70 bg-secondary/35 p-8">
                     <EmptyHeader>
                       <EmptyMedia variant="icon">
                         <MailPlusIcon className="h-6 w-6" />
@@ -895,7 +895,7 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
                     ))}
                   </div>
                 ) : (
-                  <Empty className="mt-5 rounded-[1.5rem] border-border/70 bg-secondary/35 p-8">
+                  <Empty className="mt-5 rounded-3xl border-border/70 bg-secondary/35 p-8">
                     <EmptyHeader>
                       <EmptyMedia variant="icon">
                         <UserCheckIcon className="h-6 w-6" />
@@ -944,7 +944,7 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
                 </div>
 
                 {!participantsQuery.data?.length ? (
-                  <Empty className="mt-5 rounded-[1.5rem] border-border/70 bg-secondary/35 p-8">
+                  <Empty className="mt-5 rounded-3xl border-border/70 bg-secondary/35 p-8">
                     <EmptyHeader>
                       <EmptyMedia variant="icon">
                         <UsersIcon className="h-6 w-6" />
@@ -995,7 +995,7 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
                   Delete event
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent className="rounded-[1.5rem] border-border/70">
+              <AlertDialogContent className="rounded-3xl border-border/70">
                 <AlertDialogHeader>
                   <AlertDialogTitle>Delete {event.name}?</AlertDialogTitle>
                   <AlertDialogDescription>
