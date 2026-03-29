@@ -22,7 +22,7 @@ import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { ClientMetricCard, ClientPageHeader, ClientSurface } from '@/components/client/client-page-chrome'
 import { useClientAuth } from '@/hooks/use-client-auth'
-import { fetchAppConfig, fetchUserConfig, requestClientAccountDeletion, updateUserConfig } from '@/lib/client-api'
+import { deleteClientAccount, fetchAppConfig, fetchUserConfig, updateUserConfig } from '@/lib/client-api'
 import { clientCurrentUserAtom } from '@/lib/store'
 import { formatDateShort } from '@/lib/client-view'
 
@@ -59,22 +59,16 @@ export default function ClientSettingsPage() {
   const deletionRequestMutation = useMutation({
     mutationFn: () =>
       performAuthenticatedRequest((token) =>
-        requestClientAccountDeletion(token, deletionReason.trim() || undefined),
+        deleteClientAccount(token, deletionReason.trim() || undefined),
       ),
-    onSuccess: async (response) => {
-      toast.success(
-        `Deletion request submitted. You have been signed out while we review it${
-          response.expectedResponseTimeHours
-            ? ` and we will respond within ${response.expectedResponseTimeHours} hours.`
-            : '.'
-        }`,
-      )
+    onSuccess: async () => {
+      toast.success('Your account was deleted permanently and you have been signed out.')
       setDeletionRequestOpen(false)
       await logout()
       router.replace('/login')
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : 'Unable to submit account deletion request')
+      toast.error(error instanceof Error ? error.message : 'Unable to delete your account right now')
     },
   })
 
@@ -224,23 +218,23 @@ export default function ClientSettingsPage() {
 
           <ClientSurface className="border-rose-300/60 bg-rose-500/5">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-rose-600 dark:text-rose-300">Danger zone</p>
-            <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight">Request account deletion</h2>
+            <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight">Delete account permanently</h2>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Submitting this request signs you out right away and locks the account while support reviews it. If approved, your account and all associated data are permanently deleted.
+              This permanently removes your account and associated data, then signs you out immediately.
             </p>
 
             <Dialog open={deletionRequestOpen} onOpenChange={setDeletionRequestOpen}>
               <DialogTrigger asChild>
                 <Button variant="destructive" className="mt-5 rounded-full">
                   <ShieldAlertIcon className="mr-2 h-4 w-4" />
-                  Request deletion
+                  Delete account
                 </Button>
               </DialogTrigger>
               <DialogContent className="rounded-[1.5rem] border-border/70">
                 <DialogHeader>
-                  <DialogTitle>Request permanent account deletion?</DialogTitle>
+                  <DialogTitle>Delete your account permanently?</DialogTitle>
                   <DialogDescription>
-                    Share a brief reason if you want. Once you submit this request, you will be logged out immediately and will not be able to access the account again unless support declines the request.
+                    Share a brief reason if you want. Once you confirm, your account and associated data will be permanently deleted and you will be logged out immediately.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-3">
@@ -249,7 +243,7 @@ export default function ClientSettingsPage() {
                     id="account-deletion-reason"
                     value={deletionReason}
                     onChange={(event) => setDeletionReason(event.target.value)}
-                    placeholder="Tell us what led to the deletion request, if you'd like."
+                    placeholder="Optional feedback"
                     rows={5}
                     className="rounded-2xl"
                   />
@@ -268,7 +262,7 @@ export default function ClientSettingsPage() {
                     disabled={deletionRequestMutation.isPending}
                     onClick={() => deletionRequestMutation.mutate()}
                   >
-                    {deletionRequestMutation.isPending ? 'Submitting...' : 'Request deletion'}
+                    {deletionRequestMutation.isPending ? 'Deleting...' : 'Delete account'}
                   </Button>
                 </DialogFooter>
               </DialogContent>
