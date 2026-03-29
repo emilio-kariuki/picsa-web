@@ -501,7 +501,7 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
 
   const event = eventQuery.data
   const manageLink = buildClientManageLink(event.id)
-  const guestJoinLink = buildClientGuestLink(event.url)
+  const guestJoinLink = buildClientGuestLink(event.id)
 
   return (
     <div className="space-y-6">

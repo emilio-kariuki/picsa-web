@@ -93,6 +93,10 @@ export function getAssetLinks(): AssetLinks {
   }))
 }
 
-export function buildJoinDeepLink(inviteId: string) {
-  return `customscheme://join/${encodeURIComponent(inviteId)}`
+export function buildJoinDeepLink(eventId: string) {
+  return `customscheme://join/${encodeURIComponent(eventId)}`
+}
+
+export function buildEventDeepLink(eventId: string) {
+  return `customscheme://event/${encodeURIComponent(eventId)}`
 }

@@ -3,6 +3,7 @@ import { ArrowRight, Link2, Smartphone } from '@/components/ui/icons'
 import Link from 'next/link'
 import { Footer } from '@/components/marketing/footer'
 import { Nav } from '@/components/marketing/nav'
+import { MobileAppHandoff } from '@/components/shared/mobile-app-handoff'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { buildJoinDeepLink } from '@/lib/app-links'
@@ -20,11 +21,17 @@ export const metadata: Metadata = {
 }
 
 export default async function JoinEventPage(props: JoinEventPageProps) {
-  const { inviteId } = await props.params
-  const deepLink = buildJoinDeepLink(inviteId)
+  const { inviteId: eventId } = await props.params
+  const deepLink = buildJoinDeepLink(eventId)
 
   return (
     <main className="min-h-screen bg-background text-foreground">
+      <MobileAppHandoff
+        deepLinkHref={deepLink}
+        title="Opening Picsa in the app"
+        description="If Picsa is installed on this phone, this invite will move into the app automatically. If nothing happens, you can open it manually or keep browsing here."
+        variant="overlay"
+      />
       <Nav />
 
       <section className="relative overflow-hidden pt-28">
@@ -43,18 +50,18 @@ export default async function JoinEventPage(props: JoinEventPageProps) {
                 Open Picsa to join this event.
               </h1>
               <p className="max-w-xl text-base leading-8 text-muted-foreground sm:text-lg">
-                Your invite is ready. If Picsa is installed, tap below and we will
-                hand this invite straight to the app so you can view the event and add
-                your photos in the right place.
+                Your invite is ready. If Picsa is installed, we&apos;ll try to hand
+                this invite straight to the app automatically so you can view the
+                event and add your photos in the right place.
               </p>
             </div>
 
             <div className="rounded-3xl border border-border/70 bg-background/80 p-5 shadow-sm backdrop-blur">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-                Invite code
+                Event ID
               </p>
               <p className="mt-3 break-all font-mono text-sm text-foreground sm:text-base">
-                {inviteId}
+                {eventId}
               </p>
             </div>
 
@@ -85,7 +92,8 @@ export default async function JoinEventPage(props: JoinEventPageProps) {
                     What happens next?
                   </h2>
                   <ul className="space-y-3 text-sm leading-7 text-muted-foreground sm:text-base">
-                    <li>Tap <span className="font-medium text-foreground">Open in Picsa</span> to hand this invite to the mobile app.</li>
+                    <li>We automatically try to reopen Picsa as soon as this page loads on mobile.</li>
+                    <li>If the app stays closed, tap <span className="font-medium text-foreground">Open in Picsa</span> to hand this invite to the mobile app.</li>
                     <li>If the app is not installed yet, install it first and open this same invite link again.</li>
                     <li>Once inside, you can join the event, browse photos, and upload your own.</li>
                   </ul>

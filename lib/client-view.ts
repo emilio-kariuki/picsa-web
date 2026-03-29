@@ -133,8 +133,8 @@ export function buildClientManageLink(eventId: string) {
   return buildClientEventUrl(eventId)
 }
 
-export function buildClientGuestLink(slugOrId: string) {
-  return `${MARKETING_APP_URL}/join/${slugOrId}`
+export function buildClientGuestLink(eventId: string) {
+  return `${MARKETING_APP_URL}/join/${eventId}`
 }
 
 function getInvitationsStorageKey(eventId: string) {
