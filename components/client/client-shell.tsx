@@ -112,9 +112,9 @@ export function ClientShell({ children }: { children: ReactNode }) {
   }, [pathname])
 
   return (
-    <div className="relative min-h-screen">
-      <div className="relative mx-auto flex min-h-screen w-full max-w-[1440px] gap-6 px-4 py-4 sm:px-6 lg:px-8">
-        <aside className="sticky top-4 hidden h-[calc(100vh-2rem)] w-[280px] shrink-0 lg:flex">
+    <div className="relative h-screen overflow-hidden">
+      <div className="relative mx-auto flex h-full w-full max-w-[1440px] gap-6 px-4 py-4 sm:px-6 lg:px-8">
+        <aside className="hidden h-full w-[280px] shrink-0 lg:flex">
           <div className="flex h-full w-full flex-col rounded-[2rem] border border-border/70 bg-card/90 p-5 shadow-[0_24px_80px_rgba(35,30,27,0.08)] backdrop-blur">
             <Link href="/" className="flex items-center gap-3 px-2">
               <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-accent text-lg font-bold text-accent-foreground shadow-sm font-serif">
@@ -169,8 +169,8 @@ export function ClientShell({ children }: { children: ReactNode }) {
           </div>
         </aside>
 
-        <div className="flex min-h-screen min-w-0 flex-1 flex-col">
-          <header className="sticky top-4 z-20 mb-6 rounded-[1.75rem] border border-border/70 bg-card/85 px-4 py-3 shadow-[0_18px_40px_rgba(35,30,27,0.08)] backdrop-blur sm:px-6">
+        <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+          <header className="z-20 mb-6 shrink-0 rounded-[1.75rem] border border-border/70 bg-card/85 px-4 py-3 shadow-[0_18px_40px_rgba(35,30,27,0.08)] backdrop-blur sm:px-6">
             <div className="flex items-center gap-3">
               <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
                 <SheetTrigger asChild>
@@ -245,7 +245,7 @@ export function ClientShell({ children }: { children: ReactNode }) {
             </div>
           </header>
 
-          <main className="flex-1 pb-10">{children}</main>
+          <main className="min-h-0 flex-1 overflow-y-auto pb-10">{children}</main>
         </div>
       </div>
     </div>
