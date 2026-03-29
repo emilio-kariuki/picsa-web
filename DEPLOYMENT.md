@@ -78,14 +78,13 @@ server {
 Run the app locally from `/Users/mac/projects/picsa/web` and map these hosts to `127.0.0.1` in your hosts file:
 
 - `localhost`
+- `app.localhost`
 - `admin.localhost`
 
 Then start the app with `pnpm dev` and visit:
 
 - `http://localhost:3002` for marketing
-- `http://localhost:3002/login` for the client workspace
+- `http://app.localhost:3002/login` for the client workspace
 - `http://admin.localhost:3002/login` for admin
-
-Local client auth intentionally runs on `localhost` so Google OAuth can use the supported local web origin `http://localhost:3002` during development.
 
 If you need to run the frontend on a different local port, set `NEXT_PUBLIC_LOCAL_WEB_PORT` before starting Next so the generated subdomain links stay aligned with your dev server.
