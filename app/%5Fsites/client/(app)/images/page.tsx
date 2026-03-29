@@ -156,11 +156,11 @@ export default function ClientImagesPage() {
 
   return (
     <div className="space-y-6">
-      <ClientPageHeader
+      {/* <ClientPageHeader
         eyebrow="Image library"
         title="A gallery wall for every frame worth keeping"
         description="Scan the full collection as a dense visual grid, then open the 3-dot dialog on any image when you want to share it, review it, or remove it."
-      />
+      /> */}
 
       <ClientSurface className="rounded-[1.2rem] border-border/60 bg-card/88 p-4 sm:p-5">
         {images.length ? (

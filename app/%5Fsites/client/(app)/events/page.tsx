@@ -54,7 +54,7 @@ export default function ClientEventsPage() {
 
   return (
     <div className="space-y-6">
-      <ClientPageHeader
+      {/* <ClientPageHeader
         eyebrow="Hosted events"
         title="All the gatherings you are running"
         description="Track active events, keep an eye on guest counts, and jump into the gallery or people management without losing the landing-page warmth."
@@ -66,7 +66,7 @@ export default function ClientEventsPage() {
           //   </Link>
           // </Button>
         // }
-      />
+      /> */}
 
       <div className="grid gap-4 md:grid-cols-3">
         <ClientMetricCard label="Hosted events" value={String(events.length)} helper="Every event you currently own." />

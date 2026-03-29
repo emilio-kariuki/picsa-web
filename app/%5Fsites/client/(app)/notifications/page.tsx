@@ -84,8 +84,9 @@ export default function ClientNotificationsPage() {
     <div className="space-y-6">
       <ClientPageHeader
         eyebrow="Notifications"
-        title="A calm view of everything worth your attention"
-        description="Catch invite activity, join decisions, system updates, and the moments where your event needs a quick host response."
+        title=''
+        // title="A calm view of everything worth your attention"
+        // description="Catch invite activity, join decisions, system updates, and the moments where your event needs a quick host response."
         actions={
           <Button
             variant="outline"
