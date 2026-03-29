@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import Link from 'next/link'
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
@@ -10,11 +10,14 @@ import {
   CheckIcon,
   CopyIcon,
   ImageIcon,
+  Link2Icon,
+  LockIcon,
   MailPlusIcon,
   SparklesIcon,
   Trash2Icon,
   UserCheckIcon,
   UsersIcon,
+  XIcon,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import {
@@ -94,6 +97,23 @@ function statusBadgeClass(image: ClientImage) {
   }
 
   return 'border-emerald-300 bg-emerald-500/10 text-emerald-700 dark:border-emerald-400/30 dark:text-emerald-300'
+}
+
+const galleryActionButtonClass =
+  'h-8 w-8 rounded-[0.65rem] border border-white/16 bg-black/42 text-white shadow-lg backdrop-blur-md transition-colors hover:bg-black/60 hover:text-white'
+
+function getGalleryImageStyle(image: ClientImage): CSSProperties | undefined {
+  if (!image.width || !image.height || image.width <= 0 || image.height <= 0) {
+    return undefined
+  }
+
+  return {
+    aspectRatio: `${image.width} / ${image.height}`,
+  }
+}
+
+function getGalleryUploaderLabel(image: ClientImage) {
+  return image.uploader.name ?? image.uploader.email ?? 'Uploader'
 }
 
 export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
@@ -592,10 +612,6 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
                     <dt className="text-muted-foreground">Last updated</dt>
                     <dd className="font-medium text-foreground">{formatDateShort(event.updatedAt)}</dd>
                   </div>
-                  <div className="flex items-start justify-between gap-4 rounded-[1.25rem] border border-border/70 bg-secondary/45 px-4 py-3">
-                    <dt className="text-muted-foreground">Slug</dt>
-                    <dd className="font-medium text-foreground">{event.url}</dd>
-                  </div>
                 </dl>
               </ClientSurface>
             </div>
@@ -625,75 +641,124 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
               }}
             />
 
-            <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {galleryImages.map((image) => (
-                <div key={image.id} className="overflow-hidden rounded-[1.5rem] border border-border/70 bg-secondary/35">
-                  <div className="aspect-[4/5] bg-muted">
+            <div className="mt-6 columns-2 gap-3 sm:columns-3 xl:columns-4 2xl:columns-5">
+              {galleryImages.map((image) => {
+                const galleryImageStyle = getGalleryImageStyle(image)
+
+                return (
+                  <article
+                    key={image.id}
+                    className="group relative mb-3 break-inside-avoid overflow-hidden rounded-[1rem] border border-border/60 bg-[#17110e] shadow-[0_18px_38px_rgba(0,0,0,0.2)]"
+                  >
+                    <div
+                      className={`relative bg-[#120c09] ${galleryImageStyle ? '' : 'aspect-[4/5]'}`}
+                      style={galleryImageStyle}
+                    >
                     {image.accessUrl ? (
-                      <img src={image.accessUrl} alt="" className="h-full w-full object-cover" />
+                      <img
+                        src={image.accessUrl}
+                        alt={getGalleryUploaderLabel(image)}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.025]"
+                        loading="lazy"
+                      />
                     ) : (
-                      <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+                      <div className="aspect-[4/5] flex h-full items-center justify-center px-5 text-center text-sm text-white/72">
                         {getImageStatusLabel(image)}
                       </div>
                     )}
-                  </div>
-                  <div className="space-y-4 px-4 py-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <Badge variant="outline" className={`rounded-full px-3 py-1 ${statusBadgeClass(image)}`}>
+
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/72 via-black/18 to-transparent" />
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/90 via-black/42 to-transparent" />
+
+                    <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-3">
+                      <Badge
+                        variant="outline"
+                        className={`rounded-[0.65rem] border-white/18 bg-black/36 px-2.5 py-1 text-[10px] text-white shadow-sm backdrop-blur-md ${statusBadgeClass(image)}`}
+                      >
                         {getImageStatusLabel(image)}
                       </Badge>
-                      <span className="text-xs uppercase tracking-[0.22em] text-muted-foreground">
-                        {formatRelativeTime(image.createdAt)}
-                      </span>
+
+                      <div className="flex items-center gap-2">
+                        {image.isPrivate ? (
+                          <span className="rounded-[0.65rem] border border-white/14 bg-black/32 px-2 py-1.5 text-white/82 shadow-sm backdrop-blur-sm">
+                            <LockIcon className="h-3.5 w-3.5" />
+                          </span>
+                        ) : null}
+                        {image.hd ? (
+                          <span className="rounded-[0.65rem] border border-white/14 bg-black/32 px-2 py-1.5 text-white/82 shadow-sm backdrop-blur-sm">
+                            <SparklesIcon className="h-3.5 w-3.5" />
+                          </span>
+                        ) : null}
+                      </div>
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      <p>{formatBytes(image.sizeBytes)}</p>
-                      <p className="mt-1">{image.uploader.name ?? image.uploader.email ?? 'Uploader'}</p>
+
+                    <div className="absolute inset-x-0 bottom-0 p-3">
+                      <div className="flex items-end justify-between gap-3">
+                        <div className="min-w-0 rounded-[0.7rem] border border-white/12 bg-black/30 px-3 py-2 text-white shadow-lg backdrop-blur-sm">
+                          <p className="truncate text-sm font-semibold">{getGalleryUploaderLabel(image)}</p>
+                          <p className="mt-1 truncate text-[11px] text-white/72">
+                            {formatRelativeTime(image.createdAt)} • {formatBytes(image.sizeBytes)}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-wrap justify-end gap-2">
+                          {image.viewerCanShare ? (
+                            <Button
+                              type="button"
+                              size="icon-sm"
+                              variant="secondary"
+                              className={galleryActionButtonClass}
+                              onClick={() => shareImageMutation.mutate(image.id)}
+                              aria-label="Share image"
+                              title="Share image"
+                            >
+                              <Link2Icon className="h-4 w-4" />
+                            </Button>
+                          ) : null}
+                          {image.viewerCanApprove ? (
+                            <Button
+                              type="button"
+                              size="icon-sm"
+                              className="h-8 w-8 rounded-[0.65rem] bg-emerald-500 text-white shadow-lg hover:bg-emerald-400"
+                              onClick={() => approveImageMutation.mutate(image.id)}
+                              aria-label="Approve image"
+                              title="Approve image"
+                            >
+                              <CheckIcon className="h-4 w-4" />
+                            </Button>
+                          ) : null}
+                          {image.viewerCanReject ? (
+                            <Button
+                              type="button"
+                              size="icon-sm"
+                              className="h-8 w-8 rounded-[0.65rem] bg-amber-500 text-[#120c09] shadow-lg hover:bg-amber-400"
+                              onClick={() => rejectImageMutation.mutate(image.id)}
+                              aria-label="Reject image"
+                              title="Reject image"
+                            >
+                              <XIcon className="h-4 w-4" />
+                            </Button>
+                          ) : null}
+                          {image.viewerCanDelete ? (
+                            <Button
+                              type="button"
+                              size="icon-sm"
+                              variant="secondary"
+                              className="h-8 w-8 rounded-[0.65rem] border border-white/16 bg-rose-500/88 text-white shadow-lg hover:bg-rose-400"
+                              onClick={() => deleteImageMutation.mutate(image.id)}
+                              aria-label="Delete image"
+                              title="Delete image"
+                            >
+                              <Trash2Icon className="h-4 w-4" />
+                            </Button>
+                          ) : null}
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {image.viewerCanShare ? (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="rounded-full border-border/80 bg-background/70"
-                          onClick={() => shareImageMutation.mutate(image.id)}
-                        >
-                          Share
-                        </Button>
-                      ) : null}
-                      {image.viewerCanApprove ? (
-                        <Button
-                          size="sm"
-                          className="rounded-full bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground"
-                          onClick={() => approveImageMutation.mutate(image.id)}
-                        >
-                          Approve
-                        </Button>
-                      ) : null}
-                      {image.viewerCanReject ? (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="rounded-full border-border/80 bg-background/70"
-                          onClick={() => rejectImageMutation.mutate(image.id)}
-                        >
-                          Reject
-                        </Button>
-                      ) : null}
-                      {image.viewerCanDelete ? (
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="rounded-full text-rose-600 hover:bg-rose-500/10 hover:text-rose-700 dark:text-rose-300"
-                          onClick={() => deleteImageMutation.mutate(image.id)}
-                        >
-                          Delete
-                        </Button>
-                      ) : null}
                     </div>
-                  </div>
-                </div>
-              ))}
+                  </article>
+                )
+              })}
             </div>
 
             {!galleryImages.length ? (
