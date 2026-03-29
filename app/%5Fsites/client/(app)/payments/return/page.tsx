@@ -1,15 +1,17 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowRightIcon, CheckCircle2Icon, LoaderCircleIcon, XCircleIcon } from 'lucide-react'
+import { ArrowRightIcon, CheckCircle2Icon, LoaderCircleIcon, SmartphoneIcon, XCircleIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { ClientPageHeader, ClientSurface } from '@/components/client/client-page-chrome'
 import { useClientAuth } from '@/hooks/use-client-auth'
 import { fetchEventPassCheckoutStatus } from '@/lib/client-api'
+import { buildPaymentsAppReturnUrl, isProbablyMobileUserAgent } from '@/lib/payment-return-link'
 
 function statusCopy(status: string) {
   switch (status) {
@@ -45,11 +47,43 @@ function statusCopy(status: string) {
 export default function ClientPaymentsReturnPage() {
   const { performAuthenticatedRequest } = useClientAuth()
   const hasRedirectedRef = useRef(false)
-  const searchParams =
-    typeof window === 'undefined'
-      ? new URLSearchParams()
-      : new URLSearchParams(window.location.search)
+  const hasAttemptedAppOpenRef = useRef(false)
+  const searchParams = useSearchParams()
   const checkoutIntentId = searchParams.get('checkoutIntentId')
+  const openAppHref = useMemo(
+    () => buildPaymentsAppReturnUrl(searchParams),
+    [searchParams],
+  )
+  const [shouldPreferAppHandoff, setShouldPreferAppHandoff] = useState(false)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    setShouldPreferAppHandoff(
+      isProbablyMobileUserAgent(window.navigator.userAgent),
+    )
+  }, [])
+
+  useEffect(() => {
+    if (
+      !shouldPreferAppHandoff ||
+      !checkoutIntentId ||
+      hasAttemptedAppOpenRef.current
+    ) {
+      return
+    }
+
+    hasAttemptedAppOpenRef.current = true
+    const timer = window.setTimeout(() => {
+      window.location.assign(openAppHref)
+    }, 280)
+
+    return () => {
+      window.clearTimeout(timer)
+    }
+  }, [checkoutIntentId, openAppHref, shouldPreferAppHandoff])
 
   const checkoutStatusQuery = useQuery({
     queryKey: ['client', 'payments-return', checkoutIntentId],
@@ -69,14 +103,18 @@ export default function ClientPaymentsReturnPage() {
       return
     }
 
-    if (checkoutStatusQuery.data.status === 'SUCCEEDED' && checkoutStatusQuery.data.eventId) {
+    if (
+      !shouldPreferAppHandoff &&
+      checkoutStatusQuery.data.status === 'SUCCEEDED' &&
+      checkoutStatusQuery.data.eventId
+    ) {
       hasRedirectedRef.current = true
       toast.success('Pro unlocked successfully')
       window.setTimeout(() => {
         window.location.replace(`/events/${checkoutStatusQuery.data?.eventId}`)
       }, 600)
     }
-  }, [checkoutStatusQuery.data])
+  }, [checkoutStatusQuery.data, shouldPreferAppHandoff])
 
   if (!checkoutIntentId) {
     return (
@@ -158,6 +196,13 @@ export default function ClientPaymentsReturnPage() {
               </p>
             </div>
 
+            {shouldPreferAppHandoff ? (
+              <div className="rounded-[1.25rem] border border-border/70 bg-secondary/40 px-4 py-4 text-sm text-muted-foreground">
+                We&apos;re trying to reopen Picsa now. If the app stays closed, tap{' '}
+                <span className="font-medium text-foreground">Open Picsa app</span> below.
+              </div>
+            ) : null}
+
             {session.errorMessage ? (
               <div className="rounded-[1.25rem] border border-rose-300/60 bg-rose-500/5 px-4 py-4 text-sm text-muted-foreground">
                 {session.errorMessage}
@@ -187,6 +232,16 @@ export default function ClientPaymentsReturnPage() {
         </div>
 
         <div className="mt-8 flex flex-wrap gap-3">
+          {shouldPreferAppHandoff ? (
+            <a
+              href={openAppHref}
+              className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-accent hover:text-accent-foreground"
+            >
+              <SmartphoneIcon className="mr-2 h-4 w-4" />
+              Open Picsa app
+            </a>
+          ) : null}
+
           {session.status === 'SUCCEEDED' && session.eventId ? (
             <Button asChild className="rounded-full bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground">
               <Link href={`/events/${session.eventId}`}>
