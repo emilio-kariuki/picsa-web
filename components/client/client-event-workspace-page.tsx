@@ -573,7 +573,7 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
               </div>
               <div className="border-t border-border/70 p-6">
                 <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-                  <div className="min-w-0 flex-1">
+                  <div className="min-w-0 flex-col flex-1">
                     <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Display picture</p>
                     <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight">Lead with a photo that feels like the event</h2>
                     <p className="mt-3 text-sm leading-6 text-muted-foreground">
