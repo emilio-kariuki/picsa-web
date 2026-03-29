@@ -103,9 +103,10 @@ export default function ClientDashboardPage() {
   return (
     <div className="space-y-6">
       <ClientPageHeader
-        eyebrow="Workspace"
-        title="Your event command center"
-        description="See what is active, what needs your attention, and where the latest photos are landing."
+        eyebrow=""
+        title=''
+        // title="Your event command center"
+        // description="See what is active, what needs your attention, and where the latest photos are landing."
         actions={
           <Button asChild className="rounded-full bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground">
             <Link href="/events/new">
