@@ -15,7 +15,7 @@ import {
   RefreshCwIcon,
   SearchIcon,
   UsersIcon,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 import { toast } from 'sonner'
 import { useAdminAuth } from '@/hooks/use-admin-auth'
 import {

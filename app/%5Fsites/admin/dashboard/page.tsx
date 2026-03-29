@@ -14,7 +14,7 @@ import {
   ShieldCheckIcon,
   SparklesIcon,
   UsersIcon,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 import { useAdminAuth } from '@/hooks/use-admin-auth'
 import { getAdminOverview, type AdminOverview } from '@/lib/admin-overview-api'
 import { isAdminApiError } from '@/lib/api'

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Menu, X } from 'lucide-react'
+import { Menu, X } from '@/components/ui/icons'
 import { CLIENT_CREATE_EVENT_PATH, CLIENT_LOGIN_PATH } from '@/lib/site-urls'
 
 const links = [

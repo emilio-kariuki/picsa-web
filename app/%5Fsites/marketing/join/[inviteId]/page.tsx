@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { ArrowRight, Link2, Smartphone } from 'lucide-react'
+import { ArrowRight, Link2, Smartphone } from '@/components/ui/icons'
 import Link from 'next/link'
 import { Footer } from '@/components/marketing/footer'
 import { Nav } from '@/components/marketing/nav'

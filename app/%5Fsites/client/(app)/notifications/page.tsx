@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { BellIcon, CheckCheckIcon, CheckIcon } from 'lucide-react'
+import { BellIcon, CheckCheckIcon, CheckIcon } from '@/components/ui/icons'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

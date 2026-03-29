@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { ImageIcon, ShieldCheckIcon, SparklesIcon, UsersIcon } from 'lucide-react'
+import { ImageIcon, ShieldCheckIcon, SparklesIcon, UsersIcon } from '@/components/ui/icons'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

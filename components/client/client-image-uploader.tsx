@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { ImagePlusIcon, UploadCloudIcon } from 'lucide-react'
+import { ImagePlusIcon, UploadCloudIcon } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 

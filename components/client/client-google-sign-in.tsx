@@ -2,7 +2,7 @@
 
 import Script from 'next/script'
 import { useEffect, useRef, useState } from 'react'
-import { AlertCircleIcon } from 'lucide-react'
+import { AlertCircleIcon } from '@/components/ui/icons'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 declare global {

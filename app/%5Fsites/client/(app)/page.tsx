@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useMemo } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowRightIcon, CalendarDaysIcon, CheckIcon, PlusIcon, UsersIcon } from 'lucide-react'
+import { ArrowRightIcon, CalendarDaysIcon, CheckIcon, PlusIcon, UsersIcon } from '@/components/ui/icons'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -156,34 +156,48 @@ export default function ClientDashboardPage() {
               </Button>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-4">
               {hostedEventsQuery.data.slice(0, 4).map((event) => (
                 <Link
                   key={event.id}
                   href={`/events/${event.id}`}
-                  className="group rounded-[1.5rem] border border-border/70 bg-secondary/50 p-5 transition-all hover:-translate-y-0.5 hover:shadow-[0_20px_40px_rgba(35,30,27,0.10)]"
+                  className="group block rounded-[1.5rem] border border-border/70 bg-secondary/50 p-5 transition-all hover:-translate-y-0.5 hover:shadow-[0_20px_40px_rgba(35,30,27,0.10)] lg:p-6"
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="font-serif text-2xl font-semibold text-foreground transition-colors group-hover:text-accent">
-                        {event.name}
-                      </h3>
-                      <p className="mt-2 text-sm leading-6 text-muted-foreground">{event.description || 'No description yet.'}</p>
-                    </div>
-                    <Badge variant="outline" className="rounded-full border-accent/35 bg-accent/10 px-3 py-1 text-accent">
-                      {event.settings.joinMode.replaceAll('_', ' ')}
-                    </Badge>
-                  </div>
+                  <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+                    <div className="min-w-0 max-w-2xl">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <h3 className="font-serif text-2xl font-semibold text-foreground transition-colors group-hover:text-accent sm:text-[2rem]">
+                          {event.name}
+                        </h3>
+                        <Badge variant="outline" className="rounded-full border-accent/35 bg-accent/10 px-3 py-1 text-accent">
+                          {event.settings.joinMode.replaceAll('_', ' ')}
+                        </Badge>
+                      </div>
+                      <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">
+                        {event.description || 'No description yet.'}
+                      </p>
 
-                  <div className="mt-5 flex flex-wrap gap-3 text-sm text-muted-foreground">
-                    <span className="inline-flex items-center gap-2 rounded-full bg-background/80 px-3 py-1">
-                      <UsersIcon className="h-4 w-4 text-accent" />
-                      {event.memberCount} guests
-                    </span>
-                    <span className="inline-flex items-center gap-2 rounded-full bg-background/80 px-3 py-1">
-                      <CalendarDaysIcon className="h-4 w-4 text-accent" />
-                      {formatEventWindow(event.startAt, event.endAt)}
-                    </span>
+                      <div className="mt-5 flex flex-wrap gap-3 text-sm text-muted-foreground">
+                        <span className="inline-flex items-center gap-2 rounded-full bg-background/80 px-3 py-1">
+                          <UsersIcon className="h-4 w-4 text-accent" />
+                          {event.memberCount} guests
+                        </span>
+                        <span className="inline-flex items-center gap-2 rounded-full bg-background/80 px-3 py-1">
+                          <CalendarDaysIcon className="h-4 w-4 text-accent" />
+                          {formatEventWindow(event.startAt, event.endAt)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex shrink-0 items-center justify-between gap-4 lg:min-w-[160px] lg:flex-col lg:items-end">
+                      <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/70 px-4 py-2 text-sm font-medium text-foreground transition-colors group-hover:border-accent/35 group-hover:text-accent">
+                        Open
+                        <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                      </span>
+                      <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">
+                        Hosted event
+                      </p>
+                    </div>
                   </div>
                 </Link>
               ))}

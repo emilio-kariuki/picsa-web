@@ -209,6 +209,14 @@ export async function createEventInvitation(accessToken: string, eventId: string
   return response.data.invitation
 }
 
+export async function acceptEventInvitation(accessToken: string, token: string) {
+  return apiRequest<ApiSuccessResponse<{ event: ClientEvent }>>('/events/invitations/accept', {
+    method: 'POST',
+    accessToken,
+    body: { token },
+  })
+}
+
 export async function revokeEventInvitation(accessToken: string, eventId: string, invitationId: string) {
   return apiRequest<ApiSuccessResponse<Record<string, never>>>(`/events/${eventId}/invitations/${invitationId}`, {
     method: 'DELETE',

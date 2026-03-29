@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Check, Crown } from 'lucide-react'
+import { Check, Crown } from '@/components/ui/icons'
 import { CLIENT_CREATE_EVENT_PATH } from '@/lib/site-urls'
 
 const plans = [

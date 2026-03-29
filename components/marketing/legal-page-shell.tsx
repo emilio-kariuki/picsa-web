@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowLeft, FileText, Scale, ShieldCheck, Sparkles } from 'lucide-react'
+import { ArrowLeft, FileText, Scale, ShieldCheck, Sparkles } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Footer } from '@/components/marketing/footer'

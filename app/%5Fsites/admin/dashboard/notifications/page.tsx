@@ -17,7 +17,7 @@ import {
   UserRoundIcon,
   UsersIcon,
   XCircleIcon,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 import { toast } from 'sonner'
 import { EmptyState } from '@/components/common/empty-state'
 import { KPICard } from '@/components/common/kpi-card'

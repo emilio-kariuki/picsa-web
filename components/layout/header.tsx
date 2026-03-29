@@ -30,7 +30,7 @@ import {
   CheckIcon,
   SunIcon,
   MoonIcon,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 import { useAdminAuth } from '@/hooks/use-admin-auth'
 import { getAdminDisplayName, getAdminInitials } from '@/lib/auth'
 import { currentUserAtom } from '@/lib/store'

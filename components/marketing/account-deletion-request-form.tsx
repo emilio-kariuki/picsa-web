@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Loader2, Mail, ShieldAlert, Trash2 } from 'lucide-react'
+import { Loader2, Mail, ShieldAlert, Trash2 } from '@/components/ui/icons'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'

@@ -7,7 +7,7 @@ import {
   ShieldCheck,
   Activity,
   Crown,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 
 const features = [
   {

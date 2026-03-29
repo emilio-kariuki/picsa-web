@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { ArrowLeft, Clock3 } from 'lucide-react'
+import { ArrowLeft, Clock3 } from '@/components/ui/icons'
 import Link from 'next/link'
 import { AccountDeletionRequestForm } from '@/components/marketing/account-deletion-request-form'
 import { Footer } from '@/components/marketing/footer'

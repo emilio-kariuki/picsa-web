@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { ArrowRight, Play } from 'lucide-react'
+import { ArrowRight, Play } from '@/components/ui/icons'
 import { CLIENT_CREATE_EVENT_PATH } from '@/lib/site-urls'
 
 export function Hero() {

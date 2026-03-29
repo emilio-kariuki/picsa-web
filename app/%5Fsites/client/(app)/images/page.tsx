@@ -13,7 +13,7 @@ import {
   SparklesIcon,
   Trash2Icon,
   XIcon,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

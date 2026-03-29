@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Instagram, Twitter, Github } from 'lucide-react'
+import { Instagram, Twitter, Github } from '@/components/ui/icons'
 import { CLIENT_LOGIN_PATH } from '@/lib/site-urls'
 
 const footerLinks = [

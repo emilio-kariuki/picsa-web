@@ -16,7 +16,10 @@ export function ClientAuthShell({ children }: { children: ReactNode }) {
       return
     }
 
-    router.replace(`/login?next=${encodeURIComponent(resolveClientNextPath(pathname))}`)
+    const searchText =
+      typeof window === 'undefined' ? '' : window.location.search
+    const nextPath = resolveClientNextPath(`${pathname}${searchText}`)
+    router.replace(`/login?next=${encodeURIComponent(nextPath)}`)
   }, [bootstrapStatus, isAuthenticated, pathname, router])
 
   if (bootstrapStatus !== 'ready' || !isAuthenticated) {

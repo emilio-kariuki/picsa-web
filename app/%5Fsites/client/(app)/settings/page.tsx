@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { useAtomValue } from 'jotai'
-import { ExternalLinkIcon, LifeBuoyIcon, LogOutIcon, ShieldAlertIcon } from 'lucide-react'
+import { ExternalLinkIcon, LifeBuoyIcon, LogOutIcon, ShieldAlertIcon } from '@/components/ui/icons'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {

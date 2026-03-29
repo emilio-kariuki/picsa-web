@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useAtom, useSetAtom } from 'jotai'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeftIcon, ArchiveIcon, RefreshCwIcon } from 'lucide-react'
+import { ArrowLeftIcon, ArchiveIcon, RefreshCwIcon } from '@/components/ui/icons'
 import { toast } from 'sonner'
 import { useAdminAuth } from '@/hooks/use-admin-auth'
 import { getAdminEventById, updateAdminEventStatus } from '@/lib/admin-events-api'

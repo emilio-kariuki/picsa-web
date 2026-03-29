@@ -18,7 +18,8 @@ import {
   UserCheckIcon,
   UsersIcon,
   XIcon,
-} from 'lucide-react'
+} from '@/components/ui/icons'
+import QRCode from 'qrcode'
 import { toast } from 'sonner'
 import {
   AlertDialog,
@@ -74,6 +75,7 @@ import {
 } from '@/lib/client-api'
 import type { ClientEventInvitation, ClientEventInput, ClientImage } from '@/lib/client-types'
 import {
+  buildClientGuestLink,
   buildClientManageLink,
   formatBytes,
   formatDateShort,
@@ -114,6 +116,72 @@ function getGalleryImageStyle(image: ClientImage): CSSProperties | undefined {
 
 function getGalleryUploaderLabel(image: ClientImage) {
   return image.uploader.name ?? image.uploader.email ?? 'Uploader'
+}
+
+function EventJoinQrCard({
+  eventName,
+  joinLink,
+  joinModeLabel,
+}: {
+  eventName: string
+  joinLink: string
+  joinModeLabel: string
+}) {
+  const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    let isActive = true
+
+    void QRCode.toDataURL(joinLink, {
+      errorCorrectionLevel: 'M',
+      margin: 1,
+      width: 256,
+      color: {
+        dark: '#120c09',
+        light: '#F4ECE5',
+      },
+    })
+      .then((value) => {
+        if (isActive) {
+          setQrCodeDataUrl(value)
+        }
+      })
+      .catch(() => {
+        if (isActive) {
+          setQrCodeDataUrl(null)
+        }
+      })
+
+    return () => {
+      isActive = false
+    }
+  }, [joinLink])
+
+  return (
+    <div className="mt-5 flex flex-col gap-4 rounded-[1.1rem] border border-border/70 bg-secondary/45 p-4 sm:flex-row sm:items-center">
+      <div className="flex h-[138px] w-[138px] shrink-0 items-center justify-center rounded-[0.9rem] bg-[#f4ece5] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.45)]">
+        {qrCodeDataUrl ? (
+          <img src={qrCodeDataUrl} alt={`QR code for ${eventName}`} className="h-full w-full rounded-[0.45rem]" />
+        ) : (
+          <div className="flex flex-col items-center gap-2 text-center text-[#120c09]">
+            <Spinner className="size-5" />
+            <p className="text-xs font-medium">Generating QR</p>
+          </div>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent">Join on mobile</p>
+        <h3 className="font-serif text-xl font-semibold tracking-tight text-foreground">Scan to open this event in Picsa</h3>
+        <p className="max-w-sm text-sm leading-6 text-muted-foreground">
+          Guests can scan this code with their phone to open the mobile join flow and enter the event faster.
+        </p>
+        <Badge variant="outline" className="rounded-full border-accent/30 bg-accent/10 px-3 py-1 text-accent">
+          {joinModeLabel}
+        </Badge>
+      </div>
+    </div>
+  )
 }
 
 export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
@@ -433,6 +501,7 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
 
   const event = eventQuery.data
   const manageLink = buildClientManageLink(event.id)
+  const guestJoinLink = buildClientGuestLink(event.url)
 
   return (
     <div className="space-y-6">
@@ -503,20 +572,41 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
                 )}
               </div>
               <div className="border-t border-border/70 p-6">
-                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                  <div>
+                <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+                  <div className="max-w-xl">
                     <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Display picture</p>
                     <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight">Lead with a photo that feels like the event</h2>
+                    <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                      Add a memorable cover, then let guests scan the event QR below to open the mobile join flow in seconds.
+                    </p>
+                    <EventJoinQrCard
+                      eventName={event.name}
+                      joinLink={guestJoinLink}
+                      joinModeLabel={getJoinModeLabel(event.settings.joinMode)}
+                    />
                   </div>
-                  <Button
-                    variant="outline"
-                    className="rounded-full border-border/80 bg-background/70"
-                    onClick={() => document.getElementById('event-cover-upload')?.click()}
-                    disabled={uploadDisplayPictureMutation.isPending}
-                  >
-                    <CameraIcon className="mr-2 h-4 w-4" />
-                    {uploadDisplayPictureMutation.isPending ? 'Uploading...' : 'Upload cover'}
-                  </Button>
+                  <div className="flex w-full flex-col gap-3 md:w-auto md:min-w-[196px]">
+                    <Button
+                      variant="outline"
+                      className="rounded-full border-border/80 bg-background/70"
+                      onClick={() => document.getElementById('event-cover-upload')?.click()}
+                      disabled={uploadDisplayPictureMutation.isPending}
+                    >
+                      <CameraIcon className="mr-2 h-4 w-4" />
+                      {uploadDisplayPictureMutation.isPending ? 'Uploading...' : 'Upload cover'}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="rounded-full border-border/80 bg-background/70"
+                      onClick={async () => {
+                        await navigator.clipboard.writeText(guestJoinLink)
+                        toast.success('Guest join link copied')
+                      }}
+                    >
+                      <Link2Icon className="mr-2 h-4 w-4" />
+                      Copy join link
+                    </Button>
+                  </div>
                 </div>
                 <input
                   id="event-cover-upload"

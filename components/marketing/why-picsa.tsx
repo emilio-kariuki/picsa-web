@@ -1,4 +1,4 @@
-import { X, Check } from 'lucide-react'
+import { X, Check } from '@/components/ui/icons'
 
 const withoutPicsa = [
   'Photos scattered across 5+ WhatsApp chats',

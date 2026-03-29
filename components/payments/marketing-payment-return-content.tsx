@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { CheckCircle2Icon, SmartphoneIcon } from 'lucide-react'
+import { CheckCircle2Icon, SmartphoneIcon } from '@/components/ui/icons'
 import { buildPaymentsAppReturnUrl, isProbablyMobileUserAgent } from '@/lib/payment-return-link'
 
 interface MarketingPaymentReturnContentProps {

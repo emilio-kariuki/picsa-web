@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowRightIcon, CalendarDaysIcon, PlusIcon, UsersIcon } from 'lucide-react'
+import { ArrowRightIcon, CalendarDaysIcon, PlusIcon, UsersIcon } from '@/components/ui/icons'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {

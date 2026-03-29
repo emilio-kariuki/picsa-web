@@ -11,7 +11,7 @@ import {
   SearchIcon,
   ShieldAlertIcon,
   SmartphoneIcon,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 import { EmptyState } from '@/components/common/empty-state'
 import { KPICard } from '@/components/common/kpi-card'
 import { PageHeader } from '@/components/common/page-header'

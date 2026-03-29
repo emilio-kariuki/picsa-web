@@ -14,7 +14,7 @@ import {
   ServerCogIcon,
   ShieldAlertIcon,
   WorkflowIcon,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 import { toast } from 'sonner'
 import { useAdminAuth } from '@/hooks/use-admin-auth'
 import {

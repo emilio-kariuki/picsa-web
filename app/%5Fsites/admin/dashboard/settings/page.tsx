@@ -44,7 +44,7 @@ import {
   ShieldIcon,
   SmartphoneIcon,
   UsersIcon,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 
 const APP_CONFIG_QUERY_KEY = 'admin-app-config'
 
