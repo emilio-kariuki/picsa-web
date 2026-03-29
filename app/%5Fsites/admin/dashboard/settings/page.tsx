@@ -82,6 +82,9 @@ interface AppConfigDraft {
   payments: {
     mobileDodoEventPassEnabled: boolean
   }
+  features: {
+    mobileEventStoriesEnabled: boolean
+  }
   updates: {
     androidInAppUpdatesEnabled: boolean
     iosRecommendedVersion: string
@@ -224,6 +227,9 @@ function buildAppConfigDraft(config: ClientAppConfig): AppConfigDraft {
     },
     payments: {
       mobileDodoEventPassEnabled: config.payments.mobileDodoEventPassEnabled,
+    },
+    features: {
+      mobileEventStoriesEnabled: config.features.mobileEventStoriesEnabled,
     },
     updates: {
       androidInAppUpdatesEnabled: config.updates.androidInAppUpdatesEnabled,
@@ -423,6 +429,9 @@ function buildEditableAppConfigPayload(
       },
       payments: {
         mobileDodoEventPassEnabled: draft.payments.mobileDodoEventPassEnabled,
+      },
+      features: {
+        mobileEventStoriesEnabled: draft.features.mobileEventStoriesEnabled,
       },
       updates: {
         androidInAppUpdatesEnabled,
@@ -952,6 +961,26 @@ export default function SettingsPage() {
 
               {appConfigDraft ? (
                 <>
+                  <EditableSectionCard
+                    title="Features"
+                    description="Control mobile features that should stay dark-launched until you are ready to surface them."
+                  >
+                    <ToggleField
+                      label="Show event highlight stories on mobile"
+                      description="Keep this off to hide the event story rail from the mobile Events screen. Turn it on later when you are ready to launch stories."
+                      checked={appConfigDraft.features.mobileEventStoriesEnabled}
+                      onCheckedChange={(checked) =>
+                        updateDraft((current) => ({
+                          ...current,
+                          features: {
+                            ...current.features,
+                            mobileEventStoriesEnabled: checked,
+                          },
+                        }))
+                      }
+                    />
+                  </EditableSectionCard>
+
                   <EditableSectionCard
                     title="Payments"
                     description="Choose whether mobile event-pass purchases should go through the hosted Dodo checkout flow or stay on the native RevenueCat store flow."

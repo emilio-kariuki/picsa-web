@@ -291,6 +291,10 @@ export interface ClientAppConfigPayments {
   mobileDodoEventPassEnabled: boolean
 }
 
+export interface ClientAppConfigFeatures {
+  mobileEventStoriesEnabled: boolean
+}
+
 export interface ClientAppConfigUpdates {
   androidInAppUpdatesEnabled: boolean
   iosRecommendedVersion: string | null
@@ -311,5 +315,6 @@ export interface ClientAppConfig {
   uploads: ClientAppConfigUploads
   links: ClientAppConfigLinks
   payments: ClientAppConfigPayments
+  features: ClientAppConfigFeatures
   updates: ClientAppConfigUpdates
 }
