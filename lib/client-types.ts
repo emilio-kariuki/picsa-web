@@ -46,6 +46,14 @@ export interface ClientEventSettings {
   moderateContent: boolean
 }
 
+export interface ClientEventBilling {
+  tier: 'FREE' | 'PRO'
+  isPaid: boolean
+  unlockedAt: string | null
+  productId: string | null
+  store: string | null
+}
+
 export interface ClientEventHost {
   id: string
   email: string | null
@@ -69,6 +77,7 @@ export interface ClientEvent {
   updatedAt: string
   host: ClientEventHost
   settings: ClientEventSettings
+  billing: ClientEventBilling
   viewerMembership: EventViewerMembership
   viewerRole: EventParticipantRole | null
 }
@@ -100,7 +109,71 @@ export interface ClientEventInput {
   maxImages?: number
   startAt?: string | null
   endAt?: string | null
+  unlockWithEventPass?: boolean
   settings?: Partial<ClientEventSettings>
+}
+
+export type ClientEventPassProvider = 'REVENUECAT' | 'DODO'
+export type ClientEventPassPaymentStatus =
+  | 'pending'
+  | 'processing'
+  | 'succeeded'
+  | 'failed'
+  | 'cancelled'
+  | 'refunded'
+  | 'dispute_opened'
+  | 'dispute_accepted'
+  | 'dispute_lost'
+
+export interface ClientEventPassPurchase {
+  id: string
+  productId: string
+  store: string | null
+  provider: ClientEventPassProvider
+  paymentStatus: ClientEventPassPaymentStatus | null
+  amount: number | null
+  currency: string | null
+  purchasedAt: string | null
+  claimedEventId: string | null
+  claimedAt: string | null
+  checkoutSessionId: string | null
+  paymentId: string | null
+  refundStatus: string | null
+  disputeStatus: string | null
+  revokedAt: string | null
+  revocationReason: string | null
+  isClaimed: boolean
+}
+
+export type ClientCheckoutFlow = 'create_event_pro' | 'upgrade_event_pro'
+export type ClientCheckoutSessionMode = 'checkout' | 'existing_pass' | 'already_unlocked'
+export type ClientCheckoutSessionStatus =
+  | 'PENDING'
+  | 'PROCESSING'
+  | 'SUCCEEDED'
+  | 'FAILED'
+  | 'CANCELLED'
+
+export interface ClientCheckoutSessionCreateResult {
+  mode: ClientCheckoutSessionMode
+  checkoutIntentId: string | null
+  checkoutSessionId: string | null
+  checkoutUrl: string | null
+  availablePassCount: number
+  eventId: string | null
+}
+
+export interface ClientCheckoutSessionStatusResult {
+  status: ClientCheckoutSessionStatus
+  flow: ClientCheckoutFlow
+  checkoutIntentId: string
+  checkoutSessionId: string | null
+  eventId: string | null
+  billing: ClientEventBilling | null
+  availablePassCount: number
+  errorCode: string | null
+  errorMessage: string | null
+  draftEvent: ClientEventInput | null
 }
 
 export type ImageStatus = 'UPLOADING' | 'PROCESSING' | 'READY' | 'FAILED' | 'DELETED'

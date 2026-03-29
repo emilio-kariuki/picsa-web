@@ -11,6 +11,7 @@ import {
   CopyIcon,
   ImageIcon,
   MailPlusIcon,
+  SparklesIcon,
   Trash2Icon,
   UserCheckIcon,
   UsersIcon,
@@ -49,12 +50,15 @@ import { useClientAuth } from '@/hooks/use-client-auth'
 import {
   approveEventJoinRequest,
   approveImage,
+  claimEventPassForEvent,
   createEventInvitation,
+  createEventPassCheckoutSession,
   createImageShareLink,
   deleteEvent,
   deleteImage,
   fetchAppConfig,
   fetchEvent,
+  fetchEventPasses,
   fetchEventImages,
   fetchEventJoinRequests,
   fetchEventParticipants,
@@ -120,6 +124,11 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
   const appConfigQuery = useQuery({
     queryKey: ['client', 'app-config'],
     queryFn: fetchAppConfig,
+  })
+
+  const eventPassesQuery = useQuery({
+    queryKey: ['client', 'event-passes'],
+    queryFn: () => performAuthenticatedRequest((token) => fetchEventPasses(token)),
   })
 
   const galleryQuery = useInfiniteQuery({
@@ -308,6 +317,69 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
     },
   })
 
+  const unlockEventMutation = useMutation({
+    mutationFn: async () => {
+      const passInventory =
+        eventPassesQuery.data ??
+        (await performAuthenticatedRequest((token) => fetchEventPasses(token)))
+
+      if (passInventory.availableCount > 0) {
+        await performAuthenticatedRequest((token) => claimEventPassForEvent(token, eventId))
+
+        return {
+          kind: 'claimed' as const,
+        }
+      }
+
+      const checkout = await performAuthenticatedRequest((token) =>
+        createEventPassCheckoutSession(token, {
+          flow: 'upgrade_event_pro',
+          eventId,
+          returnPath: '/payments/return',
+        }),
+      )
+
+      if (checkout.mode === 'already_unlocked') {
+        return {
+          kind: 'already_unlocked' as const,
+        }
+      }
+
+      if (checkout.mode === 'existing_pass') {
+        await performAuthenticatedRequest((token) => claimEventPassForEvent(token, eventId))
+
+        return {
+          kind: 'claimed' as const,
+        }
+      }
+
+      if (checkout.mode === 'checkout' && checkout.checkoutUrl) {
+        window.location.assign(checkout.checkoutUrl)
+
+        return {
+          kind: 'redirected' as const,
+        }
+      }
+
+      throw new Error('Unable to start Pro checkout')
+    },
+    onSuccess: (result) => {
+      if (result.kind === 'claimed') {
+        toast.success('Pro unlocked for this event')
+        refreshWorkspace()
+        void queryClient.invalidateQueries({ queryKey: ['client', 'event-passes'] })
+      }
+
+      if (result.kind === 'already_unlocked') {
+        toast.success('This event is already on Pro')
+        refreshWorkspace()
+      }
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : 'Unable to unlock Pro')
+    },
+  })
+
   const galleryImages = useMemo(
     () => galleryQuery.data?.pages.flatMap((page) => page.images) ?? [],
     [galleryQuery.data],
@@ -371,7 +443,16 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
         }
       />
 
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+        <ClientMetricCard
+          label="Plan"
+          value={event.billing.tier === 'PRO' ? 'Pro' : 'Free'}
+          helper={
+            event.billing.tier === 'PRO'
+              ? 'Image sharing and higher event limits are active.'
+              : 'Unlock Pro here when you need more room.'
+          }
+        />
         <ClientMetricCard label="Guests" value={String(event.memberCount)} helper="Current people inside the event." />
         <ClientMetricCard label="Join mode" value={getJoinModeLabel(event.settings.joinMode)} helper="How access is controlled right now." />
         <ClientMetricCard label="Gallery items" value={String(galleryImages.length)} helper="Images loaded into this workspace view." />
@@ -436,6 +517,48 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
             </ClientSurface>
 
             <div className="space-y-6">
+              {event.billing.tier !== 'PRO' ? (
+                <ClientSurface className="border-accent/30 bg-accent/5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Upgrade this event</p>
+                  <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight">Unlock Pro for bigger galleries and shareable moments</h2>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    Pro raises this event to {appConfigQuery.data?.plan.proEventMaxGuests ?? 100} guests and{' '}
+                    {appConfigQuery.data?.plan.proEventMaxImages ?? 2500} uploads, and turns on image sharing.
+                  </p>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    <Badge variant="outline" className="rounded-full border-accent/35 bg-accent/10 px-3 py-1 text-accent">
+                      $12 per event
+                    </Badge>
+                    <Badge variant="outline" className="rounded-full border-accent/35 bg-accent/10 px-3 py-1 text-accent">
+                      {eventPassesQuery.data?.availableCount
+                        ? `${eventPassesQuery.data.availableCount} pass ready`
+                        : 'Hosted checkout ready'}
+                    </Badge>
+                  </div>
+                  <Button
+                    className="mt-5 rounded-full bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground"
+                    disabled={unlockEventMutation.isPending}
+                    onClick={() => unlockEventMutation.mutate()}
+                  >
+                    <SparklesIcon className="mr-2 h-4 w-4" />
+                    {unlockEventMutation.isPending
+                      ? 'Preparing Pro...'
+                      : eventPassesQuery.data?.availableCount
+                        ? 'Use existing pass'
+                        : 'Unlock Pro'}
+                  </Button>
+                </ClientSurface>
+              ) : (
+                <ClientSurface className="border-emerald-300/50 bg-emerald-500/5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">Pro active</p>
+                  <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight">This event is already running with Pro unlocked</h2>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    Guests can use image sharing, and the event can scale up to {appConfigQuery.data?.plan.proEventMaxGuests ?? 100} guests with{' '}
+                    {appConfigQuery.data?.plan.proEventMaxImages ?? 2500} uploads.
+                  </p>
+                </ClientSurface>
+              )}
+
               <ClientSurface>
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Event snapshot</p>
                 <div className="mt-4 space-y-4">
@@ -781,9 +904,11 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
 
             <div className="mt-6">
               <ClientEventForm
+                appConfig={appConfigQuery.data}
                 initialEvent={event}
                 submitLabel={updateEventMutation.isPending ? 'Saving changes...' : 'Save changes'}
                 isSubmitting={updateEventMutation.isPending}
+                mode="edit"
                 onSubmit={async (input) => {
                   await updateEventMutation.mutateAsync(input)
                 }}

@@ -1,8 +1,12 @@
 import { apiRequest, type ApiSuccessResponse } from '@/lib/api'
 import type {
   ClientAppConfig,
+  ClientCheckoutFlow,
+  ClientCheckoutSessionCreateResult,
+  ClientCheckoutSessionStatusResult,
   ClientEvent,
   ClientEventInput,
+  ClientEventPassPurchase,
   ClientEventInvitation,
   ClientEventJoinRequest,
   ClientEventParticipant,
@@ -54,6 +58,63 @@ export async function fetchEvent(accessToken: string, eventId: string) {
   })
 
   return response.data.event
+}
+
+export async function fetchEventPasses(accessToken: string) {
+  const response = await apiRequest<ApiSuccessResponse<{
+    availableCount: number
+    totalCount: number
+    purchases: ClientEventPassPurchase[]
+  }>>('/subscriptions/event-passes', {
+    accessToken,
+  })
+
+  return response.data
+}
+
+export async function claimEventPassForEvent(accessToken: string, eventId: string) {
+  const response = await apiRequest<ApiSuccessResponse<{
+    eventId: string
+    billing: ClientEvent['billing']
+    availablePassCount: number
+  }>>(`/events/${eventId}/billing/claim`, {
+    method: 'POST',
+    accessToken,
+  })
+
+  return response.data
+}
+
+export async function createEventPassCheckoutSession(
+  accessToken: string,
+  input: {
+    flow: ClientCheckoutFlow
+    eventId?: string | null
+    draftEvent?: ClientEventInput | null
+    returnPath?: string | null
+  },
+) {
+  const response = await apiRequest<ApiSuccessResponse<ClientCheckoutSessionCreateResult>>(
+    '/payments/event-passes/checkout-sessions',
+    {
+      method: 'POST',
+      accessToken,
+      body: input,
+    },
+  )
+
+  return response.data
+}
+
+export async function fetchEventPassCheckoutStatus(accessToken: string, identifier: string) {
+  const response = await apiRequest<ApiSuccessResponse<ClientCheckoutSessionStatusResult>>(
+    `/payments/event-passes/checkout-sessions/${identifier}`,
+    {
+      accessToken,
+    },
+  )
+
+  return response.data
 }
 
 export async function createEvent(accessToken: string, input: ClientEventInput) {

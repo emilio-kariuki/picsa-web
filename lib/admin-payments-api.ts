@@ -15,13 +15,21 @@ export type AdminPaymentBillingCadence =
   | 'lifetime'
   | 'unknown'
 
-export type AdminPaymentTransactionType =
+export type AdminBillingProvider = 'REVENUECAT' | 'DODO'
+
+export type AdminSubscriptionTransactionType =
   | 'initial_purchase'
   | 'renewal'
   | 'product_change'
   | 'cancellation'
   | 'refund'
   | 'other'
+
+export type AdminBillingTransactionType =
+  | AdminSubscriptionTransactionType
+  | 'event_pass_purchase'
+  | 'event_pass_refund'
+  | 'event_pass_dispute'
 
 export type AdminPaymentsSortOrder = 'ASC' | 'DESC'
 
@@ -38,14 +46,26 @@ export interface AdminPaymentsSubscriptionsQueryInput {
   expiresAfter?: string
 }
 
-export interface AdminPaymentsTransactionsQueryInput {
+export interface AdminEventPassPaymentsQueryInput {
   page?: number
   limit?: number
   search?: string
-  sortBy?: 'createdAt' | 'amount' | 'type' | 'store'
+  sortBy?: 'createdAt' | 'purchasedAt' | 'amount' | 'provider' | 'paymentStatus' | 'claimedAt' | 'revokedAt'
   sortOrder?: AdminPaymentsSortOrder
-  type?: AdminPaymentTransactionType
-  store?: string
+  provider?: AdminBillingProvider
+  paymentStatus?: string
+  claimed?: boolean
+  revoked?: boolean
+}
+
+export interface AdminBillingTransactionsQueryInput {
+  page?: number
+  limit?: number
+  search?: string
+  sortBy?: 'createdAt' | 'amount' | 'provider' | 'type'
+  sortOrder?: AdminPaymentsSortOrder
+  provider?: AdminBillingProvider
+  type?: AdminBillingTransactionType
   createdFrom?: string
   createdTo?: string
 }
@@ -72,38 +92,93 @@ export interface AdminPaymentSubscription {
   lastTransactionAt: string | null
 }
 
-export interface AdminPaymentTransaction {
+export interface AdminEventPassPayment {
   id: string
-  transactionId: string
-  subscriberId: string | null
-  appUserId: string | null
-  subscriberName: string
-  subscriberEmail: string
-  subscriberAvatar?: string
-  productId: string | null
-  productName: string
-  store: string | null
-  type: AdminPaymentTransactionType
-  eventType: string
+  user: {
+    id: string
+    name: string
+    email: string
+    avatar: string | null
+  }
+  event: {
+    id: string
+    name: string
+    url: string
+  } | null
+  provider: AdminBillingProvider
+  paymentStatus: string | null
   amount: number | null
   currency: string | null
-  revenueNet: number | null
+  productId: string
+  store: string | null
+  transactionId: string
+  checkoutSessionId: string | null
+  paymentId: string | null
+  purchasedAt: string | null
+  claimedAt: string | null
+  revokedAt: string | null
+  revocationReason: string | null
+  refundStatus: string | null
+  disputeStatus: string | null
+  isClaimed: boolean
+  isRevoked: boolean
+}
+
+export interface AdminBillingTransaction {
+  id: string
+  provider: AdminBillingProvider
+  source: 'subscription' | 'event_pass'
+  type: AdminBillingTransactionType
   createdAt: string
+  amount: number | null
+  currency: string | null
+  store: string | null
+  transactionId: string | null
+  paymentId: string | null
+  checkoutSessionId: string | null
+  eventType: string | null
+  eventId: string | null
+  eventName: string | null
+  productId: string | null
+  productName: string | null
+  paymentStatus: string | null
+  revocationReason: string | null
+  subscriber: {
+    id: string | null
+    appUserId: string | null
+    name: string
+    email: string
+    avatar: string | null
+  }
 }
 
 export interface AdminPaymentOverview {
-  mrr: number
-  mrrChange: number
-  activeSubscriptions: number
-  activeSubscriptionsChange: number
-  trials: number
-  trialsChange: number
-  churnRate: number
-  churnRateChange: number
-  mrrSeries: Array<{
-    month: string
+  subscriptions: {
     mrr: number
-  }>
+    mrrChange: number
+    activeSubscriptions: number
+    activeSubscriptionsChange: number
+    trials: number
+    trialsChange: number
+    churnRate: number
+    churnRateChange: number
+    mrrSeries: Array<{
+      month: string
+      mrr: number
+    }>
+  }
+  eventPasses: {
+    grossRevenue: number
+    totalPurchases: number
+    availablePasses: number
+    claimedPasses: number
+    revokedPasses: number
+    providerSplit: Array<{
+      provider: AdminBillingProvider
+      revenue: number
+      purchases: number
+    }>
+  }
 }
 
 export interface AdminPaginatedData<T> {
@@ -148,42 +223,19 @@ interface RawAdminPaymentsSubscriptionItem {
   billing: RawAdminPaymentsSubscriptionBilling
 }
 
-interface RawAdminPaymentTransactionSubscriber {
-  id: string | null
-  appUserId: string | null
-  name: string
-  email: string
-  avatar?: string
-}
-
-interface RawAdminPaymentTransactionItem {
-  id: string
-  transactionId: string
-  subscriber: RawAdminPaymentTransactionSubscriber
-  productId: string | null
-  productName: string | null
-  store: string | null
-  type: AdminPaymentTransactionType
-  eventType: string
-  amount: number | null
-  currency: string | null
-  revenueNet: number | null
-  createdAt: string
-}
-
 type RawAdminPaymentsSubscriptionsResponse = ApiSuccessResponse<
   AdminPaginatedData<RawAdminPaymentsSubscriptionItem>
 >
-type RawAdminPaymentsTransactionsResponse = ApiSuccessResponse<
-  AdminPaginatedData<RawAdminPaymentTransactionItem>
->
-export type AdminPaymentsSubscriptionsResponse = ApiSuccessResponse<
+type AdminPaymentsSubscriptionsResponse = ApiSuccessResponse<
   AdminPaginatedData<AdminPaymentSubscription>
 >
-export type AdminPaymentsTransactionsResponse = ApiSuccessResponse<
-  AdminPaginatedData<AdminPaymentTransaction>
+type AdminEventPassPaymentsResponse = ApiSuccessResponse<
+  AdminPaginatedData<AdminEventPassPayment>
 >
-export type AdminPaymentsOverviewResponse = ApiSuccessResponse<{
+type AdminBillingTransactionsResponse = ApiSuccessResponse<
+  AdminPaginatedData<AdminBillingTransaction>
+>
+type AdminPaymentsOverviewResponse = ApiSuccessResponse<{
   overview: AdminPaymentOverview
 }>
 
@@ -243,25 +295,10 @@ function mapSubscriptionItem(item: RawAdminPaymentsSubscriptionItem): AdminPayme
   }
 }
 
-function mapTransactionItem(item: RawAdminPaymentTransactionItem): AdminPaymentTransaction {
-  return {
-    id: item.id,
-    transactionId: item.transactionId,
-    subscriberId: item.subscriber.id,
-    appUserId: item.subscriber.appUserId,
-    subscriberName: item.subscriber.name,
-    subscriberEmail: item.subscriber.email,
-    subscriberAvatar: item.subscriber.avatar,
-    productId: item.productId,
-    productName: item.productName || formatProductName(item.productId),
-    store: item.store,
-    type: item.type,
-    eventType: item.eventType,
-    amount: item.amount,
-    currency: item.currency,
-    revenueNet: item.revenueNet,
-    createdAt: item.createdAt,
-  }
+export async function getAdminPaymentsOverview(accessToken: string) {
+  return adminApiRequest<AdminPaymentsOverviewResponse>('/admin/payments/overview', {
+    accessToken,
+  })
 }
 
 export async function listAdminPaymentSubscriptions(
@@ -269,7 +306,7 @@ export async function listAdminPaymentSubscriptions(
   query: AdminPaymentsSubscriptionsQueryInput,
 ) {
   const response = await adminApiRequest<RawAdminPaymentsSubscriptionsResponse>(
-    `/admin/subscriptions${buildQueryString(query as Record<string, string | number | boolean | null | undefined>)}`,
+    `/admin/payments/subscriptions${buildQueryString(query as Record<string, string | number | boolean | null | undefined>)}`,
     {
       accessToken,
     },
@@ -284,28 +321,26 @@ export async function listAdminPaymentSubscriptions(
   } satisfies AdminPaymentsSubscriptionsResponse
 }
 
-export async function getAdminPaymentsOverview(accessToken: string) {
-  return adminApiRequest<AdminPaymentsOverviewResponse>('/admin/subscriptions/overview', {
-    accessToken,
-  })
-}
-
-export async function listAdminPaymentTransactions(
+export async function listAdminEventPassPayments(
   accessToken: string,
-  query: AdminPaymentsTransactionsQueryInput,
+  query: AdminEventPassPaymentsQueryInput,
 ) {
-  const response = await adminApiRequest<RawAdminPaymentsTransactionsResponse>(
-    `/admin/subscriptions/transactions${buildQueryString(query as Record<string, string | number | boolean | null | undefined>)}`,
+  return adminApiRequest<AdminEventPassPaymentsResponse>(
+    `/admin/payments/event-pass-purchases${buildQueryString(query as Record<string, string | number | boolean | null | undefined>)}`,
     {
       accessToken,
     },
   )
+}
 
-  return {
-    ...response,
-    data: {
-      ...response.data,
-      items: response.data.items.map(mapTransactionItem),
+export async function listAdminBillingTransactions(
+  accessToken: string,
+  query: AdminBillingTransactionsQueryInput,
+) {
+  return adminApiRequest<AdminBillingTransactionsResponse>(
+    `/admin/payments/transactions${buildQueryString(query as Record<string, string | number | boolean | null | undefined>)}`,
+    {
+      accessToken,
     },
-  } satisfies AdminPaymentsTransactionsResponse
+  )
 }
