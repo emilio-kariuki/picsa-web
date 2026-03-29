@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/icons'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import { PicsaLogo } from '@/components/common/picsa-logo'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -117,9 +118,7 @@ export function ClientShell({ children }: { children: ReactNode }) {
         <aside className="hidden h-full w-[280px] shrink-0 lg:flex">
           <div className="flex h-full w-full flex-col rounded-[2rem] border border-border/70 bg-card/90 p-5 shadow-[0_24px_80px_rgba(35,30,27,0.08)] backdrop-blur">
             <Link href="/" className="flex items-center gap-3 px-2">
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-accent text-lg font-bold text-accent-foreground shadow-sm font-serif">
-                P
-              </span>
+              <PicsaLogo size={44} />
               <div>
                 <p className="font-serif text-xl font-semibold tracking-tight">Picsa</p>
                 <p className="text-sm text-muted-foreground">Organizer workspace</p>
@@ -180,7 +179,10 @@ export function ClientShell({ children }: { children: ReactNode }) {
                 </SheetTrigger>
                 <SheetContent side="left" className="border-r-border/70 bg-background/98 p-0">
                   <SheetHeader className="border-b border-border/70 px-6 py-5 text-left">
-                    <SheetTitle className="font-serif text-2xl">Picsa Workspace</SheetTitle>
+                    <SheetTitle className="flex items-center gap-3 font-serif text-2xl">
+                      <PicsaLogo size={38} className="rounded-xl" />
+                      <span>Picsa Workspace</span>
+                    </SheetTitle>
                   </SheetHeader>
                   <div className="space-y-6 px-6 py-6">
                     <ClientNavigation pathname={pathname} onNavigate={() => setSheetOpen(false)} />

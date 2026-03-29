@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { PicsaLogo } from '@/components/common/picsa-logo'
 import {
   LayoutDashboardIcon,
   UsersIcon,
@@ -32,7 +33,6 @@ import {
   ClipboardListIcon,
   LogOutIcon,
   ChevronsUpDownIcon,
-  SparklesIcon,
   CalendarIcon,
   ImageIcon,
 } from '@/components/ui/icons'
@@ -66,9 +66,7 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/dashboard">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <SparklesIcon className="h-4 w-4" />
-                </div>
+                <PicsaLogo size={36} className="rounded-xl" />
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-semibold">Picsa</span>
                   <span className="text-xs text-muted-foreground">Admin</span>

@@ -158,7 +158,7 @@ function EventJoinQrCard({
   }, [joinLink])
 
   return (
-    <div className="mt-5 flex flex-col gap-4 rounded-[1.1rem] border border-border/70 bg-secondary/45 p-4 sm:flex-row sm:items-center">
+    <div className="mt-5 flex w-full flex-col gap-4 rounded-[1.1rem] border border-border/70 bg-secondary/45 p-4 sm:flex-row sm:items-center">
       <div className="flex h-[138px] w-[138px] shrink-0 items-center justify-center rounded-[0.9rem] bg-[#f4ece5] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.45)]">
         {qrCodeDataUrl ? (
           <img src={qrCodeDataUrl} alt={`QR code for ${eventName}`} className="h-full w-full rounded-[0.45rem]" />
@@ -170,10 +170,10 @@ function EventJoinQrCard({
         )}
       </div>
 
-      <div className="space-y-2">
+      <div className="min-w-0 flex-1 space-y-2">
         <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent">Join on mobile</p>
         <h3 className="font-serif text-xl font-semibold tracking-tight text-foreground">Scan to open this event in Picsa</h3>
-        <p className="max-w-sm text-sm leading-6 text-muted-foreground">
+        <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
           Guests can scan this code with their phone to open the mobile join flow and enter the event faster.
         </p>
         <Badge variant="outline" className="rounded-full border-accent/30 bg-accent/10 px-3 py-1 text-accent">
@@ -573,7 +573,7 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
               </div>
               <div className="border-t border-border/70 p-6">
                 <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-                  <div className="max-w-xl">
+                  <div className="min-w-0 flex-1">
                     <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Display picture</p>
                     <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight">Lead with a photo that feels like the event</h2>
                     <p className="mt-3 text-sm leading-6 text-muted-foreground">
