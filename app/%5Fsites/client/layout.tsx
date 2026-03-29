@@ -21,7 +21,7 @@ export default function ClientSiteLayout({
     <Providers>
       <div
         data-site="client"
-        className="grain-overlay relative min-h-screen overflow-x-hidden bg-background text-foreground font-sans"
+        className="relative min-h-screen overflow-x-hidden bg-background text-foreground font-sans"
       >
         <ClientAuthBootstrap />
         {children}

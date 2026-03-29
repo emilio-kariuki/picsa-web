@@ -207,13 +207,13 @@ export default function ClientImagesPage() {
                         loading="lazy"
                       />
                     ) : (
-                      <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(255,210,166,0.45),_transparent_55%),linear-gradient(180deg,rgba(61,41,30,0.95),rgba(26,20,17,0.92))] p-6 text-center text-sm text-white/80">
+                      <div className="flex h-full items-center justify-center bg-[#1a1310] p-6 text-center text-sm text-white/80">
                         {getImageStatusLabel(image)}
                       </div>
                     )}
                   </div>
 
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/52 via-black/6 to-black/10" />
+                  <div className="pointer-events-none absolute inset-0 bg-black/28" />
 
                   <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-2.5">
                     <Badge
@@ -290,12 +290,12 @@ export default function ClientImagesPage() {
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(255,210,166,0.35),_transparent_55%),linear-gradient(180deg,rgba(61,41,30,0.96),rgba(26,20,17,0.94))] p-8 text-center text-sm text-white/82">
+                        <div className="flex h-full items-center justify-center bg-[#1a1310] p-8 text-center text-sm text-white/82">
                           {getImageStatusLabel(activeImage)}
                         </div>
                       )}
 
-                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/38 via-transparent to-transparent" />
+                      <div className="pointer-events-none absolute inset-0 bg-black/22" />
 
                       <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-4">
                         <div className="flex flex-wrap gap-2">

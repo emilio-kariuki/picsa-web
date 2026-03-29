@@ -139,14 +139,6 @@ export function ClientLoginPageContent({
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(ellipse 70% 60% at 22% 15%, oklch(0.92 0.05 70 / 0.5), transparent 72%), radial-gradient(ellipse 45% 35% at 86% 18%, oklch(0.86 0.08 35 / 0.22), transparent 70%)',
-        }}
-      />
-
       <div className="relative mx-auto grid min-h-screen max-w-6xl gap-10 px-6 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         <div className="order-2 space-y-8 lg:order-1">
           <Link href="/" className="inline-flex items-center gap-3 rounded-full border border-border/70 bg-card/70 px-4 py-2 text-sm text-muted-foreground shadow-sm backdrop-blur">
@@ -183,7 +175,7 @@ export function ClientLoginPageContent({
         <div className="order-1 flex flex-col gap-6 lg:order-2">
           <div className="relative h-[280px] overflow-hidden rounded-[2rem] border border-border/60 bg-card/80 shadow-[0_24px_80px_rgba(35,30,27,0.12)]">
             <Image src="/images/hero-photo-2.jpg" alt="Guests celebrating an event" fill className="object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-foreground/35 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-black/40" />
             <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4">
               <div className="max-w-[220px] rounded-[1.25rem] bg-background/80 px-4 py-3 backdrop-blur">
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Today</p>

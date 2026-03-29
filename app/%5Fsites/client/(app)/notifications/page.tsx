@@ -121,7 +121,7 @@ export default function ClientNotificationsPage() {
                   'relative rounded-[0.95rem] border px-4 py-3.5 transition-colors',
                   notification.readAt
                     ? 'border-border/60 bg-secondary/18'
-                    : 'border-accent/20 bg-[linear-gradient(180deg,rgba(199,104,66,0.09),rgba(199,104,66,0.04))]',
+                    : 'border-accent/20 bg-accent/8',
                 )}
               >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">

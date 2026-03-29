@@ -113,14 +113,6 @@ export function ClientShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="relative min-h-screen">
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(ellipse 65% 45% at 15% 10%, oklch(0.92 0.05 70 / 0.45), transparent 70%), radial-gradient(ellipse 55% 40% at 88% 15%, oklch(0.88 0.08 35 / 0.18), transparent 72%)',
-        }}
-      />
-
       <div className="relative mx-auto flex min-h-screen w-full max-w-[1440px] gap-6 px-4 py-4 sm:px-6 lg:px-8">
         <aside className="sticky top-4 hidden h-[calc(100vh-2rem)] w-[280px] shrink-0 lg:flex">
           <div className="flex h-full w-full flex-col rounded-[2rem] border border-border/70 bg-card/90 p-5 shadow-[0_24px_80px_rgba(35,30,27,0.08)] backdrop-blur">
