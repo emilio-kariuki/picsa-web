@@ -192,6 +192,9 @@ html.dark [data-site='marketing'] {
 
 [data-site='client'] {
   --client-radius: 5px;
+  --client-scrollbar-thumb: #2f241f;
+  --client-scrollbar-thumb-hover: #43312a;
+  --client-scrollbar-track: transparent;
   --site-font-sans: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
   --site-font-serif: var(--font-fraunces), 'Fraunces', serif;
   --site-font-mono: var(--font-geist-mono), 'Geist Mono', monospace;
@@ -231,6 +234,9 @@ html.dark [data-site='marketing'] {
 }
 
 html.dark [data-site='client'] {
+  --client-scrollbar-thumb: #2f241f;
+  --client-scrollbar-thumb-hover: #43312a;
+  --client-scrollbar-track: transparent;
   --background: #120c09;
   --foreground: #f4ece5;
   --card: #17110e;
@@ -271,6 +277,32 @@ html.dark [data-site='client'] {
 
 [data-site='client'] :where([class*='bg-gradient'], [class*='linear-gradient'], [class*='radial-gradient']) {
   background-image: none !important;
+}
+
+[data-site='client'] .client-scroll-area {
+  scrollbar-width: thin;
+  scrollbar-color: var(--client-scrollbar-thumb) var(--client-scrollbar-track);
+}
+
+[data-site='client'] .client-scroll-area::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+[data-site='client'] .client-scroll-area::-webkit-scrollbar-track {
+  background: var(--client-scrollbar-track);
+}
+
+[data-site='client'] .client-scroll-area::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: var(--client-scrollbar-thumb);
+  background-clip: padding-box;
+}
+
+[data-site='client'] .client-scroll-area::-webkit-scrollbar-thumb:hover {
+  background: var(--client-scrollbar-thumb-hover);
+  background-clip: padding-box;
 }
 
 @theme inline {

@@ -245,7 +245,7 @@ export function ClientShell({ children }: { children: ReactNode }) {
             </div>
           </header>
 
-          <main className="min-h-0 flex-1 overflow-y-auto pb-10">{children}</main>
+          <main className="client-scroll-area min-h-0 flex-1 overflow-y-auto pb-10">{children}</main>
         </div>
       </div>
     </div>
