@@ -1,18 +1,10 @@
-'use client'
+"use client"
 
-import { useAtomValue } from 'jotai'
-import { usePathname } from 'next/navigation'
-import Link from 'next/link'
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarRail,
-} from '@/components/ui/sidebar'
+import { useAtom, useAtomValue } from "jotai"
+import { currentUserAtom, themeAtom } from "@/lib/store"
+import { cn } from "@/lib/utils"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,127 +12,161 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { PicsaLogo } from '@/components/common/picsa-logo'
+} from "@/components/ui/dropdown-menu"
+import { useRouter, usePathname } from "next/navigation"
+import { PicsaLogo } from "@/components/common/picsa-logo"
+import { useAdminAuth } from "@/hooks/use-admin-auth"
+import { getAdminDisplayName, getAdminInitials } from "@/lib/auth"
 import {
-  LayoutDashboardIcon,
+  HomeIcon,
   UsersIcon,
   CreditCardIcon,
-  BellIcon,
+  CalendarDaysIcon,
+  ImageIcon,
   TicketIcon,
+  BellIcon,
   SettingsIcon,
   ClipboardListIcon,
   LogOutIcon,
   ChevronsUpDownIcon,
-  CalendarIcon,
-  ImageIcon,
-} from '@/components/ui/icons'
-import { useAdminAuth } from '@/hooks/use-admin-auth'
-import { getAdminDisplayName, getAdminInitials } from '@/lib/auth'
-import { currentUserAtom } from '@/lib/store'
+  SunIcon,
+  MoonIcon,
+  UserRoundIcon,
+} from "@/components/ui/icons"
 
-const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboardIcon },
-  { name: 'Users', href: '/dashboard/users', icon: UsersIcon },
-  { name: 'Payments', href: '/dashboard/payments', icon: CreditCardIcon },
-  { name: 'Events', href: '/dashboard/events', icon: CalendarIcon },
-  { name: 'Images', href: '/dashboard/media', icon: ImageIcon },
-  { name: 'Tickets', href: '/dashboard/tickets', icon: TicketIcon },
-  { name: 'Notifications', href: '/dashboard/notifications', icon: BellIcon },
-  { name: 'Settings', href: '/dashboard/settings', icon: SettingsIcon },
-  { name: 'Audit Log', href: '/dashboard/audit-log', icon: ClipboardListIcon },
+const menuItems = [
+  { icon: HomeIcon, label: "Dashboard", page: "dashboard" },
+  { icon: UsersIcon, label: "Users", page: "users" },
+  { icon: CreditCardIcon, label: "Payments", page: "payments" },
+  { icon: CalendarDaysIcon, label: "Events", page: "events" },
+  { icon: ImageIcon, label: "Images", page: "media" },
+  { icon: TicketIcon, label: "Tickets", page: "tickets" },
+  { icon: BellIcon, label: "Notifications", page: "notifications" },
+  { icon: SettingsIcon, label: "Settings", page: "settings" },
+  { icon: ClipboardListIcon, label: "Audit Log", page: "audit-log" },
 ]
 
 export function AppSidebar() {
   const pathname = usePathname()
   const currentUser = useAtomValue(currentUserAtom)
+  const [theme, setTheme] = useAtom(themeAtom)
   const { logout } = useAdminAuth()
+  const router = useRouter()
   const displayName = getAdminDisplayName(currentUser)
   const initials = getAdminInitials(currentUser)
 
+  const getCurrentPage = () => {
+    const segments = pathname.split("/")
+    if (segments.length <= 2 || segments[2] === "") return "dashboard"
+    return segments[2]
+  }
+  const currentPage = getCurrentPage()
+
+  const navigateTo = (page: string) => {
+    if (page === "dashboard") {
+      router.push("/dashboard")
+    } else {
+      router.push(`/dashboard/${page}`)
+    }
+  }
+
+  const handleLogout = () => {
+    void logout()
+  }
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark")
+  }
+
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <Link href="/dashboard">
-                <PicsaLogo size={36} className="rounded-xl" />
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">Picsa</span>
-                  <span className="text-xs text-muted-foreground">Admin</span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
-      <SidebarContent>
-        <SidebarMenu>
-          {navigation.map((item) => (
-            <SidebarMenuItem key={item.name}>
-              <SidebarMenuButton
-                asChild
-                isActive={pathname === item.href}
-                tooltip={item.name}
+    <aside className="w-64 border-r border-border bg-sidebar flex flex-col">
+      <div className="p-6">
+        <div className="flex items-center gap-3">
+          <PicsaLogo size={36} className="rounded-xl shrink-0" />
+          <div className="flex-1 min-w-0">
+            <h1 className="text-base font-bold text-sidebar-foreground leading-tight truncate">
+              Picsa
+            </h1>
+            <span className="text-xs text-muted-foreground">Admin</span>
+          </div>
+        </div>
+      </div>
+
+      <nav className="flex-1 px-3 space-y-1">
+        {menuItems.map((item) => {
+          const Icon = item.icon
+          const isActive = currentPage === item.page
+          return (
+            <button
+              key={item.page}
+              onClick={() => navigateTo(item.page)}
+              className={cn(
+                "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                isActive
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                  : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground",
+              )}
+            >
+              <Icon className="h-5 w-5" />
+              {item.label}
+            </button>
+          )
+        })}
+      </nav>
+
+      <div className="p-4 border-t border-border">
+        <div className="flex items-center gap-3">
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={currentUser?.url ?? undefined} alt={displayName} />
+            <AvatarFallback className="bg-primary text-primary-foreground">{initials}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-sidebar-foreground truncate">
+              {displayName}
+            </p>
+            <p className="text-xs text-muted-foreground truncate">
+              {currentUser?.email ?? "No email on file"}
+            </p>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground hover:text-sidebar-foreground"
               >
-                <Link href={item.href}>
-                  <item.icon className="h-4 w-4" />
-                  <span>{item.name}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
-                  size="lg"
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                >
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={currentUser?.url ?? undefined} />
-                    <AvatarFallback>{initials}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col gap-0.5 leading-none">
-                    <span className="font-medium">{displayName}</span>
-                    <span className="text-xs text-muted-foreground">Admin</span>
-                  </div>
-                  <ChevronsUpDownIcon className="ml-auto h-4 w-4" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-[--radix-dropdown-menu-trigger-width] min-w-56"
-                align="start"
-                side="top"
-                sideOffset={4}
-              >
-                <DropdownMenuLabel className="text-xs text-muted-foreground">
-                  {currentUser?.email ?? 'No email on file'}
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard/settings">
-                    <SettingsIcon className="mr-2 h-4 w-4" />
-                    Settings
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onSelect={() => void logout()}>
-                  <LogOutIcon className="mr-2 h-4 w-4" />
-                  Log out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
-      <SidebarRail />
-    </Sidebar>
+                <ChevronsUpDownIcon className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => navigateTo("settings")}>
+                <UserRoundIcon className="mr-2 h-4 w-4" />
+                <span>Profile Settings</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={toggleTheme}>
+                {theme === "dark" ? (
+                  <>
+                    <SunIcon className="mr-2 h-4 w-4" />
+                    <span>Light Mode</span>
+                  </>
+                ) : (
+                  <>
+                    <MoonIcon className="mr-2 h-4 w-4" />
+                    <span>Dark Mode</span>
+                  </>
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
+                <LogOutIcon className="mr-2 h-4 w-4" />
+                <span>Logout</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+    </aside>
   )
 }

@@ -1,5 +1,4 @@
 import { DashboardAuthShell } from '@/components/auth/dashboard-auth-shell'
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/layout/app-sidebar'
 import { Header } from '@/components/layout/header'
 import { BreadcrumbNav } from '@/components/common/breadcrumb-nav'
@@ -12,17 +11,17 @@ export default function DashboardLayout({
 }) {
   return (
     <DashboardAuthShell>
-      <SidebarProvider>
+      <div className="flex h-screen">
         <AppSidebar />
-        <SidebarInset>
+        <div className="flex flex-1 flex-col overflow-auto">
           <Header />
           <div className="flex flex-1 flex-col gap-4 p-4 md:gap-6 md:p-6">
             <BreadcrumbNav />
             {children}
           </div>
-        </SidebarInset>
+        </div>
         <Toaster />
-      </SidebarProvider>
+      </div>
     </DashboardAuthShell>
   )
 }
