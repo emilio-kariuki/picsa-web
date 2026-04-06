@@ -763,19 +763,19 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
                     <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-3">
                       <Badge
                         variant="outline"
-                        className={`rounded-[0.65rem] border-white/18 bg-black/36 px-2.5 py-1 text-[10px] text-white shadow-sm backdrop-blur-md ${statusBadgeClass(image)}`}
+                        className={`rounded-[0.65rem] border-white/18 bg-black/36 px-2.5 py-1 text-[10px] text-white shadow-none backdrop-blur-md ${statusBadgeClass(image)}`}
                       >
                         {getImageStatusLabel(image)}
                       </Badge>
 
                       <div className="flex items-center gap-2">
                         {image.isPrivate ? (
-                          <span className="rounded-[0.65rem] border border-white/14 bg-black/32 px-2 py-1.5 text-white/82 shadow-sm backdrop-blur-sm">
+                          <span className="rounded-[0.65rem] border border-white/14 bg-black/32 px-2 py-1.5 text-white/82 shadow-none backdrop-blur-sm">
                             <LockIcon className="h-3.5 w-3.5" />
                           </span>
                         ) : null}
                         {image.hd ? (
-                          <span className="rounded-[0.65rem] border border-white/14 bg-black/32 px-2 py-1.5 text-white/82 shadow-sm backdrop-blur-sm">
+                          <span className="rounded-[0.65rem] border border-white/14 bg-black/32 px-2 py-1.5 text-white/82 shadow-none backdrop-blur-sm">
                             <SparklesIcon className="h-3.5 w-3.5" />
                           </span>
                         ) : null}

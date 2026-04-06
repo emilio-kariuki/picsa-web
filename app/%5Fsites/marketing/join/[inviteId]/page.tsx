@@ -56,7 +56,7 @@ export default async function JoinEventPage(props: JoinEventPageProps) {
               </p>
             </div>
 
-            <div className="rounded-3xl border border-border/70 bg-background/80 p-5 shadow-sm backdrop-blur">
+            <div className="rounded-3xl border border-border/70 bg-background/80 p-5 shadow-none backdrop-blur">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
                 Event ID
               </p>

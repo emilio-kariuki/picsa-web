@@ -27,7 +27,7 @@ export function AdminEventDetailContent({ event }: { event: AdminEventDetail }) 
         <p className="text-sm text-muted-foreground">
           {event.description || 'No description provided'}
         </p>
-        <p className="text-xs text-muted-foreground">Event ID: {event.id}</p>
+        {/* <p className="text-xs text-muted-foreground">Event ID: {event.id}</p> */}
       </div>
 
       <div className="rounded-lg border p-4">
@@ -39,7 +39,7 @@ export function AdminEventDetailContent({ event }: { event: AdminEventDetail }) 
           <div className="space-y-1">
             <p className="font-medium">{getEventHostDisplayName(event)}</p>
             <p className="text-sm text-muted-foreground">{event.host.email ?? 'No email address'}</p>
-            <p className="text-xs text-muted-foreground">Host ID: {event.host.id}</p>
+            {/* <p className="text-xs text-muted-foreground">Host ID: {event.host.id}</p> */}
           </div>
         </div>
       </div>

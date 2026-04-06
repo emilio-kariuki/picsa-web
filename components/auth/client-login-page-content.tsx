@@ -141,7 +141,7 @@ export function ClientLoginPageContent({
     <div className="relative min-h-screen overflow-hidden bg-background">
       <div className="relative mx-auto grid min-h-screen max-w-6xl gap-10 px-6 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         <div className="order-2 space-y-8 lg:order-1">
-          <Link href="/" className="inline-flex items-center gap-3 rounded-full border border-border/70 bg-card/70 px-4 py-2 text-sm text-muted-foreground shadow-sm backdrop-blur">
+          <Link href="/" className="inline-flex items-center gap-3 rounded-full border border-border/70 bg-card/70 px-4 py-2 text-sm text-muted-foreground shadow-none backdrop-blur">
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent font-serif text-sm font-bold text-accent-foreground">
               P
             </span>

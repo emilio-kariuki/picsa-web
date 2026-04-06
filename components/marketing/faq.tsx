@@ -52,7 +52,7 @@ export function FAQ() {
               <div
                 key={faq.q}
                 className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
-                  isOpen ? 'bg-background border-accent/30 shadow-sm' : 'bg-background border-border'
+                  isOpen ? 'bg-background border-accent/30 shadow-none' : 'bg-background border-border'
                 }`}
               >
                 <button

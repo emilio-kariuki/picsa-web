@@ -82,7 +82,7 @@ export function LoginPageContent({ nextPath }: LoginPageContentProps) {
         <div className="mb-6 flex justify-center md:justify-start">
           <Link
             href={MARKETING_APP_URL}
-            className="inline-flex items-center gap-3 rounded-full border border-border/70 bg-background/90 px-4 py-2 text-sm text-muted-foreground shadow-sm backdrop-blur"
+            className="inline-flex items-center gap-3 rounded-full border border-border/70 bg-background/90 px-4 py-2 text-sm text-muted-foreground shadow-none backdrop-blur"
           >
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
               P

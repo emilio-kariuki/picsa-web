@@ -231,7 +231,7 @@ function MediaPreviewPanel({
 
   return (
     <div className="flex aspect-[4/3] w-full flex-col items-center justify-center rounded-2xl border border-dashed border-border/80 bg-muted/25 px-6 text-center">
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-background text-muted-foreground shadow-sm">
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-background text-muted-foreground shadow-none">
         {image.isPrivate ? <LockIcon className="h-6 w-6" /> : <ImageIcon className="h-6 w-6" />}
       </div>
       <h3 className="mt-4 text-base font-semibold">{previewState.title}</h3>
@@ -464,7 +464,7 @@ export default function ImagesPage() {
           change={overview ? Math.round((totalCount / Math.max(overview.totalImages, 1)) * 100) : 0}
           changeLabel="of total inventory"
           icon={<ScanSearchIcon className="h-5 w-5 text-muted-foreground" />}
-          className="rounded-2xl border-border/70 bg-card/90 shadow-sm"
+          className="rounded-2xl border-border/70 bg-card/90 shadow-none"
         />
         <KPICard
           title="Pending review"
@@ -472,7 +472,7 @@ export default function ImagesPage() {
           change={overview ? Math.round((overview.pendingModeratedImages / Math.max(overview.totalImages, 1)) * 100) : 0}
           changeLabel="awaiting decisions"
           icon={<Clock3Icon className="h-5 w-5 text-muted-foreground" />}
-          className="rounded-2xl border-border/70 bg-card/90 shadow-sm"
+          className="rounded-2xl border-border/70 bg-card/90 shadow-none"
         />
         <KPICard
           title="Rejected"
@@ -480,7 +480,7 @@ export default function ImagesPage() {
           change={overview ? Math.round((overview.rejectedImages / Math.max(overview.totalImages, 1)) * 100) : 0}
           changeLabel="hidden from viewers"
           icon={<ShieldOffIcon className="h-5 w-5 text-muted-foreground" />}
-          className="rounded-2xl border-border/70 bg-card/90 shadow-sm"
+          className="rounded-2xl border-border/70 bg-card/90 shadow-none"
         />
         <KPICard
           title="Visible in view"
@@ -488,11 +488,11 @@ export default function ImagesPage() {
           change={Math.round((visiblePrivateCount / Math.max(images.length, 1)) * 100)}
           changeLabel="private within current page"
           icon={<SparklesIcon className="h-5 w-5 text-muted-foreground" />}
-          className="rounded-2xl border-border/70 bg-card/90 shadow-sm"
+          className="rounded-2xl border-border/70 bg-card/90 shadow-none"
         />
       </div>
 
-      <Card className="border-border/70 bg-card/80 p-4 shadow-sm">
+      <Card className="border-border/70 bg-card/80 p-4 shadow-none">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
             <div className="relative w-full xl:max-w-xl">
@@ -501,7 +501,7 @@ export default function ImagesPage() {
                 value={searchInput}
                 onChange={(event) => setSearchInput(event.target.value)}
                 placeholder="Search uploads"
-                className="h-11 rounded-xl border-border/70 bg-background pl-10 shadow-sm"
+                className="h-11 rounded-xl border-border/70 bg-background pl-10 shadow-none"
               />
             </div>
             <div className="inline-flex items-center rounded-full border border-border/70 bg-muted/35 px-3 py-1.5 text-sm text-muted-foreground">
@@ -519,7 +519,7 @@ export default function ImagesPage() {
                 value={statusFilter}
                 onValueChange={(value) => setStatusFilter(value as ImageStatusFilterValue)}
               >
-                <SelectTrigger className="h-10 w-[160px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[160px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -537,7 +537,7 @@ export default function ImagesPage() {
                   setModerationFilter(value as ImageModerationFilterValue)
                 }
               >
-                <SelectTrigger className="h-10 w-[180px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[180px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Moderation" />
                 </SelectTrigger>
                 <SelectContent>
@@ -551,7 +551,7 @@ export default function ImagesPage() {
                 value={privacyFilter}
                 onValueChange={(value) => setPrivacyFilter(value as ImagePrivacyFilterValue)}
               >
-                <SelectTrigger className="h-10 w-[150px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[150px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Privacy" />
                 </SelectTrigger>
                 <SelectContent>
@@ -572,7 +572,7 @@ export default function ImagesPage() {
                   setSortBy(value as NonNullable<AdminImagesQueryInput['sortBy']>)
                 }
               >
-                <SelectTrigger className="h-10 w-[170px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[170px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
@@ -588,7 +588,7 @@ export default function ImagesPage() {
                   setSortOrder(value as NonNullable<AdminImagesQueryInput['sortOrder']>)
                 }
               >
-                <SelectTrigger className="h-10 w-[155px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[155px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Order" />
                 </SelectTrigger>
                 <SelectContent>
@@ -655,10 +655,10 @@ export default function ImagesPage() {
                             className="flex w-full items-center gap-3 text-left"
                             onClick={() => setSelectedImageId(image.id)}
                           >
-                            <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-border/70 bg-muted/30 text-muted-foreground shadow-sm">
+                            <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-border/70 bg-muted/30 text-muted-foreground shadow-none">
                               <ImageIcon className="h-5 w-5" />
                             </div>
-                            <div className="space-y-1">
+                            {/* <div className="space-y-1">
                               <div className="flex flex-wrap items-center gap-2">
                                 <p className="font-medium">
                                   {image.hd ? 'HD upload' : 'Standard upload'}
@@ -669,13 +669,8 @@ export default function ImagesPage() {
                                   </Badge>
                                 ) : null}
                               </div>
-                              <div className="flex flex-wrap gap-2">
-                                <StatusBadge
-                                  status={image.status.toLowerCase()}
-                                  colorClass={getImageStatusTone(image.status)}
-                                />
-                              </div>
-                            </div>
+                              
+                            </div> */}
                           </button>
                         </TableCell>
                         <TableCell>
@@ -719,6 +714,10 @@ export default function ImagesPage() {
                                 HD
                               </Badge>
                             ) : null}
+                            <StatusBadge
+                                  status={image.status.toLowerCase()}
+                                  colorClass={getImageStatusTone(image.status)}
+                                />
                           </div>
                         </TableCell>
                         <TableCell>
@@ -727,12 +726,12 @@ export default function ImagesPage() {
                             colorClass={getImageModerationTone(image.moderationStatus)}
                           />
                         </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
+                        {/* <TableCell className="text-sm text-muted-foreground">
                           <div className="space-y-1">
                             <p>{formatImageFileSize(image.sizeBytes)}</p>
                             <p>{image.contentType}</p>
                           </div>
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell className="text-sm text-muted-foreground">
                           {formatImageDateTime(image.createdAt)}
                         </TableCell>
@@ -1093,7 +1092,7 @@ export default function ImagesPage() {
             <div className="space-y-4">
               <div className="rounded-2xl border border-border/70 bg-muted/20 p-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-background text-muted-foreground shadow-sm">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-background text-muted-foreground shadow-none">
                     <ImageIcon className="h-5 w-5" />
                   </div>
                   <div className="space-y-1">

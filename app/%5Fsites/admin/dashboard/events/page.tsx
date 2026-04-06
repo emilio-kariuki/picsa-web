@@ -282,7 +282,7 @@ export default function EventsPage() {
           change={overview ? Math.round((totalCount / Math.max(overview.totalEvents, 1)) * 100) : 0}
           changeLabel="of total inventory"
           icon={<FolderKanbanIcon className="h-5 w-5 text-muted-foreground" />}
-          className="rounded-2xl border-border/70 bg-card/90 shadow-sm"
+          className="rounded-2xl border-border/70 bg-card/90 shadow-none"
         />
         <KPICard
           title="Active events"
@@ -290,7 +290,7 @@ export default function EventsPage() {
           change={overview ? Math.round((overview.activeEvents / Math.max(overview.totalEvents, 1)) * 100) : 0}
           changeLabel="currently live"
           icon={<UsersIcon className="h-5 w-5 text-muted-foreground" />}
-          className="rounded-2xl border-border/70 bg-card/90 shadow-sm"
+          className="rounded-2xl border-border/70 bg-card/90 shadow-none"
         />
         <KPICard
           title="Archived events"
@@ -298,7 +298,7 @@ export default function EventsPage() {
           change={overview ? Math.round((overview.archivedEvents / Math.max(overview.totalEvents, 1)) * 100) : 0}
           changeLabel="in storage"
           icon={<ArchiveIcon className="h-5 w-5 text-muted-foreground" />}
-          className="rounded-2xl border-border/70 bg-card/90 shadow-sm"
+          className="rounded-2xl border-border/70 bg-card/90 shadow-none"
         />
         <KPICard
           title="Private in view"
@@ -306,11 +306,11 @@ export default function EventsPage() {
           change={Math.round((privateInView / Math.max(events.length, 1)) * 100)}
           changeLabel="of visible rows"
           icon={<LockIcon className="h-5 w-5 text-muted-foreground" />}
-          className="rounded-2xl border-border/70 bg-card/90 shadow-sm"
+          className="rounded-2xl border-border/70 bg-card/90 shadow-none"
         />
       </div>
 
-      <Card className="border-border/70 bg-card/80 p-4 shadow-sm">
+      <Card className="border-border/70 bg-card/80 p-4 shadow-none">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
             <div className="relative w-full xl:max-w-xl">
@@ -319,7 +319,7 @@ export default function EventsPage() {
                 value={searchInput}
                 onChange={(event) => setSearchInput(event.target.value)}
                 placeholder="Search by event name, slug, or id"
-                className="h-11 rounded-xl border-border/70 bg-background pl-10 shadow-sm"
+                className="h-11 rounded-xl border-border/70 bg-background pl-10 shadow-none"
               />
             </div>
             <div className="inline-flex items-center rounded-full border border-border/70 bg-muted/35 px-3 py-1.5 text-sm text-muted-foreground">
@@ -337,7 +337,7 @@ export default function EventsPage() {
                 value={statusFilter}
                 onValueChange={(value) => setStatusFilter(value as EventStatusFilterValue)}
               >
-                <SelectTrigger className="h-10 w-[150px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[150px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -350,7 +350,7 @@ export default function EventsPage() {
                 value={joinModeFilter}
                 onValueChange={(value) => setJoinModeFilter(value as EventJoinModeFilterValue)}
               >
-                <SelectTrigger className="h-10 w-[190px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[190px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Join mode" />
                 </SelectTrigger>
                 <SelectContent>
@@ -364,7 +364,7 @@ export default function EventsPage() {
                 value={privacyFilter}
                 onValueChange={(value) => setPrivacyFilter(value as EventPrivacyFilterValue)}
               >
-                <SelectTrigger className="h-10 w-[150px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[150px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Privacy" />
                 </SelectTrigger>
                 <SelectContent>
@@ -385,7 +385,7 @@ export default function EventsPage() {
                   setSortBy(value as NonNullable<AdminEventsQueryInput['sortBy']>)
                 }
               >
-                <SelectTrigger className="h-10 w-[165px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[165px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
@@ -401,7 +401,7 @@ export default function EventsPage() {
                   setSortOrder(value as NonNullable<AdminEventsQueryInput['sortOrder']>)
                 }
               >
-                <SelectTrigger className="h-10 w-[155px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[155px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Order" />
                 </SelectTrigger>
                 <SelectContent>
@@ -469,12 +469,12 @@ export default function EventsPage() {
                             <div className="space-y-1.5">
                               <div className="flex items-center gap-2">
                                 <p className="font-medium">{event.name}</p>
-                                <StatusBadge status={event.status.toLowerCase()} />
+                                
                               </div>
                               <p className="line-clamp-1 text-sm text-muted-foreground">
-                                {event.description || 'No description provided'}
+                                {event.description || ''}
                               </p>
-                              <p className="text-xs text-muted-foreground">/{event.url}</p>
+                              {/* <p className="text-xs text-muted-foreground">/{event.url}</p> */}
                             </div>
                           </Link>
                         </TableCell>
@@ -503,6 +503,7 @@ export default function EventsPage() {
                               )}
                               {event.isPrivate ? 'Private' : 'Public'}
                             </Badge>
+                            <StatusBadge status={event.status.toLowerCase()} />
                           </div>
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">

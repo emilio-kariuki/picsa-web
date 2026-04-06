@@ -8,15 +8,19 @@ import {
   CameraIcon,
   ChevronRightIcon,
   Clock3Icon,
+  CreditCardIcon,
+  DollarSignIcon,
   FolderKanbanIcon,
   ImageIcon,
   ShieldAlertIcon,
   ShieldCheckIcon,
   SparklesIcon,
+  TicketIcon,
   UsersIcon,
 } from '@/components/ui/icons'
 import { useAdminAuth } from '@/hooks/use-admin-auth'
 import { getAdminOverview, type AdminOverview } from '@/lib/admin-overview-api'
+import { getAdminPaymentsOverview, type AdminPaymentOverview } from '@/lib/admin-payments-api'
 import { isAdminApiError } from '@/lib/api'
 import { PageHeader } from '@/components/common/page-header'
 import { KPICard } from '@/components/common/kpi-card'
@@ -31,9 +35,22 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from '@/components/ui/chart'
-import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, XAxis, YAxis } from 'recharts'
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Pie,
+  PieChart,
+  XAxis,
+  YAxis,
+} from 'recharts'
 
 const OVERVIEW_QUERY_KEY = 'admin-overview'
+const PAYMENTS_OVERVIEW_QUERY_KEY = 'admin-payments-overview'
+
 const dashboardChartColors = {
   emerald: 'var(--chart-1)',
   sky: 'var(--chart-2)',
@@ -64,6 +81,31 @@ const mediaStateChartConfig = {
   },
 } satisfies ChartConfig
 
+const growthChartConfig = {
+  users: {
+    label: 'New users',
+    color: dashboardChartColors.emerald,
+  },
+  events: {
+    label: 'New events',
+    color: dashboardChartColors.sky,
+  },
+} satisfies ChartConfig
+
+const revenueChartConfig = {
+  mrr: {
+    label: 'MRR',
+    color: dashboardChartColors.violet,
+  },
+} satisfies ChartConfig
+
+const ticketChartConfig = {
+  value: {
+    label: 'Tickets',
+    color: dashboardChartColors.amber,
+  },
+} satisfies ChartConfig
+
 function formatPercent(value: number) {
   return `${Math.round(value)}%`
 }
@@ -83,6 +125,16 @@ function DashboardSkeleton() {
         {Array.from({ length: 4 }).map((_, index) => (
           <Skeleton key={index} className="h-36 rounded-2xl" />
         ))}
+      </div>
+      <div className="grid gap-4 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <Skeleton key={`second-${index}`} className="h-36 rounded-2xl" />
+        ))}
+      </div>
+      <Skeleton className="h-[340px] rounded-2xl" />
+      <div className="grid gap-6 xl:grid-cols-2">
+        <Skeleton className="h-[380px] rounded-2xl" />
+        <Skeleton className="h-[380px] rounded-2xl" />
       </div>
       <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
         <Skeleton className="h-[380px] rounded-2xl" />
@@ -202,6 +254,76 @@ function buildActionCards(overview: AdminOverview) {
   ] as const
 }
 
+function buildTicketStatusData(overview: AdminOverview) {
+  return [
+    {
+      label: 'Open',
+      value: overview.tickets.openCount,
+      fill: dashboardChartColors.rose,
+    },
+    {
+      label: 'In progress',
+      value: overview.tickets.inProgressCount,
+      fill: dashboardChartColors.amber,
+    },
+    {
+      label: 'Resolved',
+      value: overview.tickets.resolvedCount,
+      fill: dashboardChartColors.emerald,
+    },
+    {
+      label: 'Closed',
+      value: Math.max(
+        overview.tickets.totalCount -
+          overview.tickets.openCount -
+          overview.tickets.inProgressCount -
+          overview.tickets.resolvedCount,
+        0,
+      ),
+      fill: dashboardChartColors.slate,
+    },
+  ]
+}
+
+function buildGrowthSeriesData(overview: AdminOverview) {
+  const userMap = new Map(overview.userGrowthSeries.map((p) => [p.date, p.count]))
+  const eventMap = new Map(overview.eventGrowthSeries.map((p) => [p.date, p.count]))
+
+  const allDates = [
+    ...new Set([
+      ...overview.userGrowthSeries.map((p) => p.date),
+      ...overview.eventGrowthSeries.map((p) => p.date),
+    ]),
+  ].sort()
+
+  return allDates.map((date) => ({
+    date,
+    shortDate: formatShortDate(date),
+    users: userMap.get(date) ?? 0,
+    events: eventMap.get(date) ?? 0,
+  }))
+}
+
+function formatShortDate(dateStr: string) {
+  const d = new Date(dateStr + 'T00:00:00')
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+function formatCurrency(value: number) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(value / 100)
+}
+
+function formatChangeLabel(change: number) {
+  if (change === 0) return '0%'
+  const sign = change > 0 ? '+' : ''
+  return `${sign}${Math.round(change)}%`
+}
+
 export default function DashboardPage() {
   const { bootstrapStatus, isAuthenticated, performAuthenticatedRequest } = useAdminAuth()
 
@@ -212,7 +334,15 @@ export default function DashboardPage() {
     enabled: bootstrapStatus === 'ready' && isAuthenticated,
   })
 
+  const paymentsOverviewQuery = useQuery({
+    queryKey: [PAYMENTS_OVERVIEW_QUERY_KEY],
+    queryFn: () =>
+      performAuthenticatedRequest((accessToken) => getAdminPaymentsOverview(accessToken)),
+    enabled: bootstrapStatus === 'ready' && isAuthenticated,
+  })
+
   const overview = overviewQuery.data?.data.overview
+  const paymentsOverview = paymentsOverviewQuery.data?.data.overview
 
   const actionCards = useMemo(
     () => (overview ? buildActionCards(overview) : []),
@@ -231,6 +361,16 @@ export default function DashboardPage() {
 
   const mediaStateData = useMemo(
     () => (overview ? buildMediaStateData(overview) : []),
+    [overview],
+  )
+
+  const ticketStatusData = useMemo(
+    () => (overview ? buildTicketStatusData(overview) : []),
+    [overview],
+  )
+
+  const growthSeriesData = useMemo(
+    () => (overview ? buildGrowthSeriesData(overview) : []),
     [overview],
   )
 
@@ -281,6 +421,7 @@ export default function DashboardPage() {
         }
       />
 
+      {/* Primary KPI row */}
       <section className="grid gap-4 lg:grid-cols-4">
         <KPICard
           title="Users"
@@ -288,7 +429,7 @@ export default function DashboardPage() {
           change={Math.round(calculatePercentage(overview.proUsers, overview.totalUsers))}
           changeLabel="Pro adoption"
           icon={<UsersIcon className="h-5 w-5 text-muted-foreground" />}
-          className="rounded-2xl border-border/70 bg-card/90 shadow-sm"
+          className="rounded-2xl border-border/70 bg-card/90 shadow-none"
         />
         <KPICard
           title="Active events"
@@ -296,7 +437,7 @@ export default function DashboardPage() {
           change={Math.round(calculatePercentage(overview.activeEvents, overview.totalEvents))}
           changeLabel="of all events"
           icon={<CameraIcon className="h-5 w-5 text-muted-foreground" />}
-          className="rounded-2xl border-border/70 bg-card/90 shadow-sm"
+          className="rounded-2xl border-border/70 bg-card/90 shadow-none"
         />
         <KPICard
           title="Images"
@@ -304,7 +445,7 @@ export default function DashboardPage() {
           change={Math.round(calculatePercentage(overview.pendingModeratedImages, Math.max(overview.totalImages, 1)))}
           changeLabel="pending moderation"
           icon={<ImageIcon className="h-5 w-5 text-muted-foreground" />}
-          className="rounded-2xl border-border/70 bg-card/90 shadow-sm"
+          className="rounded-2xl border-border/70 bg-card/90 shadow-none"
         />
         <KPICard
           title="Notification batches"
@@ -312,12 +453,297 @@ export default function DashboardPage() {
           change={Math.round(calculatePercentage(overview.adminUsers, Math.max(overview.totalUsers, 1)))}
           changeLabel="admins vs users"
           icon={<BellRingIcon className="h-5 w-5 text-muted-foreground" />}
-          className="rounded-2xl border-border/70 bg-card/90 shadow-sm"
+          className="rounded-2xl border-border/70 bg-card/90 shadow-none"
         />
       </section>
 
+      {/* Secondary KPI row — growth + revenue + support */}
+      <section className="grid gap-4 lg:grid-cols-4">
+        <KPICard
+          title="New users (30d)"
+          value={overview.newUsersLast30d.toLocaleString()}
+          change={overview.newUsersLast7d}
+          changeLabel="last 7 days"
+          icon={<UsersIcon className="h-5 w-5 text-muted-foreground" />}
+          className="rounded-2xl border-border/70 bg-card/90 shadow-none"
+        />
+        <KPICard
+          title="New events (30d)"
+          value={overview.newEventsLast30d.toLocaleString()}
+          change={overview.newEventsLast7d}
+          changeLabel="last 7 days"
+          icon={<FolderKanbanIcon className="h-5 w-5 text-muted-foreground" />}
+          className="rounded-2xl border-border/70 bg-card/90 shadow-none"
+        />
+        {paymentsOverview ? (
+          <KPICard
+            title="MRR"
+            value={formatCurrency(paymentsOverview.subscriptions.mrr)}
+            change={Math.round(paymentsOverview.subscriptions.mrrChange)}
+            changeLabel="vs last month"
+            icon={<DollarSignIcon className="h-5 w-5 text-muted-foreground" />}
+            className="rounded-2xl border-border/70 bg-card/90 shadow-none"
+          />
+        ) : (
+          <Skeleton className="h-36 rounded-2xl" />
+        )}
+        <KPICard
+          title="Open tickets"
+          value={overview.tickets.openCount.toLocaleString()}
+          change={overview.tickets.urgentCount}
+          changeLabel="urgent"
+          icon={<TicketIcon className="h-5 w-5 text-muted-foreground" />}
+          className="rounded-2xl border-border/70 bg-card/90 shadow-none"
+        />
+      </section>
+
+      {/* Growth trends — 30-day area chart */}
+      <section>
+        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-none">
+          <CardHeader className="space-y-3">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <CardTitle className="text-xl">Growth trends</CardTitle>
+                <CardDescription>
+                  Daily new user signups and event creation over the last 30 days.
+                </CardDescription>
+              </div>
+              <div className="flex gap-4">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: dashboardChartColors.emerald }} />
+                  Users
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: dashboardChartColors.sky }} />
+                  Events
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={growthChartConfig} className="h-[280px] w-full">
+              <AreaChart
+                data={growthSeriesData}
+                accessibilityLayer
+                margin={{ top: 8, right: 8, left: -12, bottom: 0 }}
+              >
+                <defs>
+                  <linearGradient id="fillUsers" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={dashboardChartColors.emerald} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={dashboardChartColors.emerald} stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="fillEvents" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={dashboardChartColors.sky} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={dashboardChartColors.sky} stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis
+                  dataKey="shortDate"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={10}
+                  interval="preserveStartEnd"
+                  minTickGap={40}
+                />
+                <YAxis tickLine={false} axisLine={false} tickMargin={10} allowDecimals={false} />
+                <ChartTooltip
+                  content={
+                    <ChartTooltipContent
+                      labelKey="shortDate"
+                      formatter={(value) => Number(value).toLocaleString()}
+                    />
+                  }
+                />
+                <Area
+                  type="monotone"
+                  dataKey="users"
+                  stroke={dashboardChartColors.emerald}
+                  fill="url(#fillUsers)"
+                  strokeWidth={2}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="events"
+                  stroke={dashboardChartColors.sky}
+                  fill="url(#fillEvents)"
+                  strokeWidth={2}
+                />
+              </AreaChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* Revenue & Subscriptions + Support Tickets */}
+      <section className="grid gap-6 xl:grid-cols-2">
+        {/* Revenue & Subscriptions */}
+        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-none">
+          <CardHeader className="space-y-3">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <CardTitle className="text-xl">Revenue & subscriptions</CardTitle>
+                <CardDescription>
+                  Monthly recurring revenue trend and subscriber health.
+                </CardDescription>
+              </div>
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/dashboard/payments">
+                  <CreditCardIcon className="mr-1.5 h-3.5 w-3.5" />
+                  Payments
+                </Link>
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            {paymentsOverview ? (
+              <>
+                <ChartContainer config={revenueChartConfig} className="h-[200px] w-full">
+                  <AreaChart
+                    data={paymentsOverview.subscriptions.mrrSeries.map((p) => ({
+                      month: p.month,
+                      mrr: p.mrr / 100,
+                    }))}
+                    accessibilityLayer
+                    margin={{ top: 8, right: 8, left: -12, bottom: 0 }}
+                  >
+                    <defs>
+                      <linearGradient id="fillMrr" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={dashboardChartColors.violet} stopOpacity={0.3} />
+                        <stop offset="95%" stopColor={dashboardChartColors.violet} stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={10} />
+                    <YAxis tickLine={false} axisLine={false} tickMargin={10} tickFormatter={(v) => `$${v}`} />
+                    <ChartTooltip
+                      content={
+                        <ChartTooltipContent
+                          labelKey="month"
+                          formatter={(value) => `$${Number(value).toLocaleString()}`}
+                        />
+                      }
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="mrr"
+                      stroke={dashboardChartColors.violet}
+                      fill="url(#fillMrr)"
+                      strokeWidth={2}
+                    />
+                  </AreaChart>
+                </ChartContainer>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <MetricPanel
+                    title="Active subscriptions"
+                    value={paymentsOverview.subscriptions.activeSubscriptions.toLocaleString()}
+                    helper={`${formatChangeLabel(paymentsOverview.subscriptions.activeSubscriptionsChange)} vs last month`}
+                    tone="emerald"
+                  />
+                  <MetricPanel
+                    title="Trials"
+                    value={paymentsOverview.subscriptions.trials.toLocaleString()}
+                    helper={`${formatChangeLabel(paymentsOverview.subscriptions.trialsChange)} vs last month`}
+                    tone="sky"
+                  />
+                  <MetricPanel
+                    title="Churn rate"
+                    value={`${paymentsOverview.subscriptions.churnRate.toFixed(1)}%`}
+                    helper={`${formatChangeLabel(paymentsOverview.subscriptions.churnRateChange)} vs last month`}
+                    tone={paymentsOverview.subscriptions.churnRate > 5 ? 'rose' : 'emerald'}
+                  />
+                  <MetricPanel
+                    title="Event pass revenue"
+                    value={formatCurrency(paymentsOverview.eventPasses.grossRevenue)}
+                    helper={`${paymentsOverview.eventPasses.totalPurchases.toLocaleString()} total purchases`}
+                    tone="violet"
+                  />
+                </div>
+              </>
+            ) : (
+              <div className="flex h-[340px] items-center justify-center">
+                <Skeleton className="h-full w-full rounded-2xl" />
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Support tickets */}
+        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-none">
+          <CardHeader className="space-y-3">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <CardTitle className="text-xl">Support tickets</CardTitle>
+                <CardDescription>
+                  Current distribution of support ticket statuses and urgent items needing attention.
+                </CardDescription>
+              </div>
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/dashboard/tickets">
+                  <TicketIcon className="mr-1.5 h-3.5 w-3.5" />
+                  Tickets
+                </Link>
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <ChartContainer config={ticketChartConfig} className="h-[200px] w-full">
+              <BarChart
+                data={ticketStatusData}
+                accessibilityLayer
+                margin={{ top: 8, right: 8, left: -12, bottom: 0 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={10} />
+                <YAxis tickLine={false} axisLine={false} tickMargin={10} allowDecimals={false} />
+                <ChartTooltip
+                  content={
+                    <ChartTooltipContent
+                      labelKey="label"
+                      formatter={(value) => Number(value).toLocaleString()}
+                    />
+                  }
+                />
+                <Bar dataKey="value" radius={[12, 12, 4, 4]}>
+                  {ticketStatusData.map((entry) => (
+                    <Cell key={entry.label} fill={entry.fill} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ChartContainer>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <MetricPanel
+                title="Awaiting staff response"
+                value={overview.tickets.awaitingStaffResponseCount.toLocaleString()}
+                helper="Tickets where the customer replied last"
+                tone={overview.tickets.awaitingStaffResponseCount > 0 ? 'rose' : 'emerald'}
+              />
+              <MetricPanel
+                title="Unassigned"
+                value={overview.tickets.unassignedCount.toLocaleString()}
+                helper="Open tickets not yet assigned to an agent"
+                tone={overview.tickets.unassignedCount > 0 ? 'amber' : 'emerald'}
+              />
+              <MetricPanel
+                title="Urgent"
+                value={overview.tickets.urgentCount.toLocaleString()}
+                helper="High-priority tickets requiring immediate attention"
+                tone={overview.tickets.urgentCount > 0 ? 'rose' : 'emerald'}
+              />
+              <MetricPanel
+                title="Total resolved"
+                value={overview.tickets.resolvedCount.toLocaleString()}
+                helper={`${overview.tickets.totalCount.toLocaleString()} tickets total`}
+                tone="emerald"
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* User access snapshot + Event lifecycle (existing) */}
       <section className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-sm">
+        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-none">
           <CardHeader className="space-y-3">
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -392,7 +818,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-sm">
+        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-none">
           <CardHeader>
             <CardTitle className="text-xl">Event lifecycle</CardTitle>
             <CardDescription>
@@ -441,8 +867,9 @@ export default function DashboardPage() {
         </Card>
       </section>
 
+      {/* Media moderation + Priority queue (existing) */}
       <section className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-sm">
+        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-none">
           <CardHeader>
             <CardTitle className="text-xl">Media moderation</CardTitle>
             <CardDescription>
@@ -464,9 +891,9 @@ export default function DashboardPage() {
                 tone={overview.rejectedImages > 0 ? 'amber' : 'emerald'}
               />
               <MetricPanel
-                title="Notification batches"
-                value={overview.totalNotificationBatches.toLocaleString()}
-                helper="Admin-originated system pushes and broadcasts sent so far."
+                title="New images (7d)"
+                value={overview.newImagesLast7d.toLocaleString()}
+                helper={`${overview.newImagesLast30d.toLocaleString()} in the last 30 days.`}
                 tone="sky"
               />
             </div>
@@ -504,7 +931,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-sm">
+        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-none">
           <CardHeader>
             <CardTitle className="text-xl">Priority queue</CardTitle>
             <CardDescription>
@@ -519,22 +946,28 @@ export default function DashboardPage() {
               helper="Images waiting on host or admin review"
             />
             <PriorityRow
+              label="Awaiting staff response"
+              value={overview.tickets.awaitingStaffResponseCount}
+              tone={overview.tickets.awaitingStaffResponseCount > 0 ? 'rose' : 'emerald'}
+              helper="Support tickets needing admin follow-up"
+            />
+            <PriorityRow
+              label="Urgent tickets"
+              value={overview.tickets.urgentCount}
+              tone={overview.tickets.urgentCount > 0 ? 'amber' : 'emerald'}
+              helper="High-priority tickets requiring immediate action"
+            />
+            <PriorityRow
               label="Rejected images"
               value={overview.rejectedImages}
               tone={overview.rejectedImages > 0 ? 'amber' : 'emerald'}
               helper="Uploads that were explicitly rejected"
             />
             <PriorityRow
-              label="Archived events"
-              value={overview.archivedEvents}
-              tone="slate"
-              helper="Events preserved but currently closed"
-            />
-            <PriorityRow
-              label="Admin broadcasts"
-              value={overview.totalNotificationBatches}
-              tone="sky"
-              helper="System-wide notification batches already sent"
+              label="Unassigned tickets"
+              value={overview.tickets.unassignedCount}
+              tone={overview.tickets.unassignedCount > 0 ? 'amber' : 'emerald'}
+              helper="Support tickets not yet assigned to an agent"
             />
             <Separator />
             <div className="rounded-2xl bg-muted/40 p-4">
@@ -550,8 +983,9 @@ export default function DashboardPage() {
         </Card>
       </section>
 
+      {/* Quick access (existing) */}
       <section>
-        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-sm">
+        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-none">
           <CardHeader>
             <CardTitle className="text-xl">Quick access</CardTitle>
             <CardDescription>

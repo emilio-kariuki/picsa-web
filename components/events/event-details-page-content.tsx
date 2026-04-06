@@ -147,7 +147,7 @@ export function EventDetailsPageContent({ eventId }: { eventId: string }) {
       />
 
       {eventQuery.isLoading ? (
-        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-sm">
+        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-none">
           <CardContent className="flex min-h-[420px] items-center justify-center">
             <div className="flex flex-col items-center gap-3">
               <Spinner className="size-6" />
@@ -156,7 +156,7 @@ export function EventDetailsPageContent({ eventId }: { eventId: string }) {
           </CardContent>
         </Card>
       ) : eventQuery.isError ? (
-        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-sm">
+        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-none">
           <CardContent className="flex min-h-[320px] items-center justify-center px-6 text-center">
             <div className="space-y-4">
               <div className="space-y-1">
@@ -174,7 +174,7 @@ export function EventDetailsPageContent({ eventId }: { eventId: string }) {
           </CardContent>
         </Card>
       ) : event ? (
-        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-sm">
+        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-none">
           <CardContent className="p-6">
             <div className="flex flex-wrap items-center gap-2 border-b border-border/70 pb-4">
               <Badge variant="outline">/{event.url}</Badge>

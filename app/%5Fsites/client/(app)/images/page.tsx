@@ -219,7 +219,7 @@ export default function ClientImagesPage() {
                     <Badge
                       variant="outline"
                       className={cn(
-                        'rounded-[0.65rem] border-white/18 bg-black/34 px-2.5 py-1 text-[10px] text-white shadow-sm backdrop-blur-md',
+                        'rounded-[0.65rem] border-white/18 bg-black/34 px-2.5 py-1 text-[10px] text-white shadow-none backdrop-blur-md',
                         imageBadgeClass(image),
                       )}
                     >

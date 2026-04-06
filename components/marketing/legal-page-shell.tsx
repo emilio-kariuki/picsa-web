@@ -56,7 +56,7 @@ export function LegalPageShell({
         <div className="mx-auto flex h-[4.5rem] max-w-6xl items-center justify-between px-6">
           <div className="flex items-center gap-4">
             <Link href="/" className="group inline-flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-accent text-sm font-bold text-accent-foreground shadow-sm">
+              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-accent text-sm font-bold text-accent-foreground shadow-none">
                 P
               </span>
               <span className="font-serif text-xl font-bold tracking-tight text-foreground">

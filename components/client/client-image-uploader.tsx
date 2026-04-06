@@ -48,7 +48,7 @@ export function ClientImageUploader({
       }}
     >
       <div className="mx-auto flex max-w-md flex-col items-center gap-3">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-background text-accent shadow-sm">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-background text-accent shadow-none">
           <UploadCloudIcon className="h-6 w-6" />
         </div>
         <div className="space-y-2">

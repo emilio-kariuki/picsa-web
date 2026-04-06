@@ -55,7 +55,7 @@ export function HowItWorks() {
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-border bg-background p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+              <div className="rounded-3xl border border-border bg-background p-6 shadow-none hover:shadow-md transition-shadow duration-300">
                 <h3 className="font-serif font-bold text-xl text-foreground mb-2">{step.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed mb-3">{step.desc}</p>
                 <p className="text-xs text-accent font-medium leading-relaxed">{step.detail}</p>

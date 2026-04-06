@@ -271,7 +271,7 @@ function NotificationBatchDetailSheet({
         </SheetHeader>
 
         {isLoading && !batch ? (
-          <div className="flex min-h-[280px] items-center justify-center">
+          <div className="flex min-h-70 items-center justify-center">
             <Spinner className="h-6 w-6" />
           </div>
         ) : errorMessage && !batch ? (
@@ -389,7 +389,7 @@ function NotificationBatchDetailSheet({
                         <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
                           {key}
                         </p>
-                        <p className="mt-2 break-words text-sm">{value}</p>
+                        <p className="mt-2 wrap-break-word text-sm">{value}</p>
                       </div>
                     ))}
                   </div>
@@ -770,7 +770,7 @@ export default function NotificationsPage() {
 
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Select value={sortBy} onValueChange={(value) => setSortBy(value as AdminNotificationBatchSortBy)}>
-                  <SelectTrigger className="min-w-[180px]">
+                  <SelectTrigger className="min-w-45">
                     <FilterIcon className="mr-2 h-4 w-4" />
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
@@ -784,7 +784,7 @@ export default function NotificationsPage() {
                 </Select>
 
                 <Select value={sortOrder} onValueChange={(value) => setSortOrder(value as 'ASC' | 'DESC')}>
-                  <SelectTrigger className="min-w-[150px]">
+                  <SelectTrigger className="min-w-37.5">
                     <SelectValue placeholder="Sort order" />
                   </SelectTrigger>
                   <SelectContent>
@@ -801,7 +801,7 @@ export default function NotificationsPage() {
 
           {batchesQuery.isLoading ? (
             <Card className="border-border/70">
-              <CardContent className="flex min-h-[320px] items-center justify-center">
+              <CardContent className="flex min-h-80 items-center justify-center">
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <Spinner className="h-5 w-5" />
                   Loading live notification batches...
@@ -858,7 +858,7 @@ export default function NotificationsPage() {
                               className={cn(selectedBatchId === batch.id && 'bg-muted/40')}
                             >
                               <TableCell className="align-top">
-                                <div className="min-w-[280px] space-y-2">
+                                <div className="min-w-70 space-y-2">
                                   <div className="flex flex-wrap items-center gap-2">
                                     <p className="font-medium">{batch.title}</p>
                                     {batch.processingError && (
@@ -868,7 +868,6 @@ export default function NotificationsPage() {
                                   <p className="max-w-xl whitespace-normal text-sm text-muted-foreground">
                                     {batch.body}
                                   </p>
-                                  <p className="text-xs text-muted-foreground">Batch ID: {batch.id}</p>
                                 </div>
                               </TableCell>
                               <TableCell className="align-top">
@@ -876,13 +875,10 @@ export default function NotificationsPage() {
                                   <Badge className={cn('border-0', audienceStyle.badgeClassName)}>
                                     {audienceStyle.label}
                                   </Badge>
-                                  <p className="max-w-[180px] whitespace-normal text-sm text-muted-foreground">
-                                    {audienceStyle.description}
-                                  </p>
                                 </div>
                               </TableCell>
                               <TableCell className="align-top">
-                                <div className="space-y-2">
+                                <div className="space-y-2 ">
                                   <Badge className={cn('border-0', statusStyle.badgeClassName)}>
                                     <span className="inline-flex items-center gap-1.5">
                                       <StatusIcon
@@ -895,7 +891,7 @@ export default function NotificationsPage() {
                                     </span>
                                   </Badge>
                                   {batch.processingError && (
-                                    <p className="max-w-[220px] whitespace-normal text-sm text-destructive">
+                                    <p className="max-w-55 whitespace-normal text-sm text-destructive">
                                       {batch.processingError}
                                     </p>
                                   )}
@@ -904,17 +900,8 @@ export default function NotificationsPage() {
                               <TableCell className="align-top text-sm text-muted-foreground">
                                 {batch.totalRecipients.toLocaleString()}
                               </TableCell>
-                              <TableCell className="align-top text-sm text-muted-foreground">
-                                <div className="space-y-1">
-                                  <p>{formatDateTime(batch.createdAt)}</p>
-                                  <p>{formatTimeAgo(batch.createdAt)}</p>
-                                </div>
-                              </TableCell>
-                              <TableCell className="align-top text-sm text-muted-foreground">
-                                {batch.processedAt ? formatDateTime(batch.processedAt) : 'Waiting'}
-                              </TableCell>
                               <TableCell className="align-top">
-                                <div className="flex min-w-[180px] items-center gap-3">
+                                <div className="flex min-w-45 items-center gap-3">
                                   <Avatar className="h-8 w-8">
                                     <AvatarFallback>{getInitials(batch.createdBy.name)}</AvatarFallback>
                                   </Avatar>
@@ -928,6 +915,16 @@ export default function NotificationsPage() {
                                   </div>
                                 </div>
                               </TableCell>
+                              <TableCell className="align-top text-sm text-muted-foreground">
+                                <div className="space-y-1">
+                                  <p>{formatDateTime(batch.createdAt)}</p>
+                                  <p>{formatTimeAgo(batch.createdAt)}</p>
+                                </div>
+                              </TableCell>
+                              <TableCell className="align-top text-sm text-muted-foreground">
+                                {batch.processedAt ? formatDateTime(batch.processedAt) : 'Waiting'}
+                              </TableCell>
+                              
                               <TableCell className="align-top text-right">
                                 <Button
                                   variant="outline"

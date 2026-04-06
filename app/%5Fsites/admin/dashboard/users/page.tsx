@@ -378,7 +378,7 @@ export default function UsersPage() {
         }
       />
 
-      <Card className="border-border/70 bg-card/80 p-4 shadow-sm">
+      <Card className="border-border/70 bg-card/80 p-4 shadow-none">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
             <div className="relative w-full xl:max-w-xl">
@@ -387,7 +387,7 @@ export default function UsersPage() {
                 value={searchInput}
                 onChange={(event) => setSearchInput(event.target.value)}
                 placeholder="Search by name, email, or user id"
-                className="h-11 rounded-xl border-border/70 bg-background pl-10 shadow-sm"
+                className="h-11 rounded-xl border-border/70 bg-background pl-10 shadow-none"
               />
             </div>
             <div className="inline-flex items-center rounded-full border border-border/70 bg-muted/35 px-3 py-1.5 text-sm text-muted-foreground">
@@ -402,7 +402,7 @@ export default function UsersPage() {
                 Filter
               </span>
               <Select value={roleFilter} onValueChange={(value) => setRoleFilter(value as RoleFilterValue)}>
-                <SelectTrigger className="h-10 w-[150px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[150px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -412,7 +412,7 @@ export default function UsersPage() {
                 </SelectContent>
               </Select>
               <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as StatusFilterValue)}>
-                <SelectTrigger className="h-10 w-[160px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[160px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -422,7 +422,7 @@ export default function UsersPage() {
                 </SelectContent>
               </Select>
               <Select value={proFilter} onValueChange={(value) => setProFilter(value as ProFilterValue)}>
-                <SelectTrigger className="h-10 w-[145px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[145px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Plan" />
                 </SelectTrigger>
                 <SelectContent>
@@ -441,7 +441,7 @@ export default function UsersPage() {
                 value={sortBy ?? 'createdAt'}
                 onValueChange={(value) => setSortBy(value as NonNullable<AdminUsersQueryInput['sortBy']>)}
               >
-                <SelectTrigger className="h-10 w-[165px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[165px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
@@ -456,7 +456,7 @@ export default function UsersPage() {
                 value={sortOrder ?? 'DESC'}
                 onValueChange={(value) => setSortOrder(value as NonNullable<AdminUsersQueryInput['sortOrder']>)}
               >
-                <SelectTrigger className="h-10 w-[155px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[155px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Order" />
                 </SelectTrigger>
                 <SelectContent>

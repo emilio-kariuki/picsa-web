@@ -267,7 +267,7 @@ export default function AuditLogPage() {
           change={Math.round((logs.length / Math.max(totalCount, 1)) * 100)}
           changeLabel="visible on this page"
           icon={<ActivityIcon className="h-5 w-5 text-muted-foreground" />}
-          className="rounded-2xl border-border/70 bg-card/90 shadow-sm"
+          className="rounded-2xl border-border/70 bg-card/90 shadow-none"
         />
         <KPICard
           title="Failures in view"
@@ -275,7 +275,7 @@ export default function AuditLogPage() {
           change={Math.round((failureCount / Math.max(logs.length, 1)) * 100)}
           changeLabel="of visible rows"
           icon={<ShieldAlertIcon className="h-5 w-5 text-muted-foreground" />}
-          className="rounded-2xl border-border/70 bg-card/90 shadow-sm"
+          className="rounded-2xl border-border/70 bg-card/90 shadow-none"
         />
         <KPICard
           title="Queue activity"
@@ -283,17 +283,17 @@ export default function AuditLogPage() {
           change={Math.round((queueCount / Math.max(logs.length, 1)) * 100)}
           changeLabel="of visible rows"
           icon={<BotIcon className="h-5 w-5 text-muted-foreground" />}
-          className="rounded-2xl border-border/70 bg-card/90 shadow-sm"
+          className="rounded-2xl border-border/70 bg-card/90 shadow-none"
         />
         <KPICard
           title="Average duration"
           value={averageDuration == null ? '—' : formatAuditDuration(averageDuration)}
           icon={<Clock3Icon className="h-5 w-5 text-muted-foreground" />}
-          className="rounded-2xl border-border/70 bg-card/90 shadow-sm"
+          className="rounded-2xl border-border/70 bg-card/90 shadow-none"
         />
       </div>
 
-      <Card className="border-border/70 bg-card/80 p-4 shadow-sm">
+      <Card className="border-border/70 bg-card/80 p-4 shadow-none">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
             <div className="relative w-full xl:max-w-xl">
@@ -302,7 +302,7 @@ export default function AuditLogPage() {
                 value={searchInput}
                 onChange={(event) => setSearchInput(event.target.value)}
                 placeholder="Search actions, routes, queues, errors, or actors"
-                className="h-11 rounded-xl border-border/70 bg-background pl-10 shadow-sm"
+                className="h-11 rounded-xl border-border/70 bg-background pl-10 shadow-none"
               />
             </div>
             <div className="inline-flex items-center rounded-full border border-border/70 bg-muted/35 px-3 py-1.5 text-sm text-muted-foreground">
@@ -320,7 +320,7 @@ export default function AuditLogPage() {
                 value={channelFilter}
                 onValueChange={(value) => setChannelFilter(value as AuditChannelFilterValue)}
               >
-                <SelectTrigger className="h-10 w-[155px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[155px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Channel" />
                 </SelectTrigger>
                 <SelectContent>
@@ -335,7 +335,7 @@ export default function AuditLogPage() {
                 value={outcomeFilter}
                 onValueChange={(value) => setOutcomeFilter(value as AuditOutcomeFilterValue)}
               >
-                <SelectTrigger className="h-10 w-[155px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[155px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Outcome" />
                 </SelectTrigger>
                 <SelectContent>
@@ -348,7 +348,7 @@ export default function AuditLogPage() {
                 value={methodFilter}
                 onValueChange={(value) => setMethodFilter(value as AuditMethodFilterValue)}
               >
-                <SelectTrigger className="h-10 w-[145px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[145px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Method" />
                 </SelectTrigger>
                 <SelectContent>
@@ -371,7 +371,7 @@ export default function AuditLogPage() {
                   setSortBy(value as NonNullable<AdminAuditLogsQueryInput['sortBy']>)
                 }
               >
-                <SelectTrigger className="h-10 w-[170px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[170px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
@@ -390,7 +390,7 @@ export default function AuditLogPage() {
                   setSortOrder(value as NonNullable<AdminAuditLogsQueryInput['sortOrder']>)
                 }
               >
-                <SelectTrigger className="h-10 w-[155px] rounded-full border-border/70 bg-background shadow-sm">
+                <SelectTrigger className="h-10 w-[155px] rounded-full border-border/70 bg-background shadow-none">
                   <SelectValue placeholder="Order" />
                 </SelectTrigger>
                 <SelectContent>
@@ -458,7 +458,7 @@ export default function AuditLogPage() {
                           </TableCell>
                           <TableCell>
                             <div className="flex items-start gap-3">
-                              <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-2xl border border-border/70 bg-muted/25 text-muted-foreground shadow-sm">
+                              <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-2xl border border-border/70 bg-muted/25 text-muted-foreground shadow-none">
                                 <SurfaceIcon className="h-4 w-4" />
                               </div>
                               <div className="space-y-1">

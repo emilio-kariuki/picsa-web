@@ -15,7 +15,7 @@ export function PicsaLogo({
   return (
     <span
       className={cn(
-        'relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-border/70 bg-background/90 shadow-sm',
+        'relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-border/70 bg-background/90 shadow-none',
         className,
       )}
       style={{ width: size, height: size }}
