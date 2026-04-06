@@ -14,7 +14,6 @@ import {
 } from '@/lib/events-page-state'
 import { PageHeader } from '@/components/common/page-header'
 import { AdminEventDetailContent } from '@/components/events/admin-event-detail-content'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -176,12 +175,6 @@ export function EventDetailsPageContent({ eventId }: { eventId: string }) {
       ) : event ? (
         <Card className="rounded-3xl border-border/70 bg-card/90 shadow-none">
           <CardContent className="p-6">
-            <div className="flex flex-wrap items-center gap-2 border-b border-border/70 pb-4">
-              <Badge variant="outline">/{event.url}</Badge>
-              <Badge variant="secondary">{event.memberCount.toLocaleString()} members</Badge>
-              <Badge variant="secondary">{event.counts.imageCount.toLocaleString()} images</Badge>
-              <Badge variant="secondary">{event.chat.messageCount.toLocaleString()} chat messages</Badge>
-            </div>
             <AdminEventDetailContent event={event} />
           </CardContent>
         </Card>

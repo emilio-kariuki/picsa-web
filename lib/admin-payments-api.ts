@@ -44,6 +44,7 @@ export interface AdminPaymentsSubscriptionsQueryInput {
   willRenew?: boolean
   expiresBefore?: string
   expiresAfter?: string
+  isSandbox?: boolean
 }
 
 export interface AdminEventPassPaymentsQueryInput {
@@ -56,6 +57,7 @@ export interface AdminEventPassPaymentsQueryInput {
   paymentStatus?: string
   claimed?: boolean
   revoked?: boolean
+  isSandbox?: boolean
 }
 
 export interface AdminBillingTransactionsQueryInput {
@@ -68,6 +70,7 @@ export interface AdminBillingTransactionsQueryInput {
   type?: AdminBillingTransactionType
   createdFrom?: string
   createdTo?: string
+  isSandbox?: boolean
 }
 
 export interface AdminPaymentSubscription {
@@ -295,8 +298,9 @@ function mapSubscriptionItem(item: RawAdminPaymentsSubscriptionItem): AdminPayme
   }
 }
 
-export async function getAdminPaymentsOverview(accessToken: string) {
-  return adminApiRequest<AdminPaymentsOverviewResponse>('/admin/payments/overview', {
+export async function getAdminPaymentsOverview(accessToken: string, isSandbox?: boolean) {
+  const qs = typeof isSandbox === 'boolean' ? `?isSandbox=${isSandbox}` : ''
+  return adminApiRequest<AdminPaymentsOverviewResponse>(`/admin/payments/overview${qs}`, {
     accessToken,
   })
 }

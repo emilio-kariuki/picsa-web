@@ -639,7 +639,7 @@ export default function UsersPage() {
       </Card>
 
       <Sheet open={Boolean(selectedUserId)} onOpenChange={(open) => !open && setSelectedUserId(null)}>
-        <SheetContent className="w-full overflow-y-auto sm:max-w-xl">
+        <SheetContent className="w-full overflow-y-auto sm:max-w-xl p-4">
           <SheetHeader>
             <SheetTitle>User details</SheetTitle>
             <SheetDescription>
@@ -780,7 +780,7 @@ function UserDetailContent({
             <StatusBadge status={getStatusLabel(user)} />
           </div>
           <p className="text-sm text-muted-foreground">{user.email ?? 'No email address'}</p>
-          <p className="text-xs text-muted-foreground">User ID: {user.id}</p>
+          {/* <p className="text-xs text-muted-foreground">User ID: {user.id}</p> */}
         </div>
       </div>
 

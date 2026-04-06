@@ -833,9 +833,9 @@ export default function SettingsPage() {
                       <div className="space-y-1">
                         <p className="text-lg font-semibold">{displayName}</p>
                         <p className="text-sm text-muted-foreground">{email}</p>
-                        <p className="text-sm text-muted-foreground">
+                        {/* <p className="text-sm text-muted-foreground">
                           User ID: {currentUser?.id ?? 'Not available'}
-                        </p>
+                        </p> */}
                       </div>
                     </div>
                     <StatusBadge status={accountStatus} />

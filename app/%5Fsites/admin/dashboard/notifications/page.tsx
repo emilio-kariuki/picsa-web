@@ -261,7 +261,7 @@ function NotificationBatchDetailSheet({
 }) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full overflow-y-auto sm:max-w-xl">
+      <SheetContent className="w-full overflow-y-auto sm:max-w-xl p-4">
         <SheetHeader>
           <SheetTitle>Batch Details</SheetTitle>
           <SheetDescription>
@@ -366,7 +366,6 @@ function NotificationBatchDetailSheet({
                     {batch.createdBy.name || batch.createdBy.email || 'Unknown admin'}
                   </p>
                   <p className="truncate text-sm text-muted-foreground">{batch.createdBy.email}</p>
-                  <p className="truncate text-xs text-muted-foreground">Admin ID: {batch.createdBy.id}</p>
                 </div>
               </CardContent>
             </Card>

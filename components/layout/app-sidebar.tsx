@@ -79,20 +79,19 @@ export function AppSidebar() {
   }
 
   return (
-    <aside className="w-64 border-r border-border bg-sidebar flex flex-col">
-      <div className="p-6">
+    <aside className="w-64 border-r border-border flex flex-col bg-sidebar">
+      <div className="px-6 py-2.5 border-b border-border">
         <div className="flex items-center gap-3">
           <PicsaLogo size={36} className="rounded-xl shrink-0" />
           <div className="flex-1 min-w-0">
             <h1 className="text-base font-bold text-sidebar-foreground leading-tight truncate">
               Picsa
             </h1>
-            <span className="text-xs text-muted-foreground">Admin</span>
           </div>
         </div>
       </div>
 
-      <nav className="flex-1 px-3 space-y-1">
+      <nav className="flex-1 px-3 space-y-1 py-4">
         {menuItems.map((item) => {
           const Icon = item.icon
           const isActive = currentPage === item.page

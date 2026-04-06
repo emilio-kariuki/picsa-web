@@ -11,6 +11,7 @@ import {
   SearchIcon,
   ShieldAlertIcon,
   SmartphoneIcon,
+  TriangleAlertIcon,
 } from '@/components/ui/icons'
 import { EmptyState } from '@/components/common/empty-state'
 import { KPICard } from '@/components/common/kpi-card'
@@ -19,6 +20,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -27,6 +29,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Spinner } from '@/components/ui/spinner'
+import { Switch } from '@/components/ui/switch'
 import {
   Table,
   TableBody,
@@ -392,6 +395,7 @@ function TransactionsTable({ items }: { items: AdminBillingTransaction[] }) {
 export default function AdminPaymentsPage() {
   const { performAuthenticatedRequest } = useAdminAuth()
   const [activeTab, setActiveTab] = useState('overview')
+  const [isSandbox, setIsSandbox] = useState(true)
 
   const [subscriptionSearch, setSubscriptionSearch] = useState('')
   const deferredSubscriptionSearch = useDeferredValue(subscriptionSearch)
@@ -407,12 +411,12 @@ export default function AdminPaymentsPage() {
   const deferredTransactionSearch = useDeferredValue(transactionSearch)
 
   const overviewQuery = useQuery({
-    queryKey: ['admin', 'payments', 'overview'],
-    queryFn: () => performAuthenticatedRequest((token) => getAdminPaymentsOverview(token)),
+    queryKey: ['admin', 'payments', 'overview', isSandbox],
+    queryFn: () => performAuthenticatedRequest((token) => getAdminPaymentsOverview(token, isSandbox)),
   })
 
   const subscriptionsQuery = useQuery({
-    queryKey: ['admin', 'payments', 'subscriptions', deferredSubscriptionSearch],
+    queryKey: ['admin', 'payments', 'subscriptions', deferredSubscriptionSearch, isSandbox],
     queryFn: () =>
       performAuthenticatedRequest((token) =>
         listAdminPaymentSubscriptions(token, {
@@ -421,6 +425,7 @@ export default function AdminPaymentsPage() {
           search: deferredSubscriptionSearch || undefined,
           sortBy: 'expiresAt',
           sortOrder: 'ASC',
+          isSandbox,
         }),
       ),
   })
@@ -433,6 +438,7 @@ export default function AdminPaymentsPage() {
       deferredEventPassSearch,
       eventPassProvider,
       eventPassStatus,
+      isSandbox,
     ],
     queryFn: () =>
       performAuthenticatedRequest((token) =>
@@ -444,6 +450,7 @@ export default function AdminPaymentsPage() {
           sortOrder: 'DESC',
           provider: eventPassProvider === 'all' ? undefined : eventPassProvider,
           paymentStatus: eventPassStatus === 'all' ? undefined : eventPassStatus,
+          isSandbox,
         }),
       ),
   })
@@ -456,6 +463,7 @@ export default function AdminPaymentsPage() {
       deferredTransactionSearch,
       transactionProvider,
       transactionType,
+      isSandbox,
     ],
     queryFn: () =>
       performAuthenticatedRequest((token) =>
@@ -467,6 +475,7 @@ export default function AdminPaymentsPage() {
           sortOrder: 'DESC',
           provider: transactionProvider === 'all' ? undefined : transactionProvider,
           type: transactionType === 'all' ? undefined : transactionType,
+          isSandbox,
         }),
       ),
   })
@@ -484,21 +493,47 @@ export default function AdminPaymentsPage() {
         title="Payments"
         description="Track recurring subscriptions, web event-pass purchases, and provider activity from one billing workspace."
         actions={
-          <Button
-            variant="outline"
-            className="gap-2"
-            onClick={() => {
-              void overviewQuery.refetch()
-              void subscriptionsQuery.refetch()
-              void eventPassesQuery.refetch()
-              void transactionsQuery.refetch()
-            }}
-          >
-            <RefreshCwIcon className="h-4 w-4" />
-            Refresh
-          </Button>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Switch
+                id="sandbox-toggle"
+                checked={isSandbox}
+                onCheckedChange={setIsSandbox}
+              />
+              <Label
+                htmlFor="sandbox-toggle"
+                className={cn(
+                  'flex cursor-pointer items-center gap-1.5 text-sm font-medium',
+                  isSandbox ? 'text-amber-600 dark:text-amber-400' : 'text-muted-foreground',
+                )}
+              >
+                <TriangleAlertIcon className="h-4 w-4" />
+                {isSandbox ? 'Test mode' : 'Live mode'}
+              </Label>
+            </div>
+            <Button
+              variant="outline"
+              className="gap-2"
+              onClick={() => {
+                void overviewQuery.refetch()
+                void subscriptionsQuery.refetch()
+                void eventPassesQuery.refetch()
+                void transactionsQuery.refetch()
+              }}
+            >
+              <RefreshCwIcon className="h-4 w-4" />
+              Refresh
+            </Button>
+          </div>
         }
       />
+
+      {isSandbox && (
+        <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
+          <TriangleAlertIcon className="h-4 w-4 shrink-0" />
+          Showing sandbox / test payments only. Toggle off to see live data.
+        </div>
+      )}
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid h-auto w-full grid-cols-2 gap-2 rounded-2xl bg-muted/40 p-2 lg:grid-cols-4">
