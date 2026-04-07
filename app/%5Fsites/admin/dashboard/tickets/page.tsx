@@ -604,7 +604,7 @@ export default function TicketsPage() {
                   {tickets.map((ticket) => (
                     <TableRow key={ticket.id}>
                       <TableCell className="align-top">
-                        <div className="min-w-[220px] space-y-2">
+                        <div className="min-w-55 space-y-2">
                           <div>
                             <p className="font-medium">{ticket.ticketNumber}</p>
                             <p className="mt-1 text-sm text-muted-foreground">
@@ -633,7 +633,7 @@ export default function TicketsPage() {
                         </div>
                       </TableCell>
                       <TableCell className="align-top">
-                        <div className="flex min-w-[220px] items-center gap-3">
+                        <div className="flex min-w-55 items-center gap-3">
                           <Avatar className="h-9 w-9">
                             <AvatarImage src={ticket.customer.avatar} />
                             <AvatarFallback>
@@ -656,7 +656,7 @@ export default function TicketsPage() {
                       </TableCell>
                       <TableCell className="align-top">
                         {ticket.assignedTo ? (
-                          <div className="flex min-w-[180px] items-center gap-3">
+                          <div className="flex min-w-45 items-center gap-3">
                             <Avatar className="h-8 w-8">
                               <AvatarImage src={ticket.assignedTo.avatar} />
                               <AvatarFallback>
@@ -673,7 +673,7 @@ export default function TicketsPage() {
                         )}
                       </TableCell>
                       <TableCell className="align-top">
-                        <div className="min-w-[120px]">
+                        <div className="min-w-30">
                           <p className="text-sm font-medium">{formatTimeAgo(ticket.updatedAt)}</p>
                           <p className="text-xs text-muted-foreground">
                             {formatDateTime(ticket.updatedAt)}
