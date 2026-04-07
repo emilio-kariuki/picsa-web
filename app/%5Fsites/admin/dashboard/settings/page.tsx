@@ -902,10 +902,7 @@ export default function SettingsPage() {
                       label="Last updated"
                       value={formatDateTime(appConfigQuery.data?.data.updatedAt)}
                     />
-                    <MetaStat
-                      label="Updated by"
-                      value={appConfigQuery.data?.data.updatedByUserId ?? 'Not available'}
-                    />
+  
                     <MetaStat
                       label="Draft state"
                       value={hasUnsavedConfigChanges ? 'Unsaved changes' : 'Synced to live'}
