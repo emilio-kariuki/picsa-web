@@ -466,7 +466,7 @@ export default function EventsPage() {
                             href={`/dashboard/events/${event.id}`}
                             className="block w-full text-left"
                           >
-                            <div className="space-y-1.5">
+                            <div className="space-y-1.5 max-w-sm">
                               <div className="flex items-center gap-2">
                                 <p className="font-medium">{event.name}</p>
                                 
