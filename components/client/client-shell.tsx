@@ -63,9 +63,9 @@ function NavItems({
             href={item.href}
             onClick={onNavigate}
             className={cn(
-              'group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+              'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
               active
-                ? 'bg-accent/10 text-accent'
+                ? 'bg-accent/12 text-accent'
                 : 'text-muted-foreground hover:bg-secondary hover:text-foreground',
             )}
           >
@@ -96,12 +96,12 @@ export function ClientShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       {/* Desktop sidebar */}
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-sidebar lg:flex">
+      <aside className="hidden w-60 shrink-0 flex-col border-r border-border bg-sidebar lg:flex">
         {/* Logo */}
         <div className="flex h-14 items-center gap-2.5 border-b border-border px-5">
           <Link href="/" className="flex items-center gap-2.5">
-            <PicsaLogo size={28} />
-            <span className="font-semibold text-foreground tracking-tight">Picsa</span>
+            <PicsaLogo size={26} />
+            <span className="font-serif text-lg font-semibold tracking-tight text-foreground">Picsa</span>
           </Link>
         </div>
 
@@ -114,7 +114,7 @@ export function ClientShell({ children }: { children: ReactNode }) {
         <div className="border-t border-border p-3">
           <Button
             asChild
-            className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
+            className="w-full rounded-xl bg-accent text-accent-foreground hover:bg-accent/90"
           >
             <Link href="/events/new">
               <PlusIcon className="mr-2 h-4 w-4" />
@@ -127,7 +127,7 @@ export function ClientShell({ children }: { children: ReactNode }) {
         <div className="border-t border-border p-3">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors hover:bg-secondary">
+              <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors hover:bg-secondary">
                 <Avatar className="h-8 w-8 shrink-0">
                   <AvatarImage src={currentUser?.url ?? undefined} />
                   <AvatarFallback className="text-xs">{initials}</AvatarFallback>
@@ -176,7 +176,7 @@ export function ClientShell({ children }: { children: ReactNode }) {
       {/* Mobile nav drawer */}
       <div
         className={cn(
-          'fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-border bg-sidebar transition-transform duration-200 lg:hidden',
+          'fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-border bg-sidebar transition-transform duration-200 lg:hidden',
           mobileNavOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >
@@ -216,8 +216,8 @@ export function ClientShell({ children }: { children: ReactNode }) {
           </Button>
         </div>
 
-        <div className="border-t border-border p-4">
-          <div className="flex items-center gap-3">
+        <div className="border-t border-border p-3">
+          <div className="flex items-center gap-3 rounded-xl px-3 py-2">
             <Avatar className="h-8 w-8">
               <AvatarImage src={currentUser?.url ?? undefined} />
               <AvatarFallback className="text-xs">{initials}</AvatarFallback>
@@ -229,7 +229,7 @@ export function ClientShell({ children }: { children: ReactNode }) {
           </div>
           <Button
             variant="ghost"
-            className="mt-2 w-full justify-start text-muted-foreground hover:text-foreground"
+            className="mt-1 w-full justify-start rounded-xl text-muted-foreground hover:text-foreground"
             onClick={() => void logout()}
           >
             <LogOutIcon className="mr-2 h-4 w-4" />
@@ -241,19 +241,24 @@ export function ClientShell({ children }: { children: ReactNode }) {
       {/* Main content */}
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Top header */}
-        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-background px-4 sm:px-6">
+        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-sidebar/80 px-4 backdrop-blur-sm sm:px-6">
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 rounded-md lg:hidden"
+            className="h-8 w-8 rounded-lg lg:hidden"
             onClick={() => setMobileNavOpen(true)}
           >
             <MenuIcon className="h-4 w-4" />
           </Button>
 
           <div className="flex min-w-0 flex-1 items-center gap-3">
+            {/* Show logo on mobile since sidebar is hidden */}
+            <Link href="/" className="flex items-center gap-2 lg:hidden">
+              <PicsaLogo size={22} />
+              <span className="font-serif text-base font-semibold tracking-tight text-foreground">Picsa</span>
+            </Link>
             <div className="hidden h-5 w-px bg-border lg:block" />
-            <span className="truncate text-sm font-medium text-muted-foreground">
+            <span className="hidden truncate text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground lg:block">
               Organizer workspace
             </span>
           </div>
@@ -262,7 +267,7 @@ export function ClientShell({ children }: { children: ReactNode }) {
             <Button
               variant="outline"
               size="sm"
-              className="hidden gap-2 sm:inline-flex"
+              className="hidden gap-2 rounded-xl sm:inline-flex"
               onClick={() => router.push('/events/new')}
             >
               <PlusIcon className="h-3.5 w-3.5" />
@@ -307,7 +312,7 @@ export function ClientShell({ children }: { children: ReactNode }) {
 
         {/* Page content */}
         <main className="client-scroll-area min-h-0 flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+          <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
             {children}
           </div>
         </main>

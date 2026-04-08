@@ -85,7 +85,7 @@ export default function ClientEventsPage() {
       </div>
 
       {/* Desktop table */}
-      <ClientSurface className="hidden overflow-hidden lg:block">
+      <ClientSurface className="hidden overflow-hidden p-0 lg:block">
         <table className="w-full">
           <thead>
             <tr className="border-b border-border">
@@ -138,7 +138,7 @@ export default function ClientEventsPage() {
           <Link
             key={event.id}
             href={`/events/${event.id}`}
-            className="group flex items-center justify-between gap-4 rounded-xl border border-border bg-white p-4 shadow-sm transition-colors hover:bg-secondary/30"
+            className="group flex items-center justify-between gap-4 rounded-2xl border border-border/70 bg-card p-4 shadow-[0_1px_4px_rgba(0,0,0,0.06)] transition-colors hover:bg-secondary/40"
           >
             <div className="min-w-0">
               <p className="font-medium text-foreground truncate">{event.name}</p>

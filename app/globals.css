@@ -190,45 +190,45 @@ html.dark [data-site='marketing'] {
 }
 
 [data-site='client'] {
-  --client-scrollbar-thumb: #d4d4d4;
-  --client-scrollbar-thumb-hover: #a3a3a3;
+  --client-scrollbar-thumb: #d6cfc8;
+  --client-scrollbar-thumb-hover: #b5aca2;
   --client-scrollbar-track: transparent;
   --site-font-sans: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
   --site-font-serif: var(--font-fraunces), 'Fraunces', serif;
   --site-font-mono: var(--font-geist-mono), 'Geist Mono', monospace;
-  --background: #ffffff;
-  --foreground: #0a0a0a;
+  --background: #f5ede4;
+  --foreground: #1a120a;
   --card: #ffffff;
-  --card-foreground: #0a0a0a;
+  --card-foreground: #1a120a;
   --popover: #ffffff;
-  --popover-foreground: #0a0a0a;
-  --primary: #0a0a0a;
+  --popover-foreground: #1a120a;
+  --primary: #1a120a;
   --primary-foreground: #ffffff;
-  --secondary: #f5f5f5;
-  --secondary-foreground: #0a0a0a;
-  --muted: #f5f5f5;
-  --muted-foreground: #737373;
-  --accent: #e07a3f;
+  --secondary: #ede4da;
+  --secondary-foreground: #1a120a;
+  --muted: #ede4da;
+  --muted-foreground: #6b5c4e;
+  --accent: #d4652a;
   --accent-foreground: #ffffff;
-  --destructive: #ef4444;
+  --destructive: #dc2626;
   --destructive-foreground: #ffffff;
-  --border: #e5e5e5;
-  --input: #e5e5e5;
-  --ring: #e07a3f;
-  --chart-1: #e07a3f;
-  --chart-2: #f0a56c;
-  --chart-3: #c05e2a;
-  --chart-4: #f5c89a;
-  --chart-5: #8a4520;
-  --radius: 8px;
-  --sidebar: #fafafa;
-  --sidebar-foreground: #0a0a0a;
-  --sidebar-primary: #0a0a0a;
+  --border: #e2d5c8;
+  --input: #e2d5c8;
+  --ring: #d4652a;
+  --chart-1: #d4652a;
+  --chart-2: #e8915a;
+  --chart-3: #b04d1e;
+  --chart-4: #f0b88a;
+  --chart-5: #7a3510;
+  --radius: 10px;
+  --sidebar: #fdf8f3;
+  --sidebar-foreground: #1a120a;
+  --sidebar-primary: #1a120a;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f0f0f0;
-  --sidebar-accent-foreground: #0a0a0a;
-  --sidebar-border: #e5e5e5;
-  --sidebar-ring: #e07a3f;
+  --sidebar-accent: #ede4da;
+  --sidebar-accent-foreground: #1a120a;
+  --sidebar-border: #e2d5c8;
+  --sidebar-ring: #d4652a;
 }
 
 [data-site='client'] .client-scroll-area {

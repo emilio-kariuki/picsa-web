@@ -160,7 +160,7 @@ export default function ClientDashboardPage() {
 
       <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
         {/* Recent events */}
-        <ClientSurface className="overflow-hidden">
+        <ClientSurface className="overflow-hidden p-0">
           <div className="border-b border-border px-5 py-4">
             <ClientSectionHeader
               title="Recent events"
@@ -214,7 +214,7 @@ export default function ClientDashboardPage() {
         {/* Right column */}
         <div className="space-y-6">
           {/* Pending join requests */}
-          <ClientSurface className="overflow-hidden">
+          <ClientSurface className="overflow-hidden p-0">
             <div className="border-b border-border px-5 py-4">
               <ClientSectionHeader
                 title="Pending join requests"
@@ -286,7 +286,7 @@ export default function ClientDashboardPage() {
           </ClientSurface>
 
           {/* Recent uploads */}
-          <ClientSurface className="overflow-hidden">
+          <ClientSurface className="overflow-hidden p-0">
             <div className="border-b border-border px-5 py-4">
               <ClientSectionHeader title="Recent uploads" />
             </div>

@@ -532,7 +532,7 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
         }
       />
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         <ClientMetricCard
           label="Plan"
           value={event.billing.tier === 'PRO' ? 'Pro' : 'Free'}
@@ -549,11 +549,11 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
       </div>
 
       <Tabs defaultValue="overview" className="gap-4">
-        <TabsList className="h-auto w-full justify-start rounded-[1.25rem] bg-secondary/60 p-1">
-          <TabsTrigger value="overview" className="rounded-2xl px-4 py-2">Overview</TabsTrigger>
-          <TabsTrigger value="gallery" className="rounded-2xl px-4 py-2">Gallery</TabsTrigger>
-          <TabsTrigger value="people" className="rounded-2xl px-4 py-2">People</TabsTrigger>
-          <TabsTrigger value="settings" className="rounded-2xl px-4 py-2">Settings</TabsTrigger>
+        <TabsList className="h-auto w-full justify-start rounded-2xl border border-border/60 bg-card/80 p-1 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
+          <TabsTrigger value="overview" className="rounded-xl px-4 py-2 text-sm font-medium data-[state=active]:shadow-sm">Overview</TabsTrigger>
+          <TabsTrigger value="gallery" className="rounded-xl px-4 py-2 text-sm font-medium data-[state=active]:shadow-sm">Gallery</TabsTrigger>
+          <TabsTrigger value="people" className="rounded-xl px-4 py-2 text-sm font-medium data-[state=active]:shadow-sm">People</TabsTrigger>
+          <TabsTrigger value="settings" className="rounded-xl px-4 py-2 text-sm font-medium data-[state=active]:shadow-sm">Settings</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -709,7 +709,7 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
         </TabsContent>
 
         <TabsContent value="gallery" className="space-y-6">
-          <ClientSurface>
+          <ClientSurface className="p-5 sm:p-6">
             <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Event gallery</p>
