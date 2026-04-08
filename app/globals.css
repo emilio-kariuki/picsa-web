@@ -190,92 +190,45 @@ html.dark [data-site='marketing'] {
 }
 
 [data-site='client'] {
-  --client-radius: 5px;
-  --client-scrollbar-thumb: #2f241f;
-  --client-scrollbar-thumb-hover: #43312a;
+  --client-scrollbar-thumb: #d4d4d4;
+  --client-scrollbar-thumb-hover: #a3a3a3;
   --client-scrollbar-track: transparent;
   --site-font-sans: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
   --site-font-serif: var(--font-fraunces), 'Fraunces', serif;
   --site-font-mono: var(--font-geist-mono), 'Geist Mono', monospace;
-  --background: #120c09;
-  --foreground: #f4ece5;
-  --card: #17110e;
-  --card-foreground: #f4ece5;
-  --popover: #17110e;
-  --popover-foreground: #f4ece5;
-  --primary: #efe4d9;
-  --primary-foreground: #120c09;
-  --secondary: #1d1512;
-  --secondary-foreground: #f4ece5;
-  --muted: #1d1512;
-  --muted-foreground: #baa99d;
-  --accent: #ce8957;
-  --accent-foreground: #120c09;
-  --destructive: #c86842;
-  --destructive-foreground: #fff7f4;
-  --border: #2c211d;
-  --input: #2c211d;
-  --ring: #ce8957;
-  --chart-1: #ce8957;
-  --chart-2: #e1a46c;
-  --chart-3: #a86a42;
-  --chart-4: #f0c18f;
-  --chart-5: #7f5337;
-  --radius: var(--client-radius);
-  --sidebar: #15100d;
-  --sidebar-foreground: #f4ece5;
-  --sidebar-primary: #efe4d9;
-  --sidebar-primary-foreground: #120c09;
-  --sidebar-accent: #1d1512;
-  --sidebar-accent-foreground: #f4ece5;
-  --sidebar-border: #2c211d;
-  --sidebar-ring: #ce8957;
-}
-
-html.dark [data-site='client'] {
-  --client-scrollbar-thumb: #2f241f;
-  --client-scrollbar-thumb-hover: #43312a;
-  --client-scrollbar-track: transparent;
-  --background: #120c09;
-  --foreground: #f4ece5;
-  --card: #17110e;
-  --card-foreground: #f4ece5;
-  --popover: #17110e;
-  --popover-foreground: #f4ece5;
-  --primary: #efe4d9;
-  --primary-foreground: #120c09;
-  --secondary: #1d1512;
-  --secondary-foreground: #f4ece5;
-  --muted: #1d1512;
-  --muted-foreground: #baa99d;
-  --accent: #ce8957;
-  --accent-foreground: #120c09;
-  --destructive: #c86842;
-  --destructive-foreground: #fff7f4;
-  --border: #2c211d;
-  --input: #2c211d;
-  --ring: #ce8957;
-  --chart-1: #ce8957;
-  --chart-2: #e1a46c;
-  --chart-3: #a86a42;
-  --chart-4: #f0c18f;
-  --chart-5: #7f5337;
-  --sidebar: #15100d;
-  --sidebar-foreground: #f4ece5;
-  --sidebar-primary: #efe4d9;
-  --sidebar-primary-foreground: #120c09;
-  --sidebar-accent: #1d1512;
-  --sidebar-accent-foreground: #f4ece5;
-  --sidebar-border: #2c211d;
-  --sidebar-ring: #ce8957;
-}
-
-[data-site='client'] :where([class*='rounded']) {
-  border-radius: var(--client-radius) !important;
-}
-
-[data-site='client'] :where([class*='bg-gradient'], [class*='linear-gradient'], [class*='radial-gradient']) {
-  background-image: none !important;
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
+  --primary: #0a0a0a;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #0a0a0a;
+  --muted: #f5f5f5;
+  --muted-foreground: #737373;
+  --accent: #e07a3f;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #e07a3f;
+  --chart-1: #e07a3f;
+  --chart-2: #f0a56c;
+  --chart-3: #c05e2a;
+  --chart-4: #f5c89a;
+  --chart-5: #8a4520;
+  --radius: 8px;
+  --sidebar: #fafafa;
+  --sidebar-foreground: #0a0a0a;
+  --sidebar-primary: #0a0a0a;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f0f0f0;
+  --sidebar-accent-foreground: #0a0a0a;
+  --sidebar-border: #e5e5e5;
+  --sidebar-ring: #e07a3f;
 }
 
 [data-site='client'] .client-scroll-area {
@@ -284,8 +237,8 @@ html.dark [data-site='client'] {
 }
 
 [data-site='client'] .client-scroll-area::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 6px;
+  height: 6px;
 }
 
 [data-site='client'] .client-scroll-area::-webkit-scrollbar-track {
@@ -293,15 +246,12 @@ html.dark [data-site='client'] {
 }
 
 [data-site='client'] .client-scroll-area::-webkit-scrollbar-thumb {
-  border: 2px solid transparent;
   border-radius: 999px;
   background: var(--client-scrollbar-thumb);
-  background-clip: padding-box;
 }
 
 [data-site='client'] .client-scroll-area::-webkit-scrollbar-thumb:hover {
   background: var(--client-scrollbar-thumb-hover);
-  background-clip: padding-box;
 }
 
 @theme inline {

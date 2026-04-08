@@ -13,19 +13,19 @@ export function ClientPageHeader({
   actions?: ReactNode
 }) {
   return (
-    <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-      <div className="max-w-2xl">
+    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="min-w-0 max-w-2xl">
         {eyebrow ? (
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent">{eyebrow}</p>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-accent">{eyebrow}</p>
         ) : null}
-        <h1 className="mt-2 font-serif text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
           {title}
         </h1>
         {description ? (
-          <p className="mt-3 text-base leading-7 text-muted-foreground">{description}</p>
+          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{description}</p>
         ) : null}
       </div>
-      {actions ? <div className="flex flex-wrap items-center gap-3">{actions}</div> : null}
+      {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
     </div>
   )
 }
@@ -40,7 +40,7 @@ export function ClientSurface({
   return (
     <section
       className={cn(
-        'rounded-[1.75rem] border border-border/70 bg-card/90 p-5 shadow-[0_24px_80px_rgba(35,30,27,0.08)] backdrop-blur sm:p-6',
+        'rounded-xl border border-border bg-white shadow-sm',
         className,
       )}
     >
@@ -59,10 +59,32 @@ export function ClientMetricCard({
   helper?: string
 }) {
   return (
-    <div className="rounded-[1.5rem] border border-border/70 bg-secondary/60 p-5">
-      <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">{label}</p>
-      <p className="mt-3 font-serif text-4xl font-semibold tracking-tight text-foreground">{value}</p>
-      {helper ? <p className="mt-2 text-sm text-muted-foreground">{helper}</p> : null}
+    <div className="rounded-xl border border-border bg-white p-5 shadow-sm">
+      <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">{label}</p>
+      <p className="mt-2 text-3xl font-semibold tracking-tight text-foreground">{value}</p>
+      {helper ? <p className="mt-1 text-sm text-muted-foreground">{helper}</p> : null}
+    </div>
+  )
+}
+
+export function ClientSectionHeader({
+  title,
+  description,
+  actions,
+}: {
+  title: string
+  description?: string
+  actions?: ReactNode
+}) {
+  return (
+    <div className="mb-5 flex items-start justify-between gap-4">
+      <div>
+        <h2 className="text-base font-semibold text-foreground">{title}</h2>
+        {description ? (
+          <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>
+        ) : null}
+      </div>
+      {actions ? <div className="shrink-0">{actions}</div> : null}
     </div>
   )
 }

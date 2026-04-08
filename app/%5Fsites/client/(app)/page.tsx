@@ -3,13 +3,12 @@
 import Link from 'next/link'
 import { useMemo } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowRightIcon, CalendarDaysIcon, CheckIcon, PlusIcon, UsersIcon } from '@/components/ui/icons'
+import { ArrowRightIcon, CalendarDaysIcon, CheckIcon, ImageIcon, PlusIcon, UsersIcon } from '@/components/ui/icons'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import { Spinner } from '@/components/ui/spinner'
-import { ClientMetricCard, ClientPageHeader, ClientSurface } from '@/components/client/client-page-chrome'
+import { ClientMetricCard, ClientPageHeader, ClientSectionHeader, ClientSurface } from '@/components/client/client-page-chrome'
 import { useClientAuth } from '@/hooks/use-client-auth'
 import {
   approveEventJoinRequest,
@@ -19,6 +18,7 @@ import {
   rejectEventJoinRequest,
 } from '@/lib/client-api'
 import { formatEventWindow, formatRelativeTime } from '@/lib/client-view'
+import { cn } from '@/lib/utils'
 
 export default function ClientDashboardPage() {
   const queryClient = useQueryClient()
@@ -33,14 +33,12 @@ export default function ClientDashboardPage() {
     queryKey: ['client', 'dashboard', 'recent-uploads'],
     queryFn: () =>
       performAuthenticatedRequest((token) =>
-        fetchMyImages(token, {
-          limit: 6,
-        }),
+        fetchMyImages(token, { limit: 6 }),
       ),
   })
 
   const pendingRequestsQuery = useQuery({
-    queryKey: ['client', 'dashboard', 'pending-requests', hostedEventsQuery.data?.map((event) => event.id)],
+    queryKey: ['client', 'dashboard', 'pending-requests', hostedEventsQuery.data?.map((e) => e.id)],
     enabled: Boolean(hostedEventsQuery.data?.length),
     queryFn: async () => {
       const hostedEvents = hostedEventsQuery.data ?? []
@@ -54,7 +52,6 @@ export default function ClientDashboardPage() {
           }))
         }),
       )
-
       return responses.flat()
     },
   })
@@ -91,146 +88,166 @@ export default function ClientDashboardPage() {
 
   if (hostedEventsQuery.isLoading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
+      <div className="flex min-h-[50vh] items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <Spinner className="size-6" />
-          <p className="text-sm text-muted-foreground">Loading your workspace...</p>
+          <Spinner className="size-5 text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">Loading your workspace…</p>
         </div>
+      </div>
+    )
+  }
+
+  const events = hostedEventsQuery.data ?? []
+
+  // Empty state
+  if (!events.length) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-border bg-secondary">
+          <CalendarDaysIcon className="h-6 w-6 text-muted-foreground" />
+        </div>
+        <h2 className="mt-5 text-xl font-semibold text-foreground">Create your first event</h2>
+        <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
+          Set up an event space, open the gallery, and start collecting photos from your guests.
+        </p>
+        <Button
+          asChild
+          className="mt-6 gap-2 bg-accent text-accent-foreground hover:bg-accent/90"
+        >
+          <Link href="/events/new">
+            <PlusIcon className="h-4 w-4" />
+            Create your first event
+          </Link>
+        </Button>
       </div>
     )
   }
 
   return (
     <div className="space-y-6">
-      {/* <ClientPageHeader
-        eyebrow=""
-        title=''
-        // title="Your event command center"
-        // description="See what is active, what needs your attention, and where the latest photos are landing."
+      <ClientPageHeader
+        title="Dashboard"
+        description="Track your events, guests, and photo activity at a glance."
         actions={
-          <Button asChild className="rounded-full bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground">
+          <Button asChild className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90">
             <Link href="/events/new">
-              <PlusIcon className="mr-2 h-4 w-4" />
+              <PlusIcon className="h-4 w-4" />
               New event
             </Link>
           </Button>
         }
-      /> */}
+      />
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 mt-5">
+      {/* KPI row */}
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <ClientMetricCard
           label="Hosted events"
-          value={String(hostedEventsQuery.data?.length ?? 0)}
-          // helper="Every active event under your care."
+          value={String(events.length)}
         />
         <ClientMetricCard
-          label="Guests"
+          label="Total guests"
           value={String(totalGuests)}
-          // helper="People currently inside your hosted spaces."
         />
         <ClientMetricCard
           label="Pending joins"
           value={String(pendingRequestsQuery.data?.length ?? 0)}
-          // helper="Requests that still need a host decision."
         />
         <ClientMetricCard
           label="Recent uploads"
           value={String(recentUploadsQuery.data?.images.length ?? 0)}
-          // helper="A snapshot of your latest gallery activity."
         />
       </div>
 
-      {hostedEventsQuery.data?.length ? (
-        <div className="grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
-          <ClientSurface>
-            <div className="mb-5 flex items-center justify-between gap-3">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Recent events</p>
-                <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight">Keep momentum on the moments that matter</h2>
-              </div>
-              <Button asChild variant="outline" className="rounded-full border-border/80 bg-background/70">
-                <Link href="/events">
-                  View all
-                  <ArrowRightIcon className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-
-            <div className="space-y-4">
-              {hostedEventsQuery.data.slice(0, 4).map((event) => (
-                <Link
-                  key={event.id}
-                  href={`/events/${event.id}`}
-                  className="group block rounded-[1.5rem] border border-border/70 bg-secondary/50 p-5 transition-all hover:-translate-y-0.5 hover:shadow-[0_20px_40px_rgba(35,30,27,0.10)] lg:p-6"
-                >
-                  <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-                    <div className="min-w-0 max-w-2xl">
-                      <div className="flex flex-wrap items-center gap-3">
-                        <h3 className="font-serif text-2xl font-semibold text-foreground transition-colors group-hover:text-accent sm:text-[2rem]">
-                          {event.name}
-                        </h3>
-                        <Badge variant="outline" className="rounded-full border-accent/35 bg-accent/10 px-3 py-1 text-accent">
-                          {event.settings.joinMode.replaceAll('_', ' ')}
-                        </Badge>
-                      </div>
-                      <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">
-                        {event.description || 'No description yet.'}
-                      </p>
-
-                      <div className="mt-5 flex flex-wrap gap-3 text-sm text-muted-foreground">
-                        <span className="inline-flex items-center gap-2 rounded-full bg-background/80 px-3 py-1">
-                          <UsersIcon className="h-4 w-4 text-accent" />
-                          {event.memberCount} guests
-                        </span>
-                        <span className="inline-flex items-center gap-2 rounded-full bg-background/80 px-3 py-1">
-                          <CalendarDaysIcon className="h-4 w-4 text-accent" />
-                          {formatEventWindow(event.startAt, event.endAt)}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex shrink-0 items-center justify-between gap-4 lg:min-w-[160px] lg:flex-col lg:items-end">
-                      <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/70 px-4 py-2 text-sm font-medium text-foreground transition-colors group-hover:border-accent/35 group-hover:text-accent">
-                        Open
-                        <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                      </span>
-                      <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">
-                        Hosted event
-                      </p>
-                    </div>
+      <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
+        {/* Recent events */}
+        <ClientSurface className="overflow-hidden">
+          <div className="border-b border-border px-5 py-4">
+            <ClientSectionHeader
+              title="Recent events"
+              actions={
+                <Button asChild variant="ghost" size="sm" className="gap-1 text-muted-foreground">
+                  <Link href="/events">
+                    View all
+                    <ArrowRightIcon className="h-3.5 w-3.5" />
+                  </Link>
+                </Button>
+              }
+            />
+          </div>
+          <div className="divide-y divide-border">
+            {events.slice(0, 5).map((event) => (
+              <Link
+                key={event.id}
+                href={`/events/${event.id}`}
+                className="group flex items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-secondary/50"
+              >
+                <div className="min-w-0">
+                  <p className="font-medium text-foreground truncate">{event.name}</p>
+                  <p className="mt-0.5 text-sm text-muted-foreground truncate">
+                    {event.description || 'No description'}
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <UsersIcon className="h-3.5 w-3.5" />
+                      {event.memberCount} guests
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <CalendarDaysIcon className="h-3.5 w-3.5" />
+                      {formatEventWindow(event.startAt, event.endAt)}
+                    </span>
                   </div>
-                </Link>
-              ))}
+                </div>
+                <div className="flex shrink-0 items-center gap-3">
+                  <Badge
+                    variant="outline"
+                    className="hidden border-border text-muted-foreground sm:inline-flex"
+                  >
+                    {event.settings.joinMode.replaceAll('_', ' ')}
+                  </Badge>
+                  <ArrowRightIcon className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-accent" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </ClientSurface>
+
+        {/* Right column */}
+        <div className="space-y-6">
+          {/* Pending join requests */}
+          <ClientSurface className="overflow-hidden">
+            <div className="border-b border-border px-5 py-4">
+              <ClientSectionHeader
+                title="Pending join requests"
+                description={
+                  pendingRequestsQuery.data?.length
+                    ? `${pendingRequestsQuery.data.length} awaiting review`
+                    : 'Queue is clear'
+                }
+              />
             </div>
-          </ClientSurface>
-
-          <div className="space-y-6">
-            <ClientSurface>
-              <div className="mb-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Pending join requests</p>
-                <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight">Guests waiting on you</h2>
-              </div>
-
-              <div className="space-y-4">
-                {pendingRequestsQuery.data?.length ? (
-                  pendingRequestsQuery.data.slice(0, 5).map((request) => (
-                    <div key={`${request.eventId}:${request.userId}`} className="rounded-[1.35rem] border border-border/70 bg-secondary/45 p-4">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="font-medium text-foreground">{request.user.name ?? request.user.email ?? 'Guest request'}</p>
-                          <p className="text-sm text-muted-foreground">{request.eventName}</p>
-                          <p className="mt-2 text-xs uppercase tracking-[0.22em] text-muted-foreground">
+            <div className="p-4">
+              {pendingRequestsQuery.data?.length ? (
+                <div className="space-y-3">
+                  {pendingRequestsQuery.data.slice(0, 5).map((request) => (
+                    <div
+                      key={`${request.eventId}:${request.userId}`}
+                      className="rounded-lg border border-border p-3"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">
+                            {request.user.name ?? request.user.email ?? 'Guest'}
+                          </p>
+                          <p className="text-xs text-muted-foreground truncate">{request.eventName}</p>
+                          <p className="mt-1 text-xs text-muted-foreground">
                             {formatRelativeTime(request.requestedAt)}
                           </p>
                         </div>
-                        <Badge variant="outline" className="rounded-full border-border/70 bg-background/80">
-                          Awaiting review
-                        </Badge>
                       </div>
-                      <div className="mt-4 flex flex-wrap gap-2">
+                      <div className="mt-3 flex gap-2">
                         <Button
                           size="sm"
-                          className="rounded-full bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground"
+                          className="h-7 gap-1.5 bg-accent px-3 text-xs text-accent-foreground hover:bg-accent/90"
                           onClick={() =>
                             approveRequestMutation.mutate({
                               eventId: request.eventId,
@@ -238,13 +255,13 @@ export default function ClientDashboardPage() {
                             })
                           }
                         >
-                          <CheckIcon className="mr-2 h-4 w-4" />
+                          <CheckIcon className="h-3.5 w-3.5" />
                           Approve
                         </Button>
                         <Button
                           size="sm"
                           variant="outline"
-                          className="rounded-full border-border/80 bg-background/70"
+                          className="h-7 px-3 text-xs"
                           onClick={() =>
                             rejectRequestMutation.mutate({
                               eventId: request.eventId,
@@ -256,100 +273,58 @@ export default function ClientDashboardPage() {
                         </Button>
                       </div>
                     </div>
-                  ))
-                ) : (
-                  <Empty className="rounded-[1.5rem] border-border/70 bg-secondary/35 p-8">
-                    <EmptyHeader>
-                      <EmptyMedia variant="icon">
-                        <UsersIcon className="h-6 w-6" />
-                      </EmptyMedia>
-                      <EmptyTitle>Nothing waiting right now</EmptyTitle>
-                      <EmptyDescription>Your join queue is clear. New requests will show up here.</EmptyDescription>
-                    </EmptyHeader>
-                  </Empty>
-                )}
-              </div>
-            </ClientSurface>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center py-8 text-center">
+                  <UsersIcon className="h-8 w-8 text-muted-foreground/40" />
+                  <p className="mt-3 text-sm font-medium text-foreground">No pending requests</p>
+                  <p className="mt-1 text-xs text-muted-foreground">New requests will appear here</p>
+                </div>
+              )}
+            </div>
+          </ClientSurface>
 
-            <ClientSurface>
-              <div className="mb-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">Recent uploads</p>
-                <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight">Fresh from the gallery</h2>
-              </div>
-
+          {/* Recent uploads */}
+          <ClientSurface className="overflow-hidden">
+            <div className="border-b border-border px-5 py-4">
+              <ClientSectionHeader title="Recent uploads" />
+            </div>
+            <div className="p-4">
               {recentUploadsQuery.data?.images.length ? (
-                <div className="grid grid-cols-2 gap-3">
-                  {recentUploadsQuery.data.images.map((image) => (
-                    <div key={image.id} className="overflow-hidden rounded-[1.25rem] border border-border/70 bg-secondary/35">
-                      <div className="aspect-[4/5] bg-muted">
-                        {image.accessUrl ? (
-                          <img src={image.accessUrl} alt="" className="h-full w-full object-cover" />
-                        ) : (
-                          <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                            Processing...
-                          </div>
-                        )}
-                      </div>
-                      <div className="px-3 py-3 text-sm text-muted-foreground">
-                        <p className="font-medium text-foreground">{formatRelativeTime(image.createdAt)}</p>
-                        <p className="mt-1">{image.status === 'READY' ? 'Ready to share' : 'Still processing'}</p>
-                      </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {recentUploadsQuery.data.images.slice(0, 6).map((image) => (
+                    <div
+                      key={image.id}
+                      className="aspect-square overflow-hidden rounded-lg border border-border bg-secondary"
+                    >
+                      {image.accessUrl ? (
+                        <img
+                          src={image.accessUrl}
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center">
+                          <ImageIcon className="h-4 w-4 text-muted-foreground/40" />
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
               ) : (
-                <Empty className="rounded-[1.5rem] border-border/70 bg-secondary/35 p-8">
-                  <EmptyContent>
-                    <EmptyHeader>
-                      <EmptyMedia variant="icon">
-                        <CalendarDaysIcon className="h-6 w-6" />
-                      </EmptyMedia>
-                      <EmptyTitle>No uploads yet</EmptyTitle>
-                      <EmptyDescription>Create an event and open the gallery to start collecting images.</EmptyDescription>
-                    </EmptyHeader>
-                  </EmptyContent>
-                </Empty>
+                <div className="flex flex-col items-center py-8 text-center">
+                  <ImageIcon className="h-8 w-8 text-muted-foreground/40" />
+                  <p className="mt-3 text-sm font-medium text-foreground">No uploads yet</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Photos will appear here once guests start uploading
+                  </p>
+                </div>
               )}
-            </ClientSurface>
-          </div>
-        </div>
-      ) : (
-        <ClientSurface className="p-0">
-          <div className="grid gap-8 rounded-[1.75rem] p-8 lg:grid-cols-[1.05fr_0.95fr] lg:p-10">
-            <div className="space-y-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent">First event</p>
-              <h2 className="font-serif text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-                Build the first space your guests will remember.
-              </h2>
-              <p className="max-w-xl text-base leading-8 text-muted-foreground">
-                Create the event, set the join rules, and open the gallery when you are ready. The rest of the workspace comes alive as soon as uploads and guest requests start flowing in.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Button asChild className="rounded-full bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground">
-                  <Link href="/events/new">
-                    <PlusIcon className="mr-2 h-4 w-4" />
-                    Create your first event
-                  </Link>
-                </Button>
-              </div>
             </div>
-
-            <Empty className="rounded-[1.75rem] border-border/70 bg-secondary/45 p-10">
-              <EmptyContent>
-                <EmptyHeader>
-                  <EmptyMedia variant="icon">
-                    <CalendarDaysIcon className="h-6 w-6" />
-                  </EmptyMedia>
-                  <EmptyTitle>No hosted events yet</EmptyTitle>
-                  <EmptyDescription>
-                    Start with one warm, welcoming event space and let the gallery grow from there.
-                  </EmptyDescription>
-                </EmptyHeader>
-              </EmptyContent>
-            </Empty>
-          </div>
-        </ClientSurface>
-      )}
+          </ClientSurface>
+        </div>
+      </div>
     </div>
   )
 }
