@@ -578,15 +578,24 @@ function EditableSectionCard({
   title,
   description,
   children,
+  icon,
 }: {
   title: string
   description: string
   children: ReactNode
+  icon?: ReactNode
 }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle className="flex items-center gap-2.5">
+          {icon && (
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
+              {icon}
+            </span>
+          )}
+          {title}
+        </CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">{children}</CardContent>
@@ -791,21 +800,30 @@ export default function SettingsPage() {
 
       <div className="flex gap-8">
         <aside className="w-56 shrink-0">
-          <nav className="flex flex-col gap-1">
+          <nav className="sticky top-6 flex flex-col gap-0.5">
             {navItems.map((item) => {
               const Icon = item.icon
+              const isActive = activeSection === item.id
               return (
                 <button
                   key={item.id}
                   onClick={() => setActiveSection(item.id)}
                   className={cn(
-                    'flex items-center gap-3 rounded-md px-3 py-2 text-left text-sm font-medium transition-colors',
-                    activeSection === item.id
-                      ? 'bg-accent text-accent-foreground'
-                      : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground',
+                    'group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-all duration-150',
+                    isActive
+                      ? 'bg-primary/8 text-primary dark:bg-primary/15'
+                      : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground',
                   )}
                 >
-                  <Icon className="h-4 w-4 shrink-0" />
+                  {isActive && (
+                    <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-primary" />
+                  )}
+                  <Icon
+                    className={cn(
+                      'h-4 w-4 shrink-0 transition-colors',
+                      isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground',
+                    )}
+                  />
                   {item.label}
                 </button>
               )
@@ -893,7 +911,7 @@ export default function SettingsPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                  <div className="grid gap-4 sm:grid-cols-3">
                     <MetaStat
                       label="Config schema"
                       value={liveAppConfig?.version ?? 'Loading...'}
@@ -902,7 +920,6 @@ export default function SettingsPage() {
                       label="Last updated"
                       value={formatDateTime(appConfigQuery.data?.data.updatedAt)}
                     />
-  
                     <MetaStat
                       label="Draft state"
                       value={hasUnsavedConfigChanges ? 'Unsaved changes' : 'Synced to live'}
@@ -961,6 +978,7 @@ export default function SettingsPage() {
                   <EditableSectionCard
                     title="Features"
                     description="Control mobile features that should stay dark-launched until you are ready to surface them."
+                    icon={<SmartphoneIcon className="h-4 w-4" />}
                   >
                     <ToggleField
                       label="Show event highlight stories on mobile"
@@ -981,6 +999,7 @@ export default function SettingsPage() {
                   <EditableSectionCard
                     title="Payments"
                     description="Choose whether mobile event-pass purchases should go through the hosted Dodo checkout flow or stay on the native RevenueCat store flow."
+                    icon={<CreditCardIcon className="h-4 w-4" />}
                   >
                     <ToggleField
                       label="Enable Dodo event-pass checkout on mobile"
@@ -1001,6 +1020,7 @@ export default function SettingsPage() {
                   <EditableSectionCard
                     title="Updates"
                     description="Control iOS and Android version policy separately, alongside store links and the copy used in update prompts."
+                    icon={<RefreshCwIcon className="h-4 w-4" />}
                   >
                     <ToggleField
                       label="Enable Android Play in-app updates"
@@ -1186,6 +1206,7 @@ export default function SettingsPage() {
                   <EditableSectionCard
                     title="Plan"
                     description="Set free and pro event limits plus the free-tier capability flags used by the clients. Saved values here override the env defaults in the live app config."
+                    icon={<Settings2Icon className="h-4 w-4" />}
                   >
                     <div className="grid gap-4 lg:grid-cols-2">
                       <EditableField
@@ -1461,12 +1482,16 @@ export default function SettingsPage() {
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-dashed bg-muted/20 p-5">
-                  <h3 className="font-semibold">Team management is not connected yet</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Invite flows, role changes, and multi-admin access controls were previously sample data only.
-                    They now stay hidden until there is a real backend endpoint to power them.
-                  </p>
+                <div className="flex items-start gap-3 rounded-xl border border-dashed bg-muted/10 p-5">
+                  <div className="mt-0.5 rounded-md bg-muted p-1.5 text-muted-foreground">
+                    <UsersIcon className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Team management is not connected yet</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Invite flows, role changes, and multi-admin access controls will appear here once the backend endpoint is available.
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -1488,12 +1513,16 @@ export default function SettingsPage() {
                   cta="Go to Payments"
                 />
 
-                <div className="rounded-xl border border-dashed bg-muted/20 p-5">
-                  <h3 className="font-semibold">No billing editor is wired here</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Plan changes, payment method updates, and invoice downloads were mock content before. They remain
-                    unavailable in this page until a writable billing settings endpoint is added.
-                  </p>
+                <div className="flex items-start gap-3 rounded-xl border border-dashed bg-muted/10 p-5">
+                  <div className="mt-0.5 rounded-md bg-muted p-1.5 text-muted-foreground">
+                    <CreditCardIcon className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">No billing editor is wired here</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Plan changes, payment method updates, and invoice downloads will appear here once a writable billing settings endpoint is added.
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -1550,10 +1579,12 @@ export default function SettingsPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="rounded-xl border border-dashed bg-muted/20 p-5">
+                  <div className="flex items-start gap-3 rounded-xl border border-dashed bg-muted/10 p-5">
+                    <div className="mt-0.5 rounded-md bg-muted p-1.5 text-muted-foreground">
+                      <LockIcon className="h-4 w-4" />
+                    </div>
                     <p className="text-sm text-muted-foreground">
-                      Those controls were previously rendered with sample fields and made it look like changes were
-                      possible. They are now hidden until the underlying auth workflows are exposed in the admin API.
+                      Password reset, two-factor enrollment, and device session management will appear here once the underlying auth workflows are exposed in the admin API.
                     </p>
                   </div>
                 </CardContent>
@@ -1576,12 +1607,16 @@ export default function SettingsPage() {
                   <ReadOnlyField label="Authenticated role" value={formatRole(currentUser?.role)} />
                 </div>
 
-                <div className="rounded-xl border border-dashed bg-muted/20 p-5">
-                  <h3 className="font-semibold">No live API key registry</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    The old sample keys have been removed. Once the backend exposes real admin API key management, this
-                    section can show creation, rotation, and last-used data without inventing records.
-                  </p>
+                <div className="flex items-start gap-3 rounded-xl border border-dashed bg-muted/10 p-5">
+                  <div className="mt-0.5 rounded-md bg-muted p-1.5 text-muted-foreground">
+                    <KeyIcon className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">No live API key registry</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Once the backend exposes real admin API key management, this section will show creation, rotation, and last-used data.
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -1603,12 +1638,16 @@ export default function SettingsPage() {
                   cta="Go to Notifications"
                 />
 
-                <div className="rounded-xl border border-dashed bg-muted/20 p-5">
-                  <h3 className="font-semibold">Preference toggles removed</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Email and push toggles were mock UI only. They now stay out of the way until the backend returns
-                    real per-admin preferences that this page can save.
-                  </p>
+                <div className="flex items-start gap-3 rounded-xl border border-dashed bg-muted/10 p-5">
+                  <div className="mt-0.5 rounded-md bg-muted p-1.5 text-muted-foreground">
+                    <BellIcon className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Preference toggles not connected</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Email and push toggles will appear here once the backend returns real per-admin preferences that this page can save.
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>

@@ -395,7 +395,16 @@ function TransactionsTable({ items }: { items: AdminBillingTransaction[] }) {
 export default function AdminPaymentsPage() {
   const { performAuthenticatedRequest } = useAdminAuth()
   const [activeTab, setActiveTab] = useState('overview')
-  const [isSandbox, setIsSandbox] = useState(true)
+  const [isSandbox, setIsSandbox] = useState(() => {
+    if (typeof window === 'undefined') return true
+    const stored = localStorage.getItem('payments-sandbox-mode')
+    return stored === null ? true : stored === 'true'
+  })
+
+  function toggleSandbox(checked: boolean) {
+    setIsSandbox(checked)
+    localStorage.setItem('payments-sandbox-mode', String(checked))
+  }
 
   const [subscriptionSearch, setSubscriptionSearch] = useState('')
   const deferredSubscriptionSearch = useDeferredValue(subscriptionSearch)
@@ -498,7 +507,7 @@ export default function AdminPaymentsPage() {
               <Switch
                 id="sandbox-toggle"
                 checked={isSandbox}
-                onCheckedChange={setIsSandbox}
+                onCheckedChange={toggleSandbox}
               />
               <Label
                 htmlFor="sandbox-toggle"
