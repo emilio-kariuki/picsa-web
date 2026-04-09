@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useTheme } from 'next-themes'
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { GlobalSearch } from '@/components/layout/global-search'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -69,23 +69,30 @@ export function Header() {
   const displayName = getAdminDisplayName(currentUser)
   const initials = getAdminInitials(currentUser)
 
-  return (
-    <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
+  const [searchOpen, setSearchOpen] = useState(false)
 
-      
+  return (
+    <>
+    <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
+    <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center gap-2 border-b bg-background px-4">
+
+
       {/* Search */}
-      <div className="relative hidden md:block">
-        <SearchIcon className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder="Search..."
-          className="w-64 pl-8"
-        />
-      </div>
+      <button
+        type="button"
+        onClick={() => setSearchOpen(true)}
+        className="relative hidden h-9 w-64 items-center gap-2 rounded-md border border-input bg-background px-3 text-sm text-muted-foreground shadow-sm transition-colors hover:bg-accent md:flex"
+      >
+        <SearchIcon className="h-4 w-4" />
+        <span>Search...</span>
+        <kbd className="pointer-events-none ml-auto inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+          <span className="text-xs">&#8984;</span>K
+        </kbd>
+      </button>
 
       <div className="ml-auto flex items-center gap-2">
         {/* Mobile Search */}
-        <Button variant="ghost" size="icon" className="md:hidden">
+        <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setSearchOpen(true)}>
           <SearchIcon className="h-5 w-5" />
         </Button>
 
@@ -217,5 +224,6 @@ export function Header() {
         </DropdownMenu>
       </div>
     </header>
+    </>
   )
 }

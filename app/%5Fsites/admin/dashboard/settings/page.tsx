@@ -52,7 +52,6 @@ type SettingsSectionId =
   | 'general'
   | 'appConfig'
   | 'team'
-  | 'billing'
   | 'security'
   | 'api'
   | 'notifications'
@@ -108,7 +107,6 @@ const navItems: Array<{
   { id: 'general', label: 'General', icon: BuildingIcon },
   { id: 'appConfig', label: 'App Config', icon: SmartphoneIcon },
   { id: 'team', label: 'Team', icon: UsersIcon },
-  { id: 'billing', label: 'Billing', icon: CreditCardIcon },
   { id: 'security', label: 'Security', icon: LockIcon },
   { id: 'api', label: 'API', icon: KeyIcon },
   { id: 'notifications', label: 'Notifications', icon: BellIcon },
@@ -1490,37 +1488,6 @@ export default function SettingsPage() {
                     <h3 className="font-semibold">Team management is not connected yet</h3>
                     <p className="mt-1 text-sm text-muted-foreground">
                       Invite flows, role changes, and multi-admin access controls will appear here once the backend endpoint is available.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {activeSection === 'billing' && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Billing</CardTitle>
-                <CardDescription>
-                  Live billing data is available in the payments dashboard instead of this read-only settings view.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <ActionInfoCard
-                  title="Open the live payments workspace"
-                  description="Use the payments page to review subscriptions, transactions, and revenue trends from the real admin API."
-                  href="/dashboard/payments"
-                  cta="Go to Payments"
-                />
-
-                <div className="flex items-start gap-3 rounded-xl border border-dashed bg-muted/10 p-5">
-                  <div className="mt-0.5 rounded-md bg-muted p-1.5 text-muted-foreground">
-                    <CreditCardIcon className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">No billing editor is wired here</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Plan changes, payment method updates, and invoice downloads will appear here once a writable billing settings endpoint is added.
                     </p>
                   </div>
                 </div>
