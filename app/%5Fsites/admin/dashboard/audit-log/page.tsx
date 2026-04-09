@@ -432,7 +432,6 @@ export default function AuditLogPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Time</TableHead>
-                    <TableHead>Surface</TableHead>
                     <TableHead>Action</TableHead>
                     <TableHead>Actor</TableHead>
                     <TableHead>Outcome</TableHead>
@@ -443,7 +442,7 @@ export default function AuditLogPage() {
                 <TableBody>
                   {logs.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={7} className="h-28 text-center text-muted-foreground">
+                      <TableCell colSpan={6} className="h-28 text-center text-muted-foreground">
                         No audit entries matched your filters.
                       </TableCell>
                     </TableRow>
@@ -473,16 +472,8 @@ export default function AuditLogPage() {
                                     </Badge>
                                   ) : null}
                                 </div>
-                                <p className="font-medium">{getAuditSurfaceLabel(log)}</p>
+                                <p className="font-medium">{formatAuditAction(log.action)}</p>
                               </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="space-y-1">
-                              <p className="font-medium">{formatAuditAction(log.action)}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {getAuditResourceLabel(log)}
-                              </p>
                             </div>
                           </TableCell>
                           <TableCell>
