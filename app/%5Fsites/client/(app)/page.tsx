@@ -357,11 +357,11 @@ export default function ClientDashboardPage() {
             </div>
             <div className="p-4">
               {recentUploadsQuery.data?.images.length ? (
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-1">
                   {recentUploadsQuery.data.images.slice(0, 6).map((image) => (
                     <div
                       key={image.id}
-                      className="aspect-square overflow-hidden rounded-xl border border-border/60 bg-secondary"
+                      className="aspect-square overflow-hidden rounded-md border border-border/60 bg-secondary"
                     >
                       {image.accessUrl ? (
                         <img
