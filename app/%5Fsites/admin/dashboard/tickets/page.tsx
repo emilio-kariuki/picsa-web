@@ -76,7 +76,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
-import { Spinner } from '@/components/ui/spinner'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -547,11 +547,18 @@ export default function TicketsPage() {
         </CardHeader>
 
         {ticketsQuery.isLoading ? (
-          <CardContent className="py-16">
-            <div className="flex flex-col items-center gap-3 text-center">
-              <Spinner className="size-6" />
-              <p className="text-sm text-muted-foreground">Loading tickets...</p>
-            </div>
+          <CardContent className="flex flex-col gap-3 py-6">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-4">
+                <Skeleton className="h-9 w-9 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-[160px]" />
+                  <Skeleton className="h-3 w-[100px]" />
+                </div>
+                <Skeleton className="h-5 w-20 rounded-full" />
+                <Skeleton className="hidden h-4 w-[80px] sm:block" />
+              </div>
+            ))}
           </CardContent>
         ) : ticketsQuery.isError ? (
           <CardContent className="py-16">

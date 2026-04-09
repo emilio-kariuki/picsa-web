@@ -74,6 +74,7 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import { Spinner } from '@/components/ui/spinner'
+import { Skeleton } from '@/components/ui/skeleton'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Table,
@@ -405,11 +406,17 @@ export default function AuditLogPage() {
 
       <Card>
         {auditLogsQuery.isLoading ? (
-          <div className="flex min-h-80 items-center justify-center">
-            <div className="flex flex-col items-center gap-3">
-              <Spinner className="size-6" />
-              <p className="text-sm text-muted-foreground">Loading audit logs...</p>
-            </div>
+          <div className="flex min-h-80 flex-col gap-3 p-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-4">
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-[160px]" />
+                  <Skeleton className="h-3 w-[240px]" />
+                </div>
+                <Skeleton className="h-5 w-16 rounded-full" />
+                <Skeleton className="hidden h-4 w-[100px] sm:block" />
+              </div>
+            ))}
           </div>
         ) : auditLogsQuery.isError ? (
           <div className="flex min-h-80 items-center justify-center px-6 text-center">
@@ -571,10 +578,17 @@ export default function AuditLogPage() {
           </SheetHeader>
 
           {selectedAuditLogQuery.isLoading ? (
-            <div className="flex flex-1 items-center justify-center">
-              <div className="flex flex-col items-center gap-3">
-                <Spinner className="size-6" />
-                <p className="text-sm text-muted-foreground">Loading audit entry...</p>
+            <div className="mt-6 space-y-4 px-1">
+              <Skeleton className="h-5 w-[200px]" />
+              <div className="space-y-3">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+              </div>
+              <Skeleton className="h-20 w-full rounded-lg" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-2/3" />
               </div>
             </div>
           ) : selectedAuditLogQuery.isError ? (

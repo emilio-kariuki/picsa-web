@@ -27,14 +27,6 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -49,9 +41,11 @@ import {
   Sheet,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Spinner } from '@/components/ui/spinner'
 import {
   Table,
@@ -271,8 +265,34 @@ function NotificationBatchDetailSheet({
         </SheetHeader>
 
         {isLoading && !batch ? (
-          <div className="flex min-h-70 items-center justify-center">
-            <Spinner className="h-6 w-6" />
+          <div className="mt-6 space-y-6">
+            <div className="space-y-4 rounded-3xl border border-border/70 bg-muted/20 p-5">
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-5 w-16 rounded-full" />
+                <Skeleton className="h-5 w-20 rounded-full" />
+                <Skeleton className="h-5 w-24 rounded-full" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-7 w-3/4" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-2/3" />
+              </div>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {Array.from({ length: 2 }).map((_, i) => (
+                <Card key={i} className="border-border/70">
+                  <CardHeader className="pb-3"><Skeleton className="h-4 w-20" /></CardHeader>
+                  <CardContent className="space-y-3">
+                    {Array.from({ length: 3 }).map((_, j) => (
+                      <div key={j} className="space-y-1">
+                        <Skeleton className="h-3 w-16" />
+                        <Skeleton className="h-4 w-32" />
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
         ) : errorMessage && !batch ? (
           <div className="mt-6 rounded-2xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
@@ -800,11 +820,23 @@ export default function NotificationsPage() {
 
           {batchesQuery.isLoading ? (
             <Card className="border-border/70">
-              <CardContent className="flex min-h-80 items-center justify-center">
-                <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                  <Spinner className="h-5 w-5" />
-                  Loading live notification batches...
-                </div>
+              <CardContent className="p-4 space-y-4">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="flex items-center gap-4">
+                    <div className="min-w-70 space-y-2 flex-1">
+                      <Skeleton className="h-4 w-48" />
+                      <Skeleton className="h-3 w-64" />
+                    </div>
+                    <Skeleton className="h-5 w-20 rounded-full" />
+                    <Skeleton className="h-5 w-20 rounded-full" />
+                    <Skeleton className="h-4 w-12" />
+                    <div className="space-y-1">
+                      <Skeleton className="h-3 w-28" />
+                      <Skeleton className="h-3 w-16" />
+                    </div>
+                    <Skeleton className="h-8 w-16 rounded-md" />
+                  </div>
+                ))}
               </CardContent>
             </Card>
           ) : batches.length === 0 ? (
@@ -856,7 +888,7 @@ export default function NotificationsPage() {
                               key={batch.id}
                               className={cn(selectedBatchId === batch.id && 'bg-muted/40')}
                             >
-                              <TableCell className="align-top">
+                              <TableCell className="align-middle">
                                 <div className="min-w-70 space-y-2">
                                   <div className="flex flex-wrap items-center gap-2">
                                     <p className="font-medium">{batch.title}</p>
@@ -869,15 +901,15 @@ export default function NotificationsPage() {
                                   </p>
                                 </div>
                               </TableCell>
-                              <TableCell className="align-top">
+                              <TableCell className="align-middle">
                                 <div className="space-y-2">
                                   <Badge className={cn('border-0', audienceStyle.badgeClassName)}>
                                     {audienceStyle.label}
                                   </Badge>
                                 </div>
                               </TableCell>
-                              <TableCell className="align-top">
-                                <div className="space-y-2 ">
+                              <TableCell className="align-middle">
+                                <div className="space-y-2">
                                   <Badge className={cn('border-0', statusStyle.badgeClassName)}>
                                     <span className="inline-flex items-center gap-1.5">
                                       <StatusIcon
@@ -896,10 +928,10 @@ export default function NotificationsPage() {
                                   )}
                                 </div>
                               </TableCell>
-                              <TableCell className="align-top text-sm text-muted-foreground">
+                              <TableCell className="align-middle text-sm text-muted-foreground">
                                 {batch.totalRecipients.toLocaleString()}
                               </TableCell>
-                              <TableCell className="align-top">
+                              <TableCell className="align-middle">
                                 <div className="flex min-w-45 items-center gap-3">
                                   <Avatar className="h-8 w-8">
                                     <AvatarFallback>{getInitials(batch.createdBy.name)}</AvatarFallback>
@@ -914,17 +946,17 @@ export default function NotificationsPage() {
                                   </div>
                                 </div>
                               </TableCell>
-                              <TableCell className="align-top text-sm text-muted-foreground">
+                              <TableCell className="align-middle text-sm text-muted-foreground">
                                 <div className="space-y-1">
                                   <p>{formatDateTime(batch.createdAt)}</p>
                                   <p>{formatTimeAgo(batch.createdAt)}</p>
                                 </div>
                               </TableCell>
-                              <TableCell className="align-top text-sm text-muted-foreground">
+                              <TableCell className="align-middle text-sm text-muted-foreground">
                                 {batch.processedAt ? formatDateTime(batch.processedAt) : 'Waiting'}
                               </TableCell>
-                              
-                              <TableCell className="align-top text-right">
+
+                              <TableCell className="align-middle text-right">
                                 <Button
                                   variant="outline"
                                   size="sm"
@@ -994,14 +1026,14 @@ export default function NotificationsPage() {
         }
       />
 
-      <Dialog open={composeOpen} onOpenChange={handleComposeOpenChange}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>New Broadcast</DialogTitle>
-            <DialogDescription>
+      <Sheet open={composeOpen} onOpenChange={handleComposeOpenChange}>
+        <SheetContent className="sm:max-w-2xl overflow-y-auto p-4">
+          <SheetHeader>
+            <SheetTitle>New Broadcast</SheetTitle>
+            <SheetDescription>
               Create a real system notification batch and send it through the live admin pipeline.
-            </DialogDescription>
-          </DialogHeader>
+            </SheetDescription>
+          </SheetHeader>
 
           <div className="space-y-5">
             <div className="rounded-2xl border border-border/70 bg-muted/20 p-4 text-sm text-muted-foreground">
@@ -1119,8 +1151,16 @@ export default function NotificationsPage() {
                 <ScrollArea className="h-64 rounded-2xl border border-border/70 bg-background">
                   <div className="space-y-2 p-2">
                     {recipientsQuery.isLoading ? (
-                      <div className="flex h-40 items-center justify-center">
-                        <Spinner className="h-5 w-5" />
+                      <div className="space-y-2 p-2">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                          <div key={i} className="flex items-center gap-3 rounded-2xl border border-border/70 px-3 py-3">
+                            <Skeleton className="h-9 w-9 rounded-full" />
+                            <div className="space-y-1.5 flex-1">
+                              <Skeleton className="h-4 w-32" />
+                              <Skeleton className="h-3 w-44" />
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     ) : recipientsQuery.isError ? (
                       <div className="flex h-40 items-center justify-center px-4 text-center text-sm text-destructive">
@@ -1238,8 +1278,14 @@ export default function NotificationsPage() {
                 <ScrollArea className="h-64 rounded-2xl border border-border/70 bg-background">
                   <div className="space-y-2 p-2">
                     {eventsQuery.isLoading ? (
-                      <div className="flex h-40 items-center justify-center">
-                        <Spinner className="h-5 w-5" />
+                      <div className="space-y-2 p-2">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                          <div key={i} className="rounded-2xl border border-border/70 px-3 py-3 space-y-1.5">
+                            <Skeleton className="h-4 w-40" />
+                            <Skeleton className="h-3 w-32" />
+                            <Skeleton className="h-3 w-28" />
+                          </div>
+                        ))}
                       </div>
                     ) : eventsQuery.isError ? (
                       <div className="flex h-40 items-center justify-center px-4 text-center text-sm text-destructive">
@@ -1294,7 +1340,7 @@ export default function NotificationsPage() {
             )}
           </div>
 
-          <DialogFooter>
+          <SheetFooter>
             <Button
               variant="outline"
               onClick={() => handleComposeOpenChange(false)}
@@ -1315,9 +1361,9 @@ export default function NotificationsPage() {
                 </>
               )}
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </div>
   )
 }

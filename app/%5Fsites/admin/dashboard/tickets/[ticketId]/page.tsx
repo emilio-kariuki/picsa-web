@@ -50,6 +50,7 @@ import {
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Spinner } from '@/components/ui/spinner'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
 
 const TICKET_QUERY_KEY = 'admin-ticket'
@@ -286,11 +287,20 @@ export default function TicketDetailPage(props: TicketDetailPageProps) {
 
       {ticketQuery.isLoading ? (
         <Card className="rounded-3xl border-border/70 bg-card/90 shadow-none">
-          <CardContent className="flex min-h-80 items-center justify-center">
-            <div className="flex flex-col items-center gap-3">
-              <Spinner className="size-6" />
-              <p className="text-sm text-muted-foreground">Loading ticket details...</p>
+          <CardContent className="space-y-6 p-6">
+            <div className="flex items-start gap-4">
+              <Skeleton className="h-10 w-10 rounded-full" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-5 w-[200px]" />
+                <Skeleton className="h-4 w-[150px]" />
+              </div>
+              <Skeleton className="h-6 w-20 rounded-full" />
             </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Skeleton className="h-20 rounded-lg" />
+              <Skeleton className="h-20 rounded-lg" />
+            </div>
+            <Skeleton className="h-40 w-full rounded-lg" />
           </CardContent>
         </Card>
       ) : ticketQuery.isError ? (

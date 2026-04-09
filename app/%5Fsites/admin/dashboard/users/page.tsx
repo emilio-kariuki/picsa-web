@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useDeferredValue, useEffect, useMemo } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -11,21 +12,25 @@ import {
   ShieldCheckIcon,
   SparklesIcon,
   UserCogIcon,
+  UsersIcon,
+  UserCheckIcon,
+  Crown,
+  UserPlusIcon,
 } from '@/components/ui/icons'
 import { toast } from 'sonner'
 import { useAdminAuth } from '@/hooks/use-admin-auth'
 import {
-  type AdminUserDetail,
   type AdminUserRoleValue,
   type AdminUsersQueryInput,
   type AdminUserSummary,
-  getAdminUserById,
   listAdminUsers,
   syncAdminUserSubscription,
   updateAdminUserRole,
   updateAdminUserStatus,
 } from '@/lib/admin-users-api'
 import { isAdminApiError } from '@/lib/api'
+import { getAdminOverview } from '@/lib/admin-overview-api'
+import { KPICard } from '@/components/common/kpi-card'
 import {
   adminUsersActionAtom,
   adminUsersActionReasonAtom,
@@ -33,7 +38,6 @@ import {
   adminUsersProFilterAtom,
   adminUsersRoleFilterAtom,
   adminUsersSearchInputAtom,
-  adminUsersSelectedUserIdAtom,
   adminUsersSortByAtom,
   adminUsersSortOrderAtom,
   adminUsersStatusFilterAtom,
@@ -73,15 +77,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
-import { Separator } from '@/components/ui/separator'
 import { Spinner } from '@/components/ui/spinner'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -93,7 +90,7 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 
 const USERS_QUERY_KEY = 'admin-users'
-const USER_QUERY_KEY = 'admin-user'
+const USER_DETAIL_QUERY_KEY = 'admin-user'
 const USERS_PAGE_SIZE = 20
 
 function formatDate(value: string | null) {
@@ -189,7 +186,6 @@ export default function UsersPage() {
   const [proFilter, setProFilter] = useAtom(adminUsersProFilterAtom)
   const [sortBy, setSortBy] = useAtom(adminUsersSortByAtom)
   const [sortOrder, setSortOrder] = useAtom(adminUsersSortOrderAtom)
-  const [selectedUserId, setSelectedUserId] = useAtom(adminUsersSelectedUserIdAtom)
   const [userAction, setUserAction] = useAtom(adminUsersActionAtom)
   const [actionReason, setActionReason] = useAtom(adminUsersActionReasonAtom)
   const clearActionReason = useSetAtom(adminUsersActionReasonAtom)
@@ -223,19 +219,6 @@ export default function UsersPage() {
     placeholderData: (previousData) => previousData,
   })
 
-  const selectedUserQuery = useQuery({
-    queryKey: [USER_QUERY_KEY, selectedUserId],
-    queryFn: () =>
-      performAuthenticatedRequest((accessToken) =>
-        getAdminUserById(accessToken, selectedUserId!),
-      ),
-    enabled: Boolean(
-      selectedUserId &&
-        bootstrapStatus === 'ready' &&
-        isAuthenticated,
-    ),
-  })
-
   const refreshUsers = async () => {
     try {
       await usersQuery.refetch()
@@ -264,7 +247,7 @@ export default function UsersPage() {
     onSuccess: async (_, variables) => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: [USERS_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [USER_QUERY_KEY, variables.userId] }),
+        queryClient.invalidateQueries({ queryKey: [USER_DETAIL_QUERY_KEY, variables.userId] }),
       ])
       setUserAction(null)
       clearActionReason('')
@@ -294,7 +277,7 @@ export default function UsersPage() {
     onSuccess: async (_, variables) => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: [USERS_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [USER_QUERY_KEY, variables.userId] }),
+        queryClient.invalidateQueries({ queryKey: [USER_DETAIL_QUERY_KEY, variables.userId] }),
       ])
       setUserAction(null)
       clearActionReason('')
@@ -317,7 +300,7 @@ export default function UsersPage() {
     onSuccess: async (_, userId) => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: [USERS_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [USER_QUERY_KEY, userId] }),
+        queryClient.invalidateQueries({ queryKey: [USER_DETAIL_QUERY_KEY, userId] }),
       ])
       toast.success('Subscription synced')
     },
@@ -333,7 +316,15 @@ export default function UsersPage() {
   const users = usersQuery.data?.data.items ?? []
   const totalCount = usersQuery.data?.data.totalCount ?? 0
   const totalPages = Math.max(1, Math.ceil(totalCount / USERS_PAGE_SIZE))
-  const selectedUser = selectedUserQuery.data?.data.user ?? null
+
+  const overviewQuery = useQuery({
+    queryKey: ['admin-overview'],
+    queryFn: () => performAuthenticatedRequest((token) => getAdminOverview(token)),
+    enabled: bootstrapStatus === 'ready' && isAuthenticated,
+    staleTime: 60_000,
+  })
+
+  const overview = overviewQuery.data?.data.overview
 
   useEffect(() => {
     if (page > totalPages) {
@@ -377,6 +368,37 @@ export default function UsersPage() {
           </Button>
         }
       />
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <KPICard
+          title="Total users"
+          value={overview?.totalUsers ?? '—'}
+          change={overview ? Math.round((overview.activeUsers / Math.max(overview.totalUsers, 1)) * 100) : undefined}
+          changeLabel="active accounts"
+          icon={<UsersIcon className="h-5 w-5" />}
+        />
+        <KPICard
+          title="Active users"
+          value={overview?.activeUsers ?? '—'}
+          change={overview?.newUsersLast7d ? overview.newUsersLast7d : undefined}
+          changeLabel="new this week"
+          icon={<UserCheckIcon className="h-5 w-5" />}
+        />
+        <KPICard
+          title="Pro users"
+          value={overview?.proUsers ?? '—'}
+          change={overview ? Math.round((overview.proUsers / Math.max(overview.totalUsers, 1)) * 100) : undefined}
+          changeLabel="of total users"
+          icon={<Crown className="h-5 w-5" />}
+        />
+        <KPICard
+          title="New users (30d)"
+          value={overview?.newUsersLast30d ?? '—'}
+          change={overview?.newUsersLast7d ? overview.newUsersLast7d : undefined}
+          changeLabel="in the last 7 days"
+          icon={<UserPlusIcon className="h-5 w-5" />}
+        />
+      </div>
 
       <Card className="border-border/70 bg-card/80 p-4 shadow-none">
         <div className="flex flex-col gap-4">
@@ -471,11 +493,21 @@ export default function UsersPage() {
 
       <Card>
         {usersQuery.isLoading ? (
-          <div className="flex min-h-80 items-center justify-center">
-            <div className="flex flex-col items-center gap-3">
-              <Spinner className="size-6" />
-              <p className="text-sm text-muted-foreground">Loading users...</p>
-            </div>
+          <div className="flex min-h-80 flex-col gap-3 p-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-4">
+                <Skeleton className="h-9 w-9 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-[200px]" />
+                  <Skeleton className="h-3 w-[140px]" />
+                </div>
+                <Skeleton className="h-5 w-16 rounded-full" />
+                <Skeleton className="h-5 w-14 rounded-full" />
+                <Skeleton className="h-5 w-12 rounded-full" />
+                <Skeleton className="hidden h-4 w-[90px] sm:block" />
+                <Skeleton className="hidden h-4 w-[120px] sm:block" />
+              </div>
+            ))}
           </div>
         ) : usersQuery.isError ? (
           <div className="flex min-h-80 items-center justify-center px-6 text-center">
@@ -517,10 +549,9 @@ export default function UsersPage() {
                     users.map((user) => (
                       <TableRow key={user.id}>
                         <TableCell>
-                          <button
-                            type="button"
+                          <Link
+                            href={`/dashboard/users/${user.id}`}
                             className="flex w-full items-center gap-3 text-left"
-                            onClick={() => setSelectedUserId(user.id)}
                           >
                             <Avatar className="h-9 w-9">
                               <AvatarImage src={user.url ?? undefined} />
@@ -530,7 +561,7 @@ export default function UsersPage() {
                               <p className="font-medium">{getUserDisplayName(user)}</p>
                               <p className="text-sm text-muted-foreground">{user.email ?? 'No email address'}</p>
                             </div>
-                          </button>
+                          </Link>
                         </TableCell>
                         <TableCell>
                           <Badge variant="secondary">{getRoleLabel(user.role)}</Badge>
@@ -564,9 +595,11 @@ export default function UsersPage() {
                             <DropdownMenuContent align="end">
                               <DropdownMenuLabel>Actions</DropdownMenuLabel>
                               <DropdownMenuSeparator />
-                              <DropdownMenuItem onClick={() => setSelectedUserId(user.id)}>
-                                <EyeIcon className="mr-2 h-4 w-4" />
-                                View details
+                              <DropdownMenuItem asChild>
+                                <Link href={`/dashboard/users/${user.id}`}>
+                                  <EyeIcon className="mr-2 h-4 w-4" />
+                                  View details
+                                </Link>
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => {
@@ -637,37 +670,6 @@ export default function UsersPage() {
           </>
         )}
       </Card>
-
-      <Sheet open={Boolean(selectedUserId)} onOpenChange={(open) => !open && setSelectedUserId(null)}>
-        <SheetContent className="w-full overflow-y-auto sm:max-w-xl p-4">
-          <SheetHeader>
-            <SheetTitle>User details</SheetTitle>
-            <SheetDescription>
-              Review account information, subscription state, and recent activity counts.
-            </SheetDescription>
-          </SheetHeader>
-
-          {selectedUserQuery.isLoading ? (
-            <div className="mt-10 flex items-center justify-center">
-              <div className="flex flex-col items-center gap-3">
-                <Spinner className="size-6" />
-                <p className="text-sm text-muted-foreground">Loading user details...</p>
-              </div>
-            </div>
-          ) : selectedUserQuery.isError ? (
-            <div className="mt-10 rounded-lg border border-dashed p-6 text-center">
-              <p className="font-medium">Unable to load user details</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {isAdminApiError(selectedUserQuery.error) || selectedUserQuery.error instanceof Error
-                  ? selectedUserQuery.error.message
-                  : 'Something went wrong while loading this user.'}
-              </p>
-            </div>
-          ) : selectedUser ? (
-            <UserDetailContent user={selectedUser} onSync={() => syncMutation.mutate(selectedUser.id)} isSyncing={syncMutation.isPending} />
-          ) : null}
-        </SheetContent>
-      </Sheet>
 
       <Dialog open={Boolean(userAction)} onOpenChange={(open) => !open && setUserAction(null)}>
         <DialogContent>
@@ -745,105 +747,6 @@ export default function UsersPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
-  )
-}
-
-function UserDetailContent({
-  user,
-  onSync,
-  isSyncing,
-}: {
-  user: AdminUserDetail
-  onSync: () => void
-  isSyncing: boolean
-}) {
-  return (
-    <div className="mt-6 space-y-6">
-      <div className="flex items-start gap-4">
-        <Avatar className="h-14 w-14">
-          <AvatarImage src={user.url ?? undefined} />
-          <AvatarFallback>{getUserInitials(user)}</AvatarFallback>
-        </Avatar>
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-lg font-semibold">{getUserDisplayName(user)}</h3>
-            <Badge variant="secondary">{getRoleLabel(user.role)}</Badge>
-            {user.pro ? (
-              <Badge className="gap-1">
-                <SparklesIcon className="h-3.5 w-3.5" />
-                Pro
-              </Badge>
-            ) : (
-              <Badge variant="outline">Free</Badge>
-            )}
-            <StatusBadge status={getStatusLabel(user)} />
-          </div>
-          <p className="text-sm text-muted-foreground">{user.email ?? 'No email address'}</p>
-          {/* <p className="text-xs text-muted-foreground">User ID: {user.id}</p> */}
-        </div>
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-2">
-        <DetailMetric label="Joined" value={formatDateTime(user.createdAt)} />
-        <DetailMetric label="Last login" value={formatDateTime(user.lastLoginAt)} />
-        <DetailMetric label="Email verified" value={user.emailVerifiedAt ? formatDateTime(user.emailVerifiedAt) : 'Not verified'} />
-        <DetailMetric label="Auth providers" value={user.authProviders.length > 0 ? user.authProviders.join(', ') : 'None'} />
-      </div>
-
-      <Separator />
-
-      <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <h4 className="font-medium">Subscription</h4>
-            <p className="text-sm text-muted-foreground">Mirrored RevenueCat state for this account.</p>
-          </div>
-          <Button variant="outline" size="sm" onClick={onSync} disabled={isSyncing}>
-            {isSyncing ? <Spinner className="mr-2 size-4" /> : <RefreshCwIcon className="mr-2 h-4 w-4" />}
-            Sync
-          </Button>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <DetailMetric label="Product" value={user.subscription.activeProductId ?? 'No active product'} />
-          <DetailMetric label="Store" value={user.subscription.store ?? 'Unknown'} />
-          <DetailMetric label="Will renew" value={user.subscription.willRenew ? 'Yes' : 'No'} />
-          <DetailMetric label="Expires at" value={user.subscription.expiresAt ? formatDateTime(user.subscription.expiresAt) : 'Not set'} />
-          <DetailMetric label="Last synced" value={user.subscription.lastSyncedAt ? formatDateTime(user.subscription.lastSyncedAt) : 'Never'} />
-          <DetailMetric
-            label="Active entitlements"
-            value={
-              user.subscription.activeEntitlementIds.length > 0
-                ? user.subscription.activeEntitlementIds.join(', ')
-                : 'None'
-            }
-          />
-        </div>
-      </section>
-
-      <Separator />
-
-      <section className="space-y-3">
-        <div>
-          <h4 className="font-medium">Counts</h4>
-          <p className="text-sm text-muted-foreground">Current usage and inbox visibility for this user.</p>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <DetailMetric label="Hosted events" value={String(user.counts.hostedEventsCount)} />
-          <DetailMetric label="Joined events" value={String(user.counts.memberEventsCount)} />
-          <DetailMetric label="Images" value={String(user.counts.imageCount)} />
-          <DetailMetric label="Unread notifications" value={String(user.counts.unreadNotificationCount)} />
-        </div>
-      </section>
-    </div>
-  )
-}
-
-function DetailMetric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border p-3">
-      <p className="text-xs uppercase tracking-wide text-muted-foreground">{label}</p>
-      <p className="mt-2 text-sm font-medium">{value}</p>
     </div>
   )
 }

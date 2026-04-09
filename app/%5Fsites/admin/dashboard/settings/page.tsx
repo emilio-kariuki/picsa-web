@@ -22,6 +22,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useAdminAuth } from '@/hooks/use-admin-auth'
 import { type EditableAdminAppConfig, fetchAdminAppConfig, updateAdminAppConfig } from '@/lib/admin-app-config-api'
 import { isAdminApiError } from '@/lib/api'
@@ -963,9 +964,10 @@ export default function SettingsPage() {
                   ) : null}
 
                   {appConfigQuery.isLoading && !appConfigDraft ? (
-                    <div className="flex items-center gap-3 rounded-xl border bg-muted/15 p-5 text-sm text-muted-foreground">
-                      <LoaderCircleIcon className="h-4 w-4 animate-spin" />
-                      Loading the live app configuration...
+                    <div className="space-y-3 rounded-xl border bg-muted/15 p-5">
+                      <Skeleton className="h-4 w-56" />
+                      <Skeleton className="h-4 w-40" />
+                      <Skeleton className="h-4 w-48" />
                     </div>
                   ) : null}
                 </CardContent>

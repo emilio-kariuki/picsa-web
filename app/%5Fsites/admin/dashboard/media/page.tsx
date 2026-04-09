@@ -96,6 +96,7 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import { Spinner } from '@/components/ui/spinner'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -603,11 +604,18 @@ export default function ImagesPage() {
 
       <Card>
         {imagesQuery.isLoading ? (
-          <div className="flex min-h-80 items-center justify-center">
-            <div className="flex flex-col items-center gap-3">
-              <Spinner className="size-6" />
-              <p className="text-sm text-muted-foreground">Loading images...</p>
-            </div>
+          <div className="flex min-h-80 flex-col gap-3 p-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-4">
+                <Skeleton className="h-10 w-10 rounded-lg" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-[180px]" />
+                  <Skeleton className="h-3 w-[120px]" />
+                </div>
+                <Skeleton className="h-5 w-16 rounded-full" />
+                <Skeleton className="hidden h-4 w-[80px] sm:block" />
+              </div>
+            ))}
           </div>
         ) : imagesQuery.isError ? (
           <div className="flex min-h-80 items-center justify-center px-6 text-center">
@@ -850,10 +858,16 @@ export default function ImagesPage() {
           </SheetHeader>
 
           {selectedImageQuery.isLoading ? (
-            <div className="flex flex-1 items-center justify-center">
-              <div className="flex flex-col items-center gap-3">
-                <Spinner className="size-6" />
-                <p className="text-sm text-muted-foreground">Loading image details...</p>
+            <div className="mt-6 space-y-4 px-1">
+              <Skeleton className="aspect-video w-full rounded-lg" />
+              <div className="space-y-3">
+                <Skeleton className="h-5 w-[200px]" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <Skeleton className="h-16 rounded-lg" />
+                <Skeleton className="h-16 rounded-lg" />
               </div>
             </div>
           ) : selectedImageQuery.isError ? (

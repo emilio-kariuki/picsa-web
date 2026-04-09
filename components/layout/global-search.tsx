@@ -200,7 +200,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
                 <CommandItem
                   key={user.id}
                   value={`user-${user.id}-${user.name ?? ''}-${user.email ?? ''}`}
-                  onSelect={() => navigate(`/dashboard/users?search=${encodeURIComponent(query)}`)}
+                  onSelect={() => navigate(`/dashboard/users/${user.id}`)}
                 >
                   <Avatar className="mr-2 h-6 w-6">
                     <AvatarImage src={user.url ?? undefined} />

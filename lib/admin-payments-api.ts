@@ -39,6 +39,7 @@ export interface AdminPaymentsSubscriptionsQueryInput {
   search?: string
   sortBy?: 'createdAt' | 'email' | 'expiresAt' | 'store'
   sortOrder?: AdminPaymentsSortOrder
+  userId?: string
   isActive?: boolean
   store?: string
   willRenew?: boolean
@@ -53,6 +54,7 @@ export interface AdminEventPassPaymentsQueryInput {
   search?: string
   sortBy?: 'createdAt' | 'purchasedAt' | 'amount' | 'provider' | 'paymentStatus' | 'claimedAt' | 'revokedAt'
   sortOrder?: AdminPaymentsSortOrder
+  userId?: string
   provider?: AdminBillingProvider
   paymentStatus?: string
   claimed?: boolean
@@ -66,6 +68,7 @@ export interface AdminBillingTransactionsQueryInput {
   search?: string
   sortBy?: 'createdAt' | 'amount' | 'provider' | 'type'
   sortOrder?: AdminPaymentsSortOrder
+  userId?: string
   provider?: AdminBillingProvider
   type?: AdminBillingTransactionType
   createdFrom?: string

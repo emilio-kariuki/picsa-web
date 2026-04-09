@@ -1,6 +1,18 @@
 'use client'
 
 import { useDeferredValue, useMemo, useState } from 'react'
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Pie,
+  PieChart,
+  XAxis,
+  YAxis,
+} from 'recharts'
 import { useQuery } from '@tanstack/react-query'
 import {
   CreditCardIcon,
@@ -18,7 +30,13 @@ import { KPICard } from '@/components/common/kpi-card'
 import { PageHeader } from '@/components/common/page-header'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from '@/components/ui/chart'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -28,7 +46,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Spinner } from '@/components/ui/spinner'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Switch } from '@/components/ui/switch'
 import {
   Table,
@@ -56,6 +74,31 @@ import { isAdminApiError } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 const PAGE_LIMIT = 100
+
+const chartColors = {
+  violet: 'var(--chart-5)',
+  indigo: 'var(--chart-1)',
+  sky: 'var(--chart-2)',
+  amber: 'var(--chart-3)',
+  emerald: 'var(--chart-1)',
+}
+
+const mrrChartConfig = {
+  mrr: { label: 'MRR', color: chartColors.violet },
+} satisfies ChartConfig
+
+const providerChartConfig = {
+  DODO: { label: 'Dodo', color: chartColors.indigo },
+  REVENUECAT: { label: 'RevenueCat', color: chartColors.sky },
+} satisfies ChartConfig
+
+const passesDonutConfig = {
+  available: { label: 'Available', color: chartColors.emerald },
+  claimed: { label: 'Claimed', color: chartColors.sky },
+  revoked: { label: 'Revoked', color: chartColors.amber },
+} satisfies ChartConfig
+
+const DONUT_COLORS = [chartColors.emerald, chartColors.sky, chartColors.amber]
 
 function formatCurrency(amount: number | null | undefined, currency = 'USD') {
   if (amount == null) {
@@ -178,13 +221,18 @@ function errorMessage(error: unknown, fallback: string) {
   return fallback
 }
 
-function SectionLoading({ label }: { label: string }) {
+function SectionLoading() {
   return (
-    <div className="flex min-h-[220px] items-center justify-center">
-      <div className="flex flex-col items-center gap-3">
-        <Spinner className="size-5" />
-        <p className="text-sm text-muted-foreground">{label}</p>
-      </div>
+    <div className="space-y-3 p-4">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <div key={i} className="flex items-center gap-4">
+          <Skeleton className="h-4 w-28" />
+          <Skeleton className="h-5 w-24 rounded-full" />
+          <Skeleton className="h-5 w-20 rounded-full" />
+          <Skeleton className="h-4 w-40 flex-1" />
+          <Skeleton className="h-4 w-20 ml-auto" />
+        </div>
+      ))}
     </div>
   )
 }
@@ -496,6 +544,34 @@ export default function AdminPaymentsPage() {
     [overview?.eventPasses.providerSplit],
   )
 
+  const providerBarData = useMemo(
+    () =>
+      providerCards.map((p) => ({
+        provider: p.provider,
+        revenue: p.revenue / 100,
+        purchases: p.purchases,
+      })),
+    [providerCards],
+  )
+
+  const passesDonutData = useMemo(() => {
+    if (!overview) return []
+    return [
+      { name: 'Available', value: overview.eventPasses.availablePasses },
+      { name: 'Claimed', value: overview.eventPasses.claimedPasses },
+      { name: 'Revoked', value: overview.eventPasses.revokedPasses },
+    ].filter((d) => d.value > 0)
+  }, [overview])
+
+  const mrrSeriesFormatted = useMemo(
+    () =>
+      overview?.subscriptions.mrrSeries.map((p) => ({
+        month: p.month,
+        mrr: p.mrr / 100,
+      })) ?? [],
+    [overview?.subscriptions.mrrSeries],
+  )
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -554,7 +630,49 @@ export default function AdminPaymentsPage() {
 
         <TabsContent value="overview" className="space-y-6">
           {overviewQuery.isLoading ? (
-            <SectionLoading label="Loading billing overview..." />
+            <div className="space-y-6">
+              {/* KPI skeleton */}
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <Card key={i}>
+                    <CardContent className="p-5 space-y-2">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-8 w-20" />
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              {/* Chart skeleton */}
+              <Card>
+                <CardHeader>
+                  <Skeleton className="h-5 w-28" />
+                  <Skeleton className="h-3 w-52" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-[280px] w-full rounded-lg" />
+                </CardContent>
+              </Card>
+              <div className="grid gap-4 lg:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <Skeleton className="h-5 w-36" />
+                    <Skeleton className="h-3 w-56" />
+                  </CardHeader>
+                  <CardContent>
+                    <Skeleton className="h-[240px] w-full rounded-lg" />
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <Skeleton className="h-5 w-40" />
+                    <Skeleton className="h-3 w-48" />
+                  </CardHeader>
+                  <CardContent className="flex items-center justify-center">
+                    <Skeleton className="h-[200px] w-[200px] rounded-full" />
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           ) : overviewQuery.isError || !overview ? (
             <EmptyState
               icon={<ShieldAlertIcon className="h-6 w-6" />}
@@ -563,7 +681,8 @@ export default function AdminPaymentsPage() {
             />
           ) : (
             <>
-              <div className="grid gap-4 xl:grid-cols-4">
+              {/* Hero KPI row */}
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 <KPICard
                   title="MRR"
                   value={formatCurrency(overview.subscriptions.mrr)}
@@ -590,49 +709,151 @@ export default function AdminPaymentsPage() {
                 />
               </div>
 
-              <div className="grid gap-4 xl:grid-cols-4">
-                <KPICard
-                  title="Event pass revenue"
-                  value={formatCurrency(overview.eventPasses.grossRevenue)}
-                  icon={<DollarSignIcon className="h-5 w-5" />}
-                />
-                <KPICard
-                  title="Event pass purchases"
-                  value={overview.eventPasses.totalPurchases}
-                  icon={<PackageIcon className="h-5 w-5" />}
-                />
-                <KPICard
-                  title="Available passes"
-                  value={overview.eventPasses.availablePasses}
-                  icon={<CreditCardIcon className="h-5 w-5" />}
-                />
-                <KPICard
-                  title="Revoked passes"
-                  value={overview.eventPasses.revokedPasses}
-                  icon={<ShieldAlertIcon className="h-5 w-5" />}
-                />
-              </div>
+              {/* MRR trend chart */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">MRR trend</CardTitle>
+                  <CardDescription>Monthly recurring revenue over time</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {mrrSeriesFormatted.length > 0 ? (
+                    <ChartContainer config={mrrChartConfig} className="h-[280px] w-full">
+                      <AreaChart
+                        data={mrrSeriesFormatted}
+                        accessibilityLayer
+                        margin={{ top: 8, right: 8, left: -12, bottom: 0 }}
+                      >
+                        <defs>
+                          <linearGradient id="fillMrr" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor={chartColors.violet} stopOpacity={0.3} />
+                            <stop offset="95%" stopColor={chartColors.violet} stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                        <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={10} />
+                        <YAxis tickLine={false} axisLine={false} tickMargin={10} tickFormatter={(v) => `$${v}`} />
+                        <ChartTooltip
+                          content={
+                            <ChartTooltipContent
+                              labelKey="month"
+                              formatter={(value) => `$${Number(value).toLocaleString()}`}
+                            />
+                          }
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="mrr"
+                          stroke={chartColors.violet}
+                          fill="url(#fillMrr)"
+                          strokeWidth={2}
+                        />
+                      </AreaChart>
+                    </ChartContainer>
+                  ) : (
+                    <p className="py-10 text-center text-sm text-muted-foreground">No MRR data available yet.</p>
+                  )}
+                </CardContent>
+              </Card>
 
+              {/* Event passes row */}
               <div className="grid gap-4 lg:grid-cols-2">
-                {providerCards.map((provider) => (
-                  <Card key={provider.provider}>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base">{provider.provider}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-2 text-sm">
-                      <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">Revenue</span>
-                        <span className="font-medium text-foreground">
-                          {formatCurrency(provider.revenue)}
-                        </span>
+                {/* Provider revenue bar chart */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">Revenue by provider</CardTitle>
+                    <CardDescription>Event pass revenue split across payment providers</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {providerBarData.length > 0 ? (
+                      <ChartContainer config={providerChartConfig} className="h-[240px] w-full">
+                        <BarChart
+                          data={providerBarData}
+                          accessibilityLayer
+                          margin={{ top: 8, right: 8, left: -12, bottom: 0 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                          <XAxis dataKey="provider" tickLine={false} axisLine={false} tickMargin={10} />
+                          <YAxis tickLine={false} axisLine={false} tickMargin={10} tickFormatter={(v) => `$${v}`} />
+                          <ChartTooltip
+                            content={
+                              <ChartTooltipContent
+                                labelKey="provider"
+                                formatter={(value) => `$${Number(value).toLocaleString()}`}
+                              />
+                            }
+                          />
+                          <Bar dataKey="revenue" radius={[6, 6, 0, 0]}>
+                            {providerBarData.map((entry) => (
+                              <Cell
+                                key={entry.provider}
+                                fill={entry.provider === 'DODO' ? chartColors.indigo : chartColors.sky}
+                              />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ChartContainer>
+                    ) : (
+                      <p className="py-10 text-center text-sm text-muted-foreground">No provider data yet.</p>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Passes breakdown donut */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">Event pass breakdown</CardTitle>
+                    <CardDescription>
+                      {overview.eventPasses.totalPurchases.toLocaleString()} total purchases &middot;{' '}
+                      {formatCurrency(overview.eventPasses.grossRevenue)} gross revenue
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex items-center justify-center">
+                    {passesDonutData.length > 0 ? (
+                      <div className="flex flex-col items-center gap-4">
+                        <ChartContainer config={passesDonutConfig} className="h-[200px] w-[200px]">
+                          <PieChart>
+                            <ChartTooltip
+                              content={
+                                <ChartTooltipContent
+                                  formatter={(value) => Number(value).toLocaleString()}
+                                />
+                              }
+                            />
+                            <Pie
+                              data={passesDonutData}
+                              dataKey="value"
+                              nameKey="name"
+                              cx="50%"
+                              cy="50%"
+                              innerRadius={55}
+                              outerRadius={85}
+                              paddingAngle={3}
+                              strokeWidth={0}
+                            >
+                              {passesDonutData.map((_, i) => (
+                                <Cell key={i} fill={DONUT_COLORS[i % DONUT_COLORS.length]} />
+                              ))}
+                            </Pie>
+                          </PieChart>
+                        </ChartContainer>
+                        <div className="flex gap-4 text-sm">
+                          {passesDonutData.map((d, i) => (
+                            <div key={d.name} className="flex items-center gap-1.5">
+                              <span
+                                className="inline-block h-2.5 w-2.5 rounded-full"
+                                style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }}
+                              />
+                              <span className="text-muted-foreground">{d.name}</span>
+                              <span className="font-medium">{d.value}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">Successful purchases</span>
-                        <span className="font-medium text-foreground">{provider.purchases}</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                    ) : (
+                      <p className="py-10 text-center text-sm text-muted-foreground">No pass data yet.</p>
+                    )}
+                  </CardContent>
+                </Card>
               </div>
             </>
           )}
@@ -657,7 +878,7 @@ export default function AdminPaymentsPage() {
           <Card>
             <CardContent className="p-0">
               {subscriptionsQuery.isLoading ? (
-                <SectionLoading label="Loading subscriptions..." />
+                <SectionLoading />
               ) : subscriptionsQuery.isError ? (
                 <EmptyState
                   icon={<ShieldAlertIcon className="h-6 w-6" />}
@@ -715,7 +936,7 @@ export default function AdminPaymentsPage() {
           <Card>
             <CardContent className="p-0">
               {eventPassesQuery.isLoading ? (
-                <SectionLoading label="Loading event pass payments..." />
+                <SectionLoading />
               ) : eventPassesQuery.isError ? (
                 <EmptyState
                   icon={<ShieldAlertIcon className="h-6 w-6" />}
@@ -772,7 +993,7 @@ export default function AdminPaymentsPage() {
           <Card>
             <CardContent className="p-0">
               {transactionsQuery.isLoading ? (
-                <SectionLoading label="Loading billing transactions..." />
+                <SectionLoading />
               ) : transactionsQuery.isError ? (
                 <EmptyState
                   icon={<ShieldAlertIcon className="h-6 w-6" />}
