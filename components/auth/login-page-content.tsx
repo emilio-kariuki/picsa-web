@@ -20,19 +20,22 @@ import { Spinner } from '@/components/ui/spinner'
 import { isAdminApiError } from '@/lib/api'
 import { MARKETING_APP_URL } from '@/lib/site-urls'
 import { useAdminAuth } from '@/hooks/use-admin-auth'
+import { ClientGoogleSignIn } from '@/components/client/client-google-sign-in'
 
 interface LoginPageContentProps {
   nextPath: string
+  googleClientId?: string
 }
 
-export function LoginPageContent({ nextPath }: LoginPageContentProps) {
+export function LoginPageContent({ nextPath, googleClientId }: LoginPageContentProps) {
   const router = useRouter()
-  const { bootstrapStatus, isAuthenticated, login } = useAdminAuth()
+  const { bootstrapStatus, isAuthenticated, login, loginWithGoogle } = useAdminAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
 
   useEffect(() => {
     if (bootstrapStatus === 'ready' && isAuthenticated) {
@@ -61,6 +64,26 @@ export function LoginPageContent({ nextPath }: LoginPageContentProps) {
       }
     } finally {
       setIsSubmitting(false)
+    }
+  }
+
+  const handleGoogleCredential = async (idToken: string) => {
+    setIsGoogleLoading(true)
+    setErrorMessage(null)
+
+    try {
+      await loginWithGoogle(idToken)
+      router.replace(nextPath)
+    } catch (error) {
+      if (isAdminApiError(error)) {
+        setErrorMessage(error.message)
+      } else if (error instanceof Error) {
+        setErrorMessage(error.message)
+      } else {
+        setErrorMessage('Unable to sign in right now')
+      }
+    } finally {
+      setIsGoogleLoading(false)
     }
   }
 
@@ -166,12 +189,28 @@ export function LoginPageContent({ nextPath }: LoginPageContentProps) {
                   <Button
                     className="h-11 w-full rounded-full"
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isGoogleLoading}
                   >
                     {isSubmitting ? <Spinner className="size-4" /> : null}
                     {isSubmitting ? 'Signing in...' : 'Sign in to dashboard'}
                   </Button>
                 </Field>
+
+                {googleClientId ? (
+                  <>
+                    <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
+                      Or
+                    </FieldSeparator>
+
+                    <Field>
+                      <ClientGoogleSignIn
+                        clientId={googleClientId}
+                        onCredential={handleGoogleCredential}
+                        disabled={isSubmitting || isGoogleLoading}
+                      />
+                    </Field>
+                  </>
+                ) : null}
 
                 <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                   Protected access

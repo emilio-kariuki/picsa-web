@@ -22,6 +22,13 @@ export async function loginWithPassword(input: PasswordLoginInput) {
   })
 }
 
+export async function loginAdminWithGoogle(input: { idToken: string }) {
+  return adminApiRequest<AuthResponse>('/auth/google', {
+    method: 'POST',
+    body: { idToken: input.idToken },
+  })
+}
+
 export async function refreshAdminSession(refreshToken: string) {
   return adminApiRequest<AuthResponse>('/auth/refresh', {
     method: 'POST',

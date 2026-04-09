@@ -11,6 +11,7 @@ import {
 } from '@/lib/auth'
 import {
   fetchAuthenticatedAdmin,
+  loginAdminWithGoogle,
   loginWithPassword,
   logoutAdminSession,
   refreshAdminSession,
@@ -139,6 +140,29 @@ export function useAdminAuth() {
     [hydrateSession, setBootstrapStatus],
   )
 
+  const loginWithGoogle = useCallback(
+    async (idToken: string) => {
+      const response = await loginAdminWithGoogle({ idToken })
+      const nextSession = buildAdminAuthSession(response.data)
+
+      if (!isAdminUser(nextSession.currentUser)) {
+        try {
+          await logoutAdminSession(nextSession.refreshToken)
+        } catch {}
+
+        hydrateSession(null)
+        throw new AdminApiError('Admin access required', {
+          status: 403,
+        })
+      }
+
+      hydrateSession(nextSession)
+      setBootstrapStatus('ready')
+      return nextSession
+    },
+    [hydrateSession, setBootstrapStatus],
+  )
+
   const logout = useCallback(async () => {
     const refreshToken = session?.refreshToken
 
@@ -239,6 +263,7 @@ export function useAdminAuth() {
     bootstrapStatus,
     bootstrap,
     login,
+    loginWithGoogle,
     logout,
     clearSession,
     performAuthenticatedRequest,

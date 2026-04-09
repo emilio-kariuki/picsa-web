@@ -96,7 +96,7 @@ export function ClientGoogleSignIn({
         strategy="afterInteractive"
         onLoad={() => setScriptReady(true)}
       />
-      <div ref={buttonRef} className="w-full min-h-11" aria-disabled={disabled} />
+      <div ref={buttonRef} className="flex w-full min-h-11 justify-center" aria-disabled={disabled} />
     </>
   )
 }
