@@ -1,3 +1,4 @@
+import type { ComponentType } from 'react'
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
@@ -44,7 +45,7 @@ export function ClientSurface({
   return (
     <section
       className={cn(
-        'rounded-2xl border border-border/70 bg-card p-5 shadow-[0_1px_4px_rgba(0,0,0,0.06)] sm:p-6',
+        'rounded-2xl border border-border/60 bg-card p-5 shadow-[0_1px_4px_rgba(0,0,0,0.04)] sm:p-6',
         className,
       )}
     >
@@ -57,18 +58,27 @@ export function ClientMetricCard({
   label,
   value,
   helper,
+  icon: Icon,
 }: {
   label: string
   value: string
   helper?: string
+  icon?: ComponentType<{ className?: string }>
 }) {
   return (
-    <div className="flex flex-col justify-between rounded-2xl border border-border/70 bg-card p-5 shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
-      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/70">
-        {label}
-      </p>
-      <div>
-        <p className="mt-3 font-serif text-4xl font-semibold tracking-tight text-foreground">
+    <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/60 bg-card p-5 shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-shadow hover:shadow-md">
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground/80">
+          {label}
+        </p>
+        {Icon ? (
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
+            <Icon className="h-4.5 w-4.5" />
+          </div>
+        ) : null}
+      </div>
+      <div className="mt-3">
+        <p className="font-serif text-3xl font-semibold tracking-tight text-foreground">
           {value}
         </p>
         {helper ? (
