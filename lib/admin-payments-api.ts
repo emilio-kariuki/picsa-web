@@ -55,6 +55,7 @@ export interface AdminEventPassPaymentsQueryInput {
   sortBy?: 'createdAt' | 'purchasedAt' | 'amount' | 'provider' | 'paymentStatus' | 'claimedAt' | 'revokedAt'
   sortOrder?: AdminPaymentsSortOrder
   userId?: string
+  eventId?: string
   provider?: AdminBillingProvider
   paymentStatus?: string
   claimed?: boolean

@@ -47,10 +47,10 @@ const menuItems = [
   { icon: CreditCardIcon, label: "Payments", page: "payments" },
   { icon: CalendarDaysIcon, label: "Events", page: "events" },
   { icon: ImageIcon, label: "Images", page: "media" },
-  { icon: TicketIcon, label: "Tickets", page: "tickets" },
   { icon: BellIcon, label: "Notifications", page: "notifications" },
-  { icon: SettingsIcon, label: "Settings", page: "settings" },
   { icon: ClipboardListIcon, label: "Audit Log", page: "audit-log" },
+  { icon: TicketIcon, label: "Tickets", page: "tickets" },
+  { icon: SettingsIcon, label: "Settings", page: "settings" },
 ]
 
 export function AppSidebar() {
@@ -96,7 +96,7 @@ export function AppSidebar() {
       {/* Header */}
       <div className={cn("border-b border-border", collapsed ? "px-3 py-2.5" : "px-6 py-2.5")}>
         <div className={cn("flex items-center", collapsed ? "justify-center" : "gap-3")}>
-          <PicsaLogo size={36} className="rounded-xl shrink-0" />
+          <PicsaLogo size={44} className="rounded-lg shrink-0 border-none bg-transparent shadow-none" imageClassName="rounded-lg" />
           {!collapsed && (
             <div className="flex-1 min-w-0">
               <h1 className="text-base font-bold text-sidebar-foreground leading-tight truncate">

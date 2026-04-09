@@ -35,6 +35,14 @@ export interface AdminEventSummary {
   updatedAt: string
 }
 
+export interface AdminEventBilling {
+  tier: 'FREE' | 'PRO'
+  isPaid: boolean
+  unlockedAt: string | null
+  productId: string | null
+  store: string | null
+}
+
 export interface AdminEventDetail extends AdminEventSummary {
   startAt: string | null
   endAt: string | null
@@ -60,6 +68,7 @@ export interface AdminEventDetail extends AdminEventSummary {
     messageCount: number
     lastMessageAt: string | null
   }
+  billing: AdminEventBilling
 }
 
 export interface AdminPaginatedData<T> {
