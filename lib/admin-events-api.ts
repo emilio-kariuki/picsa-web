@@ -1,4 +1,3 @@
-import type { AdminUserSummary } from '@/lib/admin-users-api'
 import { adminApiRequest, type ApiSuccessResponse } from '@/lib/api'
 
 export type AdminEventStatusValue = 'ACTIVE' | 'ARCHIVED'
@@ -19,12 +18,19 @@ export interface AdminEventsQueryInput {
   createdTo?: string
 }
 
+export interface AdminEventHost {
+  id: string
+  name: string | null
+  email: string | null
+  url: string | null
+}
+
 export interface AdminEventSummary {
   id: string
   name: string
   description: string | null
   url: string
-  host: AdminUserSummary
+  host: AdminEventHost
   isPrivate: boolean
   joinMode: AdminEventJoinModeValue
   memberCount: number
