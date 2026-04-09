@@ -1,4 +1,3 @@
-import type { AdminUserSummary } from '@/lib/admin-users-api'
 import { adminApiRequest, type ApiSuccessResponse } from '@/lib/api'
 
 export type AdminImageStatusValue = 'UPLOADING' | 'PROCESSING' | 'READY' | 'FAILED' | 'DELETED'
@@ -20,11 +19,17 @@ export interface AdminImagesQueryInput {
   createdTo?: string
 }
 
+export interface AdminImageUploader {
+  name: string | null
+  email: string | null
+  url: string | null
+}
+
 export interface AdminImageSummary {
   id: string
   eventId: string
   eventName: string | null
-  uploader: AdminUserSummary
+  uploader: AdminImageUploader
   status: AdminImageStatusValue
   moderationStatus: AdminImageModerationStatusValue
   isPrivate: boolean
