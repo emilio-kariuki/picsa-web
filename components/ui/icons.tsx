@@ -42,6 +42,7 @@ import {
   DollarSign as DollarSignSvg,
   ExternalLink as ExternalLinkSvg,
   EyeIcon as EyeIconSvg,
+  ViewOffSlashIcon as EyeOffIconSvg,
   FileText as FileTextSvg,
   FilterIcon as FilterIconSvg,
   FolderKanbanIcon as FolderKanbanIconSvg,
@@ -184,6 +185,7 @@ export const Crown = createIcon(CrownSvg)
 export const DollarSignIcon = createIcon(DollarSignSvg)
 export const ExternalLinkIcon = createIcon(ExternalLinkSvg)
 export const EyeIcon = createIcon(EyeIconSvg)
+export const EyeOffIcon = createIcon(EyeOffIconSvg)
 export const FileText = createIcon(FileTextSvg)
 export const FilterIcon = createIcon(FilterIconSvg)
 export const FolderKanbanIcon = createIcon(FolderKanbanIconSvg)

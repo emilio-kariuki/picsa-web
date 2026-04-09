@@ -1,7 +1,8 @@
 "use client"
 
-import { useAtom, useAtomValue } from "jotai"
-import { currentUserAtom, themeAtom } from "@/lib/store"
+import { useAtomValue } from "jotai"
+import { useTheme } from "next-themes"
+import { currentUserAtom } from "@/lib/store"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -49,7 +50,7 @@ const menuItems = [
 export function AppSidebar() {
   const pathname = usePathname()
   const currentUser = useAtomValue(currentUserAtom)
-  const [theme, setTheme] = useAtom(themeAtom)
+  const { resolvedTheme, setTheme } = useTheme()
   const { logout } = useAdminAuth()
   const router = useRouter()
   const displayName = getAdminDisplayName(currentUser)
@@ -75,7 +76,7 @@ export function AppSidebar() {
   }
 
   const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark")
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
   }
 
   return (
@@ -145,7 +146,7 @@ export function AppSidebar() {
                 <span>Profile Settings</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={toggleTheme}>
-                {theme === "dark" ? (
+                {resolvedTheme === "dark" ? (
                   <>
                     <SunIcon className="mr-2 h-4 w-4" />
                     <span>Light Mode</span>
