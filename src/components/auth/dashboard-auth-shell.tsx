@@ -1,0 +1,32 @@
+import { useEffect, type ReactNode } from 'react'
+import { useNavigate, useLocation } from '@tanstack/react-router'
+import { Spinner } from '@/components/ui/spinner'
+import { resolveAdminNextPath } from '@/lib/auth'
+import { useAdminAuth } from '@/hooks/use-admin-auth'
+
+export function DashboardAuthShell({ children }: { children: ReactNode }) {
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const { bootstrapStatus, isAuthenticated } = useAdminAuth()
+
+  useEffect(() => {
+    if (bootstrapStatus !== 'ready' || isAuthenticated) {
+      return
+    }
+
+    navigate({ to: `/admin/login?next=${encodeURIComponent(resolveAdminNextPath(pathname))}`, replace: true })
+  }, [bootstrapStatus, isAuthenticated, pathname, navigate])
+
+  if (bootstrapStatus !== 'ready' || !isAuthenticated) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <Spinner className="size-6" />
+          <p className="text-sm text-muted-foreground">Loading admin session...</p>
+        </div>
+      </div>
+    )
+  }
+
+  return <>{children}</>
+}

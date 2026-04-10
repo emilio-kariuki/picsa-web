@@ -1,0 +1,320 @@
+export type ClientUserRole = 'admin' | 'user'
+
+export interface ClientAuthenticatedUser {
+  id: string
+  email: string | null
+  name: string | null
+  url: string | null
+  pro: boolean
+  active: boolean
+  role: ClientUserRole
+  emailVerifiedAt: string | null
+  lastLoginAt: string | null
+  createdAt: string | null
+  updatedAt: string | null
+}
+
+export interface ClientAuthResponseData {
+  accessToken: string
+  accessTokenExpiresAt: string
+  refreshToken: string
+  refreshTokenExpiresAt: string
+  user: ClientAuthenticatedUser
+}
+
+export interface ClientAuthSession {
+  accessToken: string
+  accessTokenExpiresAt: string
+  refreshToken: string
+  refreshTokenExpiresAt: string
+  currentUser: ClientAuthenticatedUser
+}
+
+export type EventJoinMode = 'OPEN' | 'APPROVAL_REQUIRED' | 'INVITE_ONLY'
+export type EventStatus = 'ACTIVE' | 'ARCHIVED'
+export type EventViewerMembership = 'none' | 'pending' | 'active' | 'invited'
+export type EventParticipantRole = 'host' | 'member'
+export type EventMembershipStatus = 'PENDING' | 'ACTIVE' | 'LEFT' | 'REMOVED' | 'REJECTED'
+
+export interface ClientEventSettings {
+  isPrivate: boolean
+  joinMode: EventJoinMode
+  allowGuestsToInvite: boolean
+  allowGuestsChat: boolean
+  allowGalleryUpload: boolean
+  allowImagesToBeShared: boolean
+  moderateContent: boolean
+}
+
+export interface ClientEventBilling {
+  tier: 'FREE' | 'PRO'
+  isPaid: boolean
+  unlockedAt: string | null
+  productId: string | null
+  store: string | null
+}
+
+export interface ClientEventHost {
+  id: string
+  email: string | null
+  name: string | null
+  url: string | null
+}
+
+export interface ClientEvent {
+  id: string
+  name: string
+  description: string | null
+  url: string
+  displayPictureUrl: string | null
+  maxGuests: number
+  maxImages: number
+  memberCount: number
+  startAt: string | null
+  endAt: string | null
+  status: EventStatus
+  createdAt: string
+  updatedAt: string
+  host: ClientEventHost
+  settings: ClientEventSettings
+  billing: ClientEventBilling
+  viewerMembership: EventViewerMembership
+  viewerRole: EventParticipantRole | null
+}
+
+export interface ClientEventParticipant {
+  role: EventParticipantRole
+  joinedAt: string | null
+  user: ClientAuthenticatedUser
+}
+
+export interface ClientEventJoinRequest {
+  userId: string
+  status: EventMembershipStatus
+  requestedAt: string
+  user: ClientAuthenticatedUser
+}
+
+export interface ClientEventInvitation {
+  id: string
+  email: string
+  expiresAt: string
+  createdAt: string
+}
+
+export interface ClientEventInput {
+  name: string
+  description?: string | null
+  maxGuests?: number
+  maxImages?: number
+  startAt?: string | null
+  endAt?: string | null
+  unlockWithEventPass?: boolean
+  settings?: Partial<ClientEventSettings>
+}
+
+export type ClientEventPassProvider = 'REVENUECAT' | 'DODO'
+export type ClientEventPassPaymentStatus =
+  | 'pending'
+  | 'processing'
+  | 'succeeded'
+  | 'failed'
+  | 'cancelled'
+  | 'refunded'
+  | 'dispute_opened'
+  | 'dispute_accepted'
+  | 'dispute_lost'
+
+export interface ClientEventPassPurchase {
+  id: string
+  productId: string
+  store: string | null
+  provider: ClientEventPassProvider
+  paymentStatus: ClientEventPassPaymentStatus | null
+  amount: number | null
+  currency: string | null
+  purchasedAt: string | null
+  claimedEventId: string | null
+  claimedAt: string | null
+  checkoutSessionId: string | null
+  paymentId: string | null
+  refundStatus: string | null
+  disputeStatus: string | null
+  revokedAt: string | null
+  revocationReason: string | null
+  isClaimed: boolean
+}
+
+export type ClientCheckoutFlow = 'create_event_pro' | 'upgrade_event_pro'
+export type ClientCheckoutSessionMode = 'checkout' | 'existing_pass' | 'already_unlocked'
+export type ClientCheckoutSessionStatus =
+  | 'PENDING'
+  | 'PROCESSING'
+  | 'SUCCEEDED'
+  | 'FAILED'
+  | 'CANCELLED'
+
+export interface ClientCheckoutSessionCreateResult {
+  mode: ClientCheckoutSessionMode
+  checkoutIntentId: string | null
+  checkoutSessionId: string | null
+  checkoutUrl: string | null
+  availablePassCount: number
+  eventId: string | null
+}
+
+export interface ClientCheckoutSessionStatusResult {
+  status: ClientCheckoutSessionStatus
+  flow: ClientCheckoutFlow
+  checkoutIntentId: string
+  checkoutSessionId: string | null
+  eventId: string | null
+  billing: ClientEventBilling | null
+  availablePassCount: number
+  errorCode: string | null
+  errorMessage: string | null
+  draftEvent: ClientEventInput | null
+}
+
+export type ImageStatus = 'UPLOADING' | 'PROCESSING' | 'READY' | 'FAILED' | 'DELETED'
+export type ImageModerationStatus = 'APPROVED' | 'PENDING' | 'REJECTED'
+
+export interface ClientImage {
+  id: string
+  eventId: string
+  uploader: ClientAuthenticatedUser
+  status: ImageStatus
+  moderationStatus: ImageModerationStatus
+  hd: boolean
+  isPrivate: boolean
+  width: number | null
+  height: number | null
+  contentType: string
+  sizeBytes: number
+  createdAt: string
+  accessUrl: string | null
+  accessUrlExpiresAt: string | null
+  viewerCanDelete: boolean
+  viewerCanApprove: boolean
+  viewerCanReject: boolean
+  viewerCanShare: boolean
+}
+
+export interface ClientImageBatchSummary {
+  acceptedCount: number
+  rejectedCount: number
+}
+
+export interface ClientImageBatchAccepted {
+  originalFileName: string
+  uploadSessionId: string
+  imageId: string
+  status: string
+}
+
+export interface ClientImageBatchRejected {
+  originalFileName: string
+  code: string
+  message: string
+}
+
+export interface ClientImageBatchResult {
+  accepted: ClientImageBatchAccepted[]
+  rejected: ClientImageBatchRejected[]
+  summary: ClientImageBatchSummary
+}
+
+export interface ClientImageShareLink {
+  imageId: string
+  shareUrl: string
+  expiresAt: string
+}
+
+export type ClientNotificationType =
+  | 'chat_message'
+  | 'event_invitation'
+  | 'event_join_approved'
+  | 'event_join_rejected'
+  | 'event_join_request'
+  | 'system'
+
+export interface ClientNotification {
+  id: string
+  userId: string
+  type: ClientNotificationType
+  title: string
+  body: string
+  data: Record<string, string>
+  readAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ClientNotificationPage {
+  notifications: ClientNotification[]
+  unreadCount: number
+  nextCursor: string | null
+}
+
+export interface ClientUserConfig {
+  pushNotificationsEnabled: boolean
+  emailNotificationsEnabled: boolean
+  vibrationsEnabled: boolean
+  updatedAt: string
+}
+
+export interface ClientAppConfigPlan {
+  freeEventMaxGuests: number
+  proEventMaxGuests: number
+  freeEventMaxImages: number
+  proEventMaxImages: number
+  allowFreeHdUploads: boolean
+  allowFreePrivateImages: boolean
+}
+
+export interface ClientAppConfigUploads {
+  imageBatchMaxFiles: number
+}
+
+export interface ClientAppConfigLinks {
+  websiteUrl: string
+  privacyPolicyUrl: string
+  termsOfServiceUrl: string
+  instagramUrl: string
+  linkedinUrl: string
+  twitterUrl: string
+  supportEmail: string | null
+  supportPhone: string | null
+}
+
+export interface ClientAppConfigPayments {
+  mobileDodoEventPassEnabled: boolean
+}
+
+export interface ClientAppConfigFeatures {
+  mobileEventStoriesEnabled: boolean
+}
+
+export interface ClientAppConfigUpdates {
+  androidInAppUpdatesEnabled: boolean
+  iosRecommendedVersion: string | null
+  iosMinimumSupportedVersion: string | null
+  androidRecommendedVersion: string | null
+  androidMinimumSupportedVersion: string | null
+  iosStoreUrl: string | null
+  androidStoreUrl: string | null
+  title: string | null
+  message: string | null
+  releaseNotes: string | null
+  remindAfterHours: number
+}
+
+export interface ClientAppConfig {
+  version: string
+  plan: ClientAppConfigPlan
+  uploads: ClientAppConfigUploads
+  links: ClientAppConfigLinks
+  payments: ClientAppConfigPayments
+  features: ClientAppConfigFeatures
+  updates: ClientAppConfigUpdates
+}
