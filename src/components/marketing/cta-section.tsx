@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from '@/components/ui/icons'
 import { CLIENT_CREATE_EVENT_PATH } from '@/lib/site-urls'
+import { AppStoreButtons } from './app-store-buttons'
 
 export function CtaSection() {
   return (
@@ -58,6 +59,8 @@ export function CtaSection() {
                 </a>
               </Button>
             </div>
+
+            <AppStoreButtons variant="light" className="justify-center pt-2" />
 
             <p className="text-primary-foreground/40 text-xs mt-8">
               No credit card required · Free forever plan · Create your first event in 2 minutes

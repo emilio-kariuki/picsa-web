@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { Instagram, Twitter, Github } from '@/components/ui/icons'
 import { CLIENT_LOGIN_PATH } from '@/lib/site-urls'
+import { AppStoreButtons } from './app-store-buttons'
 
 const footerLinks = [
   { label: 'Features', to: '/', hash: 'features' },
@@ -40,7 +41,9 @@ export function Footer() {
           </nav>
 
           {/* Social */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col items-center md:items-end gap-3">
+            <AppStoreButtons variant="outline" />
+            <div className="flex items-center gap-3">
             {[
               { Icon: Twitter, label: 'Twitter' },
               { Icon: Instagram, label: 'Instagram' },
@@ -55,6 +58,7 @@ export function Footer() {
                 <Icon className="w-3.5 h-3.5" />
               </a>
             ))}
+            </div>
           </div>
         </div>
 
