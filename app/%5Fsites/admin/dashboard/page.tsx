@@ -29,6 +29,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
+import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   ChartContainer,
@@ -358,7 +359,9 @@ export default function DashboardPage() {
   })
 
   const [activeUsersRange, setActiveUsersRange] = useState<'daily' | 'weekly' | 'monthly'>('daily')
-  const [growthTrendsRange, setGrowthTrendsRange] = useState<'daily' | 'weekly' | 'monthly'>('daily')
+  const [growthTimeRange, setGrowthTimeRange] = useState<'3m' | '6m' | '12m' | 'all'>('all')
+  const [growthDateFrom, setGrowthDateFrom] = useState('')
+  const [growthDateTo, setGrowthDateTo] = useState('')
 
   const overview = overviewQuery.data?.data.overview
   const paymentsOverview = paymentsOverviewQuery.data?.data.overview
@@ -661,20 +664,14 @@ export default function DashboardPage() {
         )}
       </section>
 
-      {/* Growth trends — area chart with daily/weekly/monthly toggle */}
+      {/* Growth trends — area chart with time range filters */}
       <section>
         <Card className="rounded-3xl border-border/70 bg-card/90 shadow-none">
           <CardHeader className="space-y-3">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <CardTitle className="text-xl">Growth trends</CardTitle>
-                <CardDescription>
-                  {growthTrendsRange === 'daily'
-                    ? 'Daily new user signups and event creation over the last 30 days.'
-                    : growthTrendsRange === 'weekly'
-                      ? 'Weekly new user signups and event creation over the last 12 weeks.'
-                      : 'Monthly new user signups and event creation over the last 12 months.'}
-                </CardDescription>
+                <CardDescription>New user signups and event creation over time.</CardDescription>
               </div>
               <div className="flex items-center gap-3">
                 <div className="flex gap-4">
@@ -688,59 +685,82 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-1 rounded-full border border-border/70 bg-muted/40 p-1">
-                  {(['daily', 'weekly', 'monthly'] as const).map((range) => (
+                  {(['3m', '6m', '12m', 'all'] as const).map((range) => (
                     <button
                       key={range}
-                      onClick={() => setGrowthTrendsRange(range)}
+                      onClick={() => { setGrowthTimeRange(range); setGrowthDateFrom(''); setGrowthDateTo('') }}
                       className={`rounded-full px-3 py-1 text-xs font-medium transition ${
-                        growthTrendsRange === range
+                        growthTimeRange === range && !growthDateFrom && !growthDateTo
                           ? 'bg-background text-foreground shadow-sm'
                           : 'text-muted-foreground hover:text-foreground'
                       }`}
                     >
-                      {range.charAt(0).toUpperCase() + range.slice(1)}
+                      {range === 'all' ? 'All' : range.toUpperCase()}
                     </button>
                   ))}
                 </div>
               </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Input
+                type="date"
+                value={growthDateFrom}
+                onChange={(e) => setGrowthDateFrom(e.target.value)}
+                className="h-8 w-[160px] text-xs"
+              />
+              <span className="text-xs text-muted-foreground">to</span>
+              <Input
+                type="date"
+                value={growthDateTo}
+                onChange={(e) => setGrowthDateTo(e.target.value)}
+                className="h-8 w-[160px] text-xs"
+              />
+              {(growthDateFrom || growthDateTo) && (
+                <button
+                  onClick={() => { setGrowthDateFrom(''); setGrowthDateTo('') }}
+                  className="text-xs text-muted-foreground hover:text-foreground"
+                >
+                  Clear
+                </button>
+              )}
             </div>
           </CardHeader>
           <CardContent>
             <ChartContainer config={growthChartConfig} className="h-[280px] w-full">
               <AreaChart
                 data={(() => {
-                  const userSeries =
-                    growthTrendsRange === 'weekly'
-                      ? overview.userGrowthWeeklySeries ?? []
-                      : growthTrendsRange === 'monthly'
-                        ? overview.userGrowthMonthlySeries ?? []
-                        : overview.userGrowthSeries
-                  const eventSeries =
-                    growthTrendsRange === 'weekly'
-                      ? overview.eventGrowthWeeklySeries ?? []
-                      : growthTrendsRange === 'monthly'
-                        ? overview.eventGrowthMonthlySeries ?? []
-                        : overview.eventGrowthSeries
+                  const userSeries = overview.userGrowthMonthlySeries ?? []
+                  const eventSeries = overview.eventGrowthMonthlySeries ?? []
                   const userMap = new Map(userSeries.map((p) => [p.date, p.count]))
                   const eventMap = new Map(eventSeries.map((p) => [p.date, p.count]))
                   const allDates = [
                     ...new Set([...userSeries.map((p) => p.date), ...eventSeries.map((p) => p.date)]),
                   ].sort()
-                  return allDates.map((date) => ({
-                    date,
-                    shortDate:
-                      growthTrendsRange === 'daily'
-                        ? formatShortDate(date)
-                        : growthTrendsRange === 'weekly'
-                          ? `W${date.split('-')[1]}`
-                          : (() => {
-                              const [y, m] = date.split('-')
-                              const d = new Date(Number(y), Number(m) - 1)
-                              return d.toLocaleDateString('en-US', { month: 'short' }) + " '" + y.slice(2)
-                            })(),
-                    users: userMap.get(date) ?? 0,
-                    events: eventMap.get(date) ?? 0,
-                  }))
+
+                  let filtered = allDates
+                  if (growthDateFrom || growthDateTo) {
+                    const from = growthDateFrom ? growthDateFrom.slice(0, 7) : ''
+                    const to = growthDateTo ? growthDateTo.slice(0, 7) : ''
+                    filtered = allDates.filter((d) => {
+                      if (from && d < from) return false
+                      if (to && d > to) return false
+                      return true
+                    })
+                  } else if (growthTimeRange !== 'all') {
+                    const months = growthTimeRange === '3m' ? 3 : growthTimeRange === '6m' ? 6 : 12
+                    filtered = allDates.slice(-months)
+                  }
+
+                  return filtered.map((date) => {
+                    const [y, m] = date.split('-')
+                    const d = new Date(Number(y), Number(m) - 1)
+                    return {
+                      date,
+                      shortDate: d.toLocaleDateString('en-US', { month: 'short' }) + " '" + y.slice(2),
+                      users: userMap.get(date) ?? 0,
+                      events: eventMap.get(date) ?? 0,
+                    }
+                  })
                 })()}
                 accessibilityLayer
                 margin={{ top: 8, right: 8, left: -12, bottom: 0 }}

@@ -563,6 +563,10 @@ export default function AdminPaymentsPage() {
     ].filter((d) => d.value > 0)
   }, [overview])
 
+  const [mrrTimeRange, setMrrTimeRange] = useState<'3m' | '6m' | '12m' | 'all'>('all')
+  const [mrrDateFrom, setMrrDateFrom] = useState('')
+  const [mrrDateTo, setMrrDateTo] = useState('')
+
   const mrrSeriesFormatted = useMemo(
     () =>
       overview?.subscriptions.mrrSeries.map((p) => ({
@@ -571,6 +575,19 @@ export default function AdminPaymentsPage() {
       })) ?? [],
     [overview?.subscriptions.mrrSeries],
   )
+
+  const mrrSeriesFiltered = useMemo(() => {
+    if (mrrDateFrom || mrrDateTo) {
+      return mrrSeriesFormatted.filter((p) => {
+        if (mrrDateFrom && p.month < mrrDateFrom) return false
+        if (mrrDateTo && p.month > mrrDateTo) return false
+        return true
+      })
+    }
+    if (mrrTimeRange === 'all') return mrrSeriesFormatted
+    const months = mrrTimeRange === '3m' ? 3 : mrrTimeRange === '6m' ? 6 : 12
+    return mrrSeriesFormatted.slice(-months)
+  }, [mrrSeriesFormatted, mrrTimeRange, mrrDateFrom, mrrDateTo])
 
   return (
     <div className="space-y-6">
@@ -711,15 +728,59 @@ export default function AdminPaymentsPage() {
 
               {/* MRR trend chart */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">MRR trend</CardTitle>
-                  <CardDescription>Monthly recurring revenue over time</CardDescription>
+                <CardHeader className="space-y-3">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <CardTitle className="text-base">MRR trend</CardTitle>
+                      <CardDescription>Monthly recurring revenue over time</CardDescription>
+                    </div>
+                    <div className="flex items-center gap-1 rounded-full border border-border/70 bg-muted/40 p-1">
+                      {(['3m', '6m', '12m', 'all'] as const).map((range) => (
+                        <button
+                          key={range}
+                          onClick={() => { setMrrTimeRange(range); setMrrDateFrom(''); setMrrDateTo('') }}
+                          className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+                            mrrTimeRange === range && !mrrDateFrom && !mrrDateTo
+                              ? 'bg-background text-foreground shadow-sm'
+                              : 'text-muted-foreground hover:text-foreground'
+                          }`}
+                        >
+                          {range === 'all' ? 'All' : range.toUpperCase()}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="month"
+                      placeholder="From"
+                      value={mrrDateFrom}
+                      onChange={(e) => setMrrDateFrom(e.target.value)}
+                      className="h-8 w-[160px] text-xs"
+                    />
+                    <span className="text-xs text-muted-foreground">to</span>
+                    <Input
+                      type="month"
+                      placeholder="To"
+                      value={mrrDateTo}
+                      onChange={(e) => setMrrDateTo(e.target.value)}
+                      className="h-8 w-[160px] text-xs"
+                    />
+                    {(mrrDateFrom || mrrDateTo) && (
+                      <button
+                        onClick={() => { setMrrDateFrom(''); setMrrDateTo('') }}
+                        className="text-xs text-muted-foreground hover:text-foreground"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  {mrrSeriesFormatted.length > 0 ? (
+                  {mrrSeriesFiltered.length > 0 ? (
                     <ChartContainer config={mrrChartConfig} className="h-[280px] w-full">
                       <AreaChart
-                        data={mrrSeriesFormatted}
+                        data={mrrSeriesFiltered}
                         accessibilityLayer
                         margin={{ top: 8, right: 8, left: -12, bottom: 0 }}
                       >

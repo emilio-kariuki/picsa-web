@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query'
 import {
   ActivityIcon,
   BotIcon,
+  ChevronDownIcon,
   Clock3Icon,
   EyeIcon,
   GlobeIcon,
@@ -76,6 +77,7 @@ import {
 } from '@/components/ui/sheet'
 import { Spinner } from '@/components/ui/spinner'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Table,
@@ -304,29 +306,38 @@ export default function AuditLogPage() {
       </div>
 
       {topRoutes.length > 0 && (
-        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-none">
-          <CardHeader>
-            <CardTitle className="text-xl">Top endpoints (30d)</CardTitle>
-            <CardDescription>
-              Most frequently hit API routes by authenticated users.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {topRoutes.map((route) => (
-                <div
-                  key={route.route}
-                  className="flex items-center justify-between rounded-2xl border border-border/70 bg-background/70 px-4 py-3"
-                >
-                  <code className="text-sm font-medium">{route.route}</code>
-                  <Badge variant="secondary" className="rounded-full px-2.5 py-1 text-xs">
-                    {route.count.toLocaleString()}
-                  </Badge>
+        <Collapsible>
+          <Card className="rounded-3xl border-border/70 bg-card/90 shadow-none">
+            <CollapsibleTrigger asChild>
+              <button className="flex w-full items-center justify-between px-6 py-4 text-left">
+                <div>
+                  <h3 className="text-xl font-semibold leading-none tracking-tight">Top endpoints (30d)</h3>
+                  <p className="mt-1.5 text-sm text-muted-foreground">
+                    Most frequently hit API routes by authenticated users.
+                  </p>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                <ChevronDownIcon className="h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
+              </button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="px-6 pb-6">
+                <div className="space-y-2">
+                  {topRoutes.map((route) => (
+                    <div
+                      key={route.route}
+                      className="flex items-center justify-between rounded-2xl border border-border/70 bg-background/70 px-4 py-3"
+                    >
+                      <code className="text-sm font-medium">{route.route}</code>
+                      <Badge variant="secondary" className="rounded-full px-2.5 py-1 text-xs">
+                        {route.count.toLocaleString()}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CollapsibleContent>
+          </Card>
+        </Collapsible>
       )}
 
       <Card className="border-border/70 bg-card/80 p-4 shadow-none">
