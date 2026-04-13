@@ -2,6 +2,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Play } from '@/components/ui/icons'
 import { CLIENT_CREATE_EVENT_PATH } from '@/lib/site-urls'
+import { AppStoreButtons } from './app-store-buttons'
 
 export function Hero() {
   return (
@@ -62,6 +63,8 @@ export function Hero() {
               </a>
             </Button>
           </div>
+
+          <AppStoreButtons variant="outline" className="pt-1" />
 
           {/* Mini social proof */}
           <div className="flex items-center gap-4 pt-2">
