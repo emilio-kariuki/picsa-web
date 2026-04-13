@@ -36,6 +36,7 @@ import {
   stringifyAuditJson,
 } from '@/lib/admin-audit-format'
 import { isAdminApiError } from '@/lib/api'
+import { getAdminAnalytics } from '@/lib/admin-overview-api'
 import {
   adminAuditLogsChannelFilterAtom,
   adminAuditLogsMethodFilterAtom,
@@ -197,6 +198,14 @@ export default function AuditLogPage() {
     placeholderData: (previousData) => previousData,
   })
 
+  const analyticsQuery = useQuery({
+    queryKey: ['admin-analytics'],
+    queryFn: () =>
+      performAuthenticatedRequest((accessToken) => getAdminAnalytics(accessToken)),
+    enabled: bootstrapStatus === 'ready' && isAuthenticated,
+  })
+  const topRoutes = analyticsQuery.data?.data.analytics.topRoutes ?? []
+
   const selectedAuditLogQuery = useQuery({
     queryKey: [AUDIT_LOG_QUERY_KEY, selectedAuditLogId],
     queryFn: () =>
@@ -293,6 +302,32 @@ export default function AuditLogPage() {
           className="rounded-2xl border-border/70 bg-card/90 shadow-none"
         />
       </div>
+
+      {topRoutes.length > 0 && (
+        <Card className="rounded-3xl border-border/70 bg-card/90 shadow-none">
+          <CardHeader>
+            <CardTitle className="text-xl">Top endpoints (30d)</CardTitle>
+            <CardDescription>
+              Most frequently hit API routes by authenticated users.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {topRoutes.map((route) => (
+                <div
+                  key={route.route}
+                  className="flex items-center justify-between rounded-2xl border border-border/70 bg-background/70 px-4 py-3"
+                >
+                  <code className="text-sm font-medium">{route.route}</code>
+                  <Badge variant="secondary" className="rounded-full px-2.5 py-1 text-xs">
+                    {route.count.toLocaleString()}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card className="border-border/70 bg-card/80 p-4 shadow-none">
         <div className="flex flex-col gap-4">

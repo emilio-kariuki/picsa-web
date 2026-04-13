@@ -1,9 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
+  ActivityIcon,
   BellRingIcon,
   CameraIcon,
   ChevronRightIcon,
@@ -19,7 +20,7 @@ import {
   UsersIcon,
 } from '@/components/ui/icons'
 import { useAdminAuth } from '@/hooks/use-admin-auth'
-import { getAdminOverview, type AdminOverview } from '@/lib/admin-overview-api'
+import { getAdminOverview, getAdminAnalytics, type AdminOverview, type AdminAnalytics } from '@/lib/admin-overview-api'
 import { getAdminPaymentsOverview, type AdminPaymentOverview } from '@/lib/admin-payments-api'
 import { isAdminApiError } from '@/lib/api'
 import { PageHeader } from '@/components/common/page-header'
@@ -49,6 +50,7 @@ import {
 } from 'recharts'
 
 const OVERVIEW_QUERY_KEY = 'admin-overview'
+const ANALYTICS_QUERY_KEY = 'admin-analytics'
 const PAYMENTS_OVERVIEW_QUERY_KEY = 'admin-payments-overview'
 
 const dashboardChartColors = {
@@ -89,6 +91,13 @@ const growthChartConfig = {
   events: {
     label: 'New events',
     color: dashboardChartColors.sky,
+  },
+} satisfies ChartConfig
+
+const dauChartConfig = {
+  dau: {
+    label: 'Active users',
+    color: dashboardChartColors.violet,
   },
 } satisfies ChartConfig
 
@@ -341,8 +350,19 @@ export default function DashboardPage() {
     enabled: bootstrapStatus === 'ready' && isAuthenticated,
   })
 
+  const analyticsQuery = useQuery({
+    queryKey: [ANALYTICS_QUERY_KEY],
+    queryFn: () =>
+      performAuthenticatedRequest((accessToken) => getAdminAnalytics(accessToken)),
+    enabled: bootstrapStatus === 'ready' && isAuthenticated,
+  })
+
+  const [activeUsersRange, setActiveUsersRange] = useState<'daily' | 'weekly' | 'monthly'>('daily')
+  const [growthTrendsRange, setGrowthTrendsRange] = useState<'daily' | 'weekly' | 'monthly'>('daily')
+
   const overview = overviewQuery.data?.data.overview
   const paymentsOverview = paymentsOverviewQuery.data?.data.overview
+  const analytics = analyticsQuery.data?.data.analytics
 
   const actionCards = useMemo(
     () => (overview ? buildActionCards(overview) : []),
@@ -497,7 +517,151 @@ export default function DashboardPage() {
         />
       </section>
 
-      {/* Growth trends — 30-day area chart */}
+      {/* User engagement — DAU / WAU / MAU */}
+      <section className="space-y-4">
+        {analytics ? (
+          <>
+            <section className="grid gap-4 lg:grid-cols-4">
+              <KPICard
+                title="DAU (today)"
+                value={analytics.dau.toLocaleString()}
+                change={analytics.dauMauRatio}
+                changeLabel="DAU/MAU ratio"
+                icon={<ActivityIcon className="h-5 w-5 text-muted-foreground" />}
+                className="rounded-2xl border-border/70 bg-card/90 shadow-none"
+              />
+              <KPICard
+                title="WAU (7d)"
+                value={analytics.wau.toLocaleString()}
+                change={analytics.wau}
+                changeLabel="unique users"
+                icon={<ActivityIcon className="h-5 w-5 text-muted-foreground" />}
+                className="rounded-2xl border-border/70 bg-card/90 shadow-none"
+              />
+              <KPICard
+                title="MAU (30d)"
+                value={analytics.mau.toLocaleString()}
+                change={analytics.mau}
+                changeLabel="unique users"
+                icon={<UsersIcon className="h-5 w-5 text-muted-foreground" />}
+                className="rounded-2xl border-border/70 bg-card/90 shadow-none"
+              />
+              <KPICard
+                title="DAU/MAU ratio"
+                value={`${analytics.dauMauRatio}%`}
+                change={analytics.dauMauRatio}
+                changeLabel="stickiness"
+                icon={<SparklesIcon className="h-5 w-5 text-muted-foreground" />}
+                className="rounded-2xl border-border/70 bg-card/90 shadow-none"
+              />
+            </section>
+
+            <Card className="rounded-3xl border-border/70 bg-card/90 shadow-none">
+              <CardHeader className="space-y-3">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <CardTitle className="text-xl">Active users</CardTitle>
+                    <CardDescription>
+                      {activeUsersRange === 'daily'
+                        ? 'Unique authenticated users per day over the last 30 days.'
+                        : activeUsersRange === 'weekly'
+                          ? 'Unique authenticated users per week over the last 12 weeks.'
+                          : 'Unique authenticated users per month over the last 12 months.'}
+                    </CardDescription>
+                  </div>
+                  <div className="flex items-center gap-1 rounded-full border border-border/70 bg-muted/40 p-1">
+                    {(['daily', 'weekly', 'monthly'] as const).map((range) => (
+                      <button
+                        key={range}
+                        onClick={() => setActiveUsersRange(range)}
+                        className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+                          activeUsersRange === range
+                            ? 'bg-background text-foreground shadow-sm'
+                            : 'text-muted-foreground hover:text-foreground'
+                        }`}
+                      >
+                        {range.charAt(0).toUpperCase() + range.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <ChartContainer config={dauChartConfig} className="h-[280px] w-full">
+                  <AreaChart
+                    data={(() => {
+                      if (activeUsersRange === 'weekly') {
+                        return (analytics.wauSeries ?? []).map((p) => {
+                          const parts = p.date.split('-')
+                          return { date: p.date, shortDate: `W${parts[1]}`, dau: p.count }
+                        })
+                      }
+                      if (activeUsersRange === 'monthly') {
+                        return (analytics.mauSeries ?? []).map((p) => {
+                          const [y, m] = p.date.split('-')
+                          const d = new Date(Number(y), Number(m) - 1)
+                          const label = d.toLocaleDateString('en-US', { month: 'short' }) + " '" + y.slice(2)
+                          return { date: p.date, shortDate: label, dau: p.count }
+                        })
+                      }
+                      return analytics.dauSeries.map((p) => ({
+                        date: p.date,
+                        shortDate: formatShortDate(p.date),
+                        dau: p.count,
+                      }))
+                    })()}
+                    accessibilityLayer
+                    margin={{ top: 8, right: 8, left: -12, bottom: 0 }}
+                  >
+                    <defs>
+                      <linearGradient id="fillDau" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={dashboardChartColors.violet} stopOpacity={0.3} />
+                        <stop offset="95%" stopColor={dashboardChartColors.violet} stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis
+                      dataKey="shortDate"
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={10}
+                      interval="preserveStartEnd"
+                      minTickGap={40}
+                    />
+                    <YAxis tickLine={false} axisLine={false} tickMargin={10} allowDecimals={false} />
+                    <ChartTooltip
+                      content={
+                        <ChartTooltipContent
+                          labelKey="shortDate"
+                          formatter={(value) => Number(value).toLocaleString()}
+                        />
+                      }
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="dau"
+                      stroke={dashboardChartColors.violet}
+                      fill="url(#fillDau)"
+                      strokeWidth={2}
+                    />
+                  </AreaChart>
+                </ChartContainer>
+              </CardContent>
+            </Card>
+          </>
+        ) : (
+          <div className="space-y-4">
+            <div className="grid gap-4 lg:grid-cols-4">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <Skeleton key={`analytics-kpi-${index}`} className="h-36 rounded-2xl" />
+              ))}
+            </div>
+            <Skeleton className="h-[340px] rounded-2xl" />
+          </div>
+        )}
+      </section>
+
+      {/* Growth trends — area chart with daily/weekly/monthly toggle */}
       <section>
         <Card className="rounded-3xl border-border/70 bg-card/90 shadow-none">
           <CardHeader className="space-y-3">
@@ -505,17 +669,38 @@ export default function DashboardPage() {
               <div>
                 <CardTitle className="text-xl">Growth trends</CardTitle>
                 <CardDescription>
-                  Daily new user signups and event creation over the last 30 days.
+                  {growthTrendsRange === 'daily'
+                    ? 'Daily new user signups and event creation over the last 30 days.'
+                    : growthTrendsRange === 'weekly'
+                      ? 'Weekly new user signups and event creation over the last 12 weeks.'
+                      : 'Monthly new user signups and event creation over the last 12 months.'}
                 </CardDescription>
               </div>
-              <div className="flex gap-4">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: dashboardChartColors.emerald }} />
-                  Users
+              <div className="flex items-center gap-3">
+                <div className="flex gap-4">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: dashboardChartColors.emerald }} />
+                    Users
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: dashboardChartColors.sky }} />
+                    Events
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: dashboardChartColors.sky }} />
-                  Events
+                <div className="flex items-center gap-1 rounded-full border border-border/70 bg-muted/40 p-1">
+                  {(['daily', 'weekly', 'monthly'] as const).map((range) => (
+                    <button
+                      key={range}
+                      onClick={() => setGrowthTrendsRange(range)}
+                      className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+                        growthTrendsRange === range
+                          ? 'bg-background text-foreground shadow-sm'
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      {range.charAt(0).toUpperCase() + range.slice(1)}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
@@ -523,7 +708,40 @@ export default function DashboardPage() {
           <CardContent>
             <ChartContainer config={growthChartConfig} className="h-[280px] w-full">
               <AreaChart
-                data={growthSeriesData}
+                data={(() => {
+                  const userSeries =
+                    growthTrendsRange === 'weekly'
+                      ? overview.userGrowthWeeklySeries ?? []
+                      : growthTrendsRange === 'monthly'
+                        ? overview.userGrowthMonthlySeries ?? []
+                        : overview.userGrowthSeries
+                  const eventSeries =
+                    growthTrendsRange === 'weekly'
+                      ? overview.eventGrowthWeeklySeries ?? []
+                      : growthTrendsRange === 'monthly'
+                        ? overview.eventGrowthMonthlySeries ?? []
+                        : overview.eventGrowthSeries
+                  const userMap = new Map(userSeries.map((p) => [p.date, p.count]))
+                  const eventMap = new Map(eventSeries.map((p) => [p.date, p.count]))
+                  const allDates = [
+                    ...new Set([...userSeries.map((p) => p.date), ...eventSeries.map((p) => p.date)]),
+                  ].sort()
+                  return allDates.map((date) => ({
+                    date,
+                    shortDate:
+                      growthTrendsRange === 'daily'
+                        ? formatShortDate(date)
+                        : growthTrendsRange === 'weekly'
+                          ? `W${date.split('-')[1]}`
+                          : (() => {
+                              const [y, m] = date.split('-')
+                              const d = new Date(Number(y), Number(m) - 1)
+                              return d.toLocaleDateString('en-US', { month: 'short' }) + " '" + y.slice(2)
+                            })(),
+                    users: userMap.get(date) ?? 0,
+                    events: eventMap.get(date) ?? 0,
+                  }))
+                })()}
                 accessibilityLayer
                 margin={{ top: 8, right: 8, left: -12, bottom: 0 }}
               >

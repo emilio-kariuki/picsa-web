@@ -57,6 +57,7 @@ export interface AdminEventDetail extends AdminEventSummary {
     joinMode: AdminEventJoinModeValue
     allowGuestsToInvite: boolean
     allowGuestsChat: boolean
+    showChat: boolean
     allowGalleryUpload: boolean
     allowImagesToBeShared: boolean
     moderateContent: boolean

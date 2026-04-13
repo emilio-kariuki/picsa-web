@@ -36,6 +36,10 @@ export interface AdminOverview {
   tickets: AdminOverviewTickets
   userGrowthSeries: AdminOverviewGrowthPoint[]
   eventGrowthSeries: AdminOverviewGrowthPoint[]
+  userGrowthWeeklySeries: AdminOverviewGrowthPoint[]
+  eventGrowthWeeklySeries: AdminOverviewGrowthPoint[]
+  userGrowthMonthlySeries: AdminOverviewGrowthPoint[]
+  eventGrowthMonthlySeries: AdminOverviewGrowthPoint[]
 }
 
 export type AdminOverviewResponse = ApiSuccessResponse<{
@@ -44,6 +48,27 @@ export type AdminOverviewResponse = ApiSuccessResponse<{
 
 export async function getAdminOverview(accessToken: string) {
   return adminApiRequest<AdminOverviewResponse>('/admin/overview', {
+    accessToken,
+  })
+}
+
+export interface AdminAnalytics {
+  dau: number
+  wau: number
+  mau: number
+  dauMauRatio: number
+  dauSeries: AdminOverviewGrowthPoint[]
+  wauSeries: AdminOverviewGrowthPoint[]
+  mauSeries: AdminOverviewGrowthPoint[]
+  topRoutes: Array<{ route: string; count: number }>
+}
+
+export type AdminAnalyticsResponse = ApiSuccessResponse<{
+  analytics: AdminAnalytics
+}>
+
+export async function getAdminAnalytics(accessToken: string) {
+  return adminApiRequest<AdminAnalyticsResponse>('/admin/overview/analytics', {
     accessToken,
   })
 }

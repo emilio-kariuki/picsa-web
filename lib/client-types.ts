@@ -41,6 +41,7 @@ export interface ClientEventSettings {
   joinMode: EventJoinMode
   allowGuestsToInvite: boolean
   allowGuestsChat: boolean
+  showChat: boolean
   allowGalleryUpload: boolean
   allowImagesToBeShared: boolean
   moderateContent: boolean

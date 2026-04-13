@@ -109,6 +109,7 @@ export function AdminEventDetailContent({ event }: { event: AdminEventDetail }) 
   const settingsRows: Array<{ label: string; enabled: boolean; icon: typeof CheckIcon }> = [
     { label: 'Guests can invite others', enabled: event.settings.allowGuestsToInvite, icon: event.settings.allowGuestsToInvite ? CheckIcon : XIcon },
     { label: 'Guest chat', enabled: event.settings.allowGuestsChat, icon: event.settings.allowGuestsChat ? CheckIcon : XIcon },
+    { label: 'Show chat', enabled: event.settings.showChat, icon: event.settings.showChat ? CheckIcon : XIcon },
     { label: 'Gallery upload', enabled: event.settings.allowGalleryUpload, icon: event.settings.allowGalleryUpload ? CheckIcon : XIcon },
     { label: 'Image sharing', enabled: event.settings.allowImagesToBeShared, icon: event.settings.allowImagesToBeShared ? CheckIcon : XIcon },
     { label: 'Content moderation', enabled: event.settings.moderateContent, icon: event.settings.moderateContent ? ShieldCheckIcon : ShieldOffIcon },

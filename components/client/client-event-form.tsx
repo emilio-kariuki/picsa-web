@@ -22,6 +22,7 @@ const defaultSettings: ClientEventSettings = {
   joinMode: 'OPEN',
   allowGuestsToInvite: true,
   allowGuestsChat: true,
+  showChat: true,
   allowGalleryUpload: true,
   allowImagesToBeShared: false,
   moderateContent: true,
@@ -457,6 +458,12 @@ export function ClientEventForm({
                 key: 'allowGuestsChat',
                 label: 'Guests can chat',
                 description: 'Keep everyone talking inside the event instead of splintering into side threads.',
+                disabled: false,
+              },
+              {
+                key: 'showChat',
+                label: 'Show chat',
+                description: 'Display the chat section on the event details page. Turn off to hide it entirely.',
                 disabled: false,
               },
               {
