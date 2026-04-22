@@ -14,15 +14,23 @@ interface JoinEventPageProps {
   }>
 }
 
-export const metadata: Metadata = {
-  title: 'Join an Event | Picsa',
-  description:
-    'Open Picsa to join your shared event space and start contributing photos.',
+export async function generateMetadata({ params }: JoinEventPageProps): Promise<Metadata> {
+  const { inviteId: eventId } = await params
+
+  return {
+    title: 'Join an Event | Picsa',
+    description:
+      'Open Picsa to join your shared event space and start contributing photos.',
+    other: {
+      'apple-itunes-app': `app-clip-bundle-id=com.ecoville.picsa.camera, app-clip-display=card, app-id=6744581978, app-argument=https://picsa.pro/join/${eventId}`,
+    },
+  }
 }
 
 export default async function JoinEventPage(props: JoinEventPageProps) {
   const { inviteId: eventId } = await props.params
   const deepLink = buildJoinDeepLink(eventId)
+  const appClipUrl = `https://picsa.pro/join/${eventId}`
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -70,6 +78,12 @@ export default async function JoinEventPage(props: JoinEventPageProps) {
                 <a href={deepLink}>
                   <Smartphone className="mr-2 h-4 w-4" />
                   Open in Picsa
+                </a>
+              </Button>
+              <Button asChild size="lg" variant="secondary" className="rounded-full px-6">
+                <a href={appClipUrl}>
+                  <Smartphone className="mr-2 h-4 w-4" />
+                  Open App Clip
                 </a>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-full px-6">
