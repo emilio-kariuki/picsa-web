@@ -43,6 +43,8 @@ function isAdminPath(pathname: string) {
 }
 
 function isClientPath(pathname: string) {
+  if (isPublicEventPath(pathname)) return false
+
   return (
     pathname === '/login' ||
     pathname === '/events' ||
