@@ -30,6 +30,9 @@ const jakartaSans = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: 'Picsa',
   description: 'Picsa brings event memories and admin operations into one platform.',
+  other: {
+    'apple-itunes-app': 'app-clip-bundle-id=com.ecoville.picsa.camera, app-id=6744581978',
+  },
   icons: {
     icon: [
       {

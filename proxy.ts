@@ -61,8 +61,15 @@ function isMarketingOnlyPath(pathname: string) {
     MARKETING_ONLY_PATHS.has(pathname) ||
     DIRECT_ROUTE_PATHS.has(pathname) ||
     pathname === '/join' ||
-    pathname.startsWith('/join/')
+    pathname.startsWith('/join/') ||
+    isPublicEventPath(pathname)
   )
+}
+
+const PUBLIC_EVENT_PATH_RE = /^\/events\/[a-zA-Z0-9_-]+$/
+
+function isPublicEventPath(pathname: string) {
+  return PUBLIC_EVENT_PATH_RE.test(pathname)
 }
 
 function buildSitePath(site: 'admin' | 'marketing' | 'client', pathname: string) {

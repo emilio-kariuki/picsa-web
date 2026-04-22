@@ -1,9 +1,13 @@
 type AppleAppSiteAssociation = {
   applinks: {
-    apps: [];
     details: Array<{
-      appID: string;
-      paths: string[];
+      appIDs: string[];
+      components: Array<{
+        '/'?: string;
+        '#'?: string;
+        exclude?: boolean;
+        comment?: string;
+      }>;
     }>;
   };
   appclips: {
@@ -59,18 +63,22 @@ const androidSha256CertFingerprints = readEnvList(
 )
 
 export function getAppleAppSiteAssociation(): AppleAppSiteAssociation {
-  const appIds = [
-    `${appleTeamId}.${iosBundleId}`,
-    `${appleTeamId}.${iosAppClipBundleId}`,
-  ]
+  const mainAppId = `${appleTeamId}.${iosBundleId}`
 
   return {
     applinks: {
-      apps: [],
-      details: appIds.map((appID) => ({
-        appID,
-        paths: UNIVERSAL_LINK_PATHS,
-      })),
+      details: [
+        {
+          appIDs: [mainAppId],
+          components: [
+            { '#': 'no_universal_links', exclude: true, comment: 'Exclude URLs with no_universal_links fragment' },
+            ...UNIVERSAL_LINK_PATHS.map((path) => ({
+              '/': path,
+              comment: `Matches ${path}`,
+            })),
+          ],
+        },
+      ],
     },
     appclips: {
       apps: [`${appleTeamId}.${iosAppClipBundleId}`],
