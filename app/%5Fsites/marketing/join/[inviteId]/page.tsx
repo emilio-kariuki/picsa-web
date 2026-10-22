@@ -3,10 +3,9 @@ import { ArrowRight, Link2, Smartphone } from '@/components/ui/icons'
 import Link from 'next/link'
 import { Footer } from '@/components/marketing/footer'
 import { Nav } from '@/components/marketing/nav'
-import { MobileAppHandoff } from '@/components/shared/mobile-app-handoff'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { buildJoinDeepLink } from '@/lib/app-links'
+import { buildAppClipBanner, buildJoinDeepLink } from '@/lib/app-links'
 
 interface JoinEventPageProps {
   params: Promise<{
@@ -22,7 +21,7 @@ export async function generateMetadata({ params }: JoinEventPageProps): Promise<
     description:
       'Open Picsa to join your shared event space and start contributing photos.',
     other: {
-      'apple-itunes-app': `app-clip-bundle-id=com.ecoville.picsa.camera, app-clip-display=card, app-id=6744581978, app-argument=https://picsa.pro/join/${eventId}`,
+      'apple-itunes-app': buildAppClipBanner(`https://picsa.pro/join/${encodeURIComponent(eventId)}`),
     },
   }
 }
@@ -30,16 +29,9 @@ export async function generateMetadata({ params }: JoinEventPageProps): Promise<
 export default async function JoinEventPage(props: JoinEventPageProps) {
   const { inviteId: eventId } = await props.params
   const deepLink = buildJoinDeepLink(eventId)
-  const appClipUrl = `https://picsa.pro/join/${eventId}`
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <MobileAppHandoff
-        deepLinkHref={deepLink}
-        title="Opening Picsa in the app"
-        description="If Picsa is installed on this phone, this invite will move into the app automatically. If nothing happens, you can open it manually or keep browsing here."
-        variant="overlay"
-      />
       <Nav />
 
       <section className="relative overflow-hidden pt-28">
@@ -58,9 +50,9 @@ export default async function JoinEventPage(props: JoinEventPageProps) {
                 Open Picsa to join this event.
               </h1>
               <p className="max-w-xl text-base leading-8 text-muted-foreground sm:text-lg">
-                Your invite is ready. If Picsa is installed, we&apos;ll try to hand
-                this invite straight to the app automatically so you can view the
-                event and add your photos in the right place.
+                Your invite is ready. Open it in Picsa to view the event and add
+                your photos. On iPhone, you can also use the App Clip when the
+                Picsa banner appears in Safari.
               </p>
             </div>
 
@@ -78,12 +70,6 @@ export default async function JoinEventPage(props: JoinEventPageProps) {
                 <a href={deepLink}>
                   <Smartphone className="mr-2 h-4 w-4" />
                   Open in Picsa
-                </a>
-              </Button>
-              <Button asChild size="lg" variant="secondary" className="rounded-full px-6">
-                <a href={appClipUrl}>
-                  <Smartphone className="mr-2 h-4 w-4" />
-                  Open App Clip
                 </a>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-full px-6">
@@ -106,9 +92,8 @@ export default async function JoinEventPage(props: JoinEventPageProps) {
                     What happens next?
                   </h2>
                   <ul className="space-y-3 text-sm leading-7 text-muted-foreground sm:text-base">
-                    <li>We automatically try to reopen Picsa as soon as this page loads on mobile.</li>
-                    <li>If the app stays closed, tap <span className="font-medium text-foreground">Open in Picsa</span> to hand this invite to the mobile app.</li>
-                    <li>If the app is not installed yet, install it first and open this same invite link again.</li>
+                    <li>If Picsa is installed, tap <span className="font-medium text-foreground">Open in Picsa</span> to open this invite.</li>
+                    <li>If Safari shows the Picsa banner, tap <span className="font-medium text-foreground">Open</span> in the banner to use the App Clip without installing the full app.</li>
                     <li>Once inside, you can join the event, browse photos, and upload your own.</li>
                   </ul>
                 </div>

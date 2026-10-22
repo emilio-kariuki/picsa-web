@@ -4,11 +4,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Footer } from '@/components/marketing/footer'
 import { Nav } from '@/components/marketing/nav'
-import { MobileAppHandoff } from '@/components/shared/mobile-app-handoff'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { getAdminApiBaseUrl } from '@/lib/api'
-import { buildEventDeepLink } from '@/lib/app-links'
+import { buildAppClipBanner, buildEventDeepLink } from '@/lib/app-links'
 
 interface EventPreviewPageProps {
   params: Promise<{ eventId: string }>
@@ -63,7 +62,7 @@ export async function generateMetadata({ params }: EventPreviewPageProps): Promi
   }
 
   const appClipMeta: Record<string, string> = {
-    'apple-itunes-app': `app-clip-bundle-id=com.ecoville.picsa.camera, app-clip-display=card, app-id=6744581978, app-argument=https://picsa.pro/events/${eventId}`,
+    'apple-itunes-app': buildAppClipBanner(`https://picsa.pro/events/${encodeURIComponent(eventId)}`),
   }
 
   return {
@@ -107,12 +106,6 @@ export default async function EventPreviewPage({ params }: EventPreviewPageProps
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <MobileAppHandoff
-        deepLinkHref={deepLink}
-        title="Opening this event in Picsa"
-        description="If Picsa is installed, we'll open this event automatically. Tap the button below if nothing happens."
-        variant="overlay"
-      />
       <Nav />
 
       <section className="relative overflow-hidden pt-28">
@@ -170,6 +163,10 @@ export default async function EventPreviewPage({ params }: EventPreviewPageProps
                 </a>
               </Button>
             </div>
+            <p className="text-sm leading-6 text-muted-foreground">
+              If Safari shows the Picsa banner, tap Open in the banner to use the
+              App Clip without installing the full app.
+            </p>
           </div>
 
           {event.displayPictureUrl && (

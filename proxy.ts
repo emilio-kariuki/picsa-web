@@ -68,7 +68,7 @@ function isMarketingOnlyPath(pathname: string) {
   )
 }
 
-const PUBLIC_EVENT_PATH_RE = /^\/events\/[a-zA-Z0-9_-]+$/
+const PUBLIC_EVENT_PATH_RE = /^\/(?:events?|camera)\/[a-zA-Z0-9_-]+$/
 
 function isPublicEventPath(pathname: string) {
   return PUBLIC_EVENT_PATH_RE.test(pathname)

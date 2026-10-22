@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Fraunces, Geist, Geist_Mono, Plus_Jakarta_Sans } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { buildAppClipBanner } from '@/lib/app-links'
 import './globals.css'
 
 const geistSans = Geist({
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
   title: 'Picsa',
   description: 'Picsa brings event memories and admin operations into one platform.',
   other: {
-    'apple-itunes-app': 'app-clip-bundle-id=com.ecoville.picsa.camera, app-id=6744581978',
+    'apple-itunes-app': buildAppClipBanner(),
   },
   icons: {
     icon: [
