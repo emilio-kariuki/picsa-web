@@ -25,6 +25,8 @@ type AssetLinks = Array<{
 }>
 
 const DEFAULT_APPLE_TEAM_ID = 'RLHUQBL2FQ'
+export const APP_STORE_ID = '6825893560'
+export const APP_STORE_URL = `https://apps.apple.com/app/id${APP_STORE_ID}`
 const DEFAULT_IOS_BUNDLE_ID = 'com.emiliokariuki.picsa'
 const DEFAULT_IOS_APP_CLIP_BUNDLE_ID = 'com.emiliokariuki.picsa.camera'
 const DEFAULT_ANDROID_PACKAGE_NAME = 'com.ecoville.picsa'
@@ -114,6 +116,7 @@ export function buildEventDeepLink(eventId: string) {
 
 export function buildAppClipBanner(appArgument?: string) {
   return [
+    `app-id=${APP_STORE_ID}`,
     `app-clip-bundle-id=${iosAppClipBundleId}`,
     ...(appArgument ? ['app-clip-display=card', `app-argument=${appArgument}`] : []),
   ].join(', ')

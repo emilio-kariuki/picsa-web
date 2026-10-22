@@ -7,7 +7,7 @@ import { Nav } from '@/components/marketing/nav'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { getAdminApiBaseUrl } from '@/lib/api'
-import { buildAppClipBanner, buildEventDeepLink } from '@/lib/app-links'
+import { APP_STORE_URL, buildAppClipBanner, buildEventDeepLink } from '@/lib/app-links'
 
 interface EventPreviewPageProps {
   params: Promise<{ eventId: string }>
@@ -81,7 +81,6 @@ export default async function EventPreviewPage({ params }: EventPreviewPageProps
   const { eventId } = await params
   const event = await fetchEventPreview(eventId)
   const deepLink = buildEventDeepLink(eventId)
-  const eventUrl = `https://picsa.pro/events/${eventId}`
 
   if (!event) {
     return (
@@ -158,7 +157,7 @@ export default async function EventPreviewPage({ params }: EventPreviewPageProps
                 </a>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-full px-6">
-                <a href={`https://apps.apple.com/app/id6744581978`}>
+                <a href={APP_STORE_URL}>
                   Get the app
                 </a>
               </Button>

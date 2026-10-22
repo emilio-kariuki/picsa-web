@@ -1,6 +1,7 @@
+import { APP_STORE_URL } from '@/lib/app-links'
+
 const PLAY_STORE_URL =
   'https://play.google.com/store/apps/details?id=com.ecoville.picsa&pcampaignid=web_share'
-const APP_STORE_URL = 'https://apps.apple.com/us/app/picsa-pro/id6744581978'
 
 function AppleLogo({ className }: { className?: string }) {
   return (
