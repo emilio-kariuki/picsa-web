@@ -1,6 +1,5 @@
-import { useMemo } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { useNavigate, useLocation } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { SparklesIcon } from '@/components/ui/icons'
 import { toast } from 'sonner'
 import { ClientEventForm } from '@/components/client/client-event-form'
@@ -12,19 +11,14 @@ import {
 import { useClientAuth } from '@/hooks/use-client-auth'
 import {
   createEvent,
-  createEventPassCheckoutSession,
   fetchAppConfig,
-  fetchEventPassCheckoutStatus,
   fetchEventPasses,
 } from '@/lib/client-api'
 import type { ClientEventInput } from '@/lib/client-types'
 
 export function ClientNewEventPage() {
   const navigate = useNavigate()
-  const location = useLocation()
-  const searchParams = new URLSearchParams(location.searchStr)
   const { performAuthenticatedRequest } = useClientAuth()
-  const checkoutIntentId = searchParams.get('checkoutIntentId')
 
   const appConfigQuery = useQuery({
     queryKey: ['client', 'app-config'],
@@ -36,83 +30,20 @@ export function ClientNewEventPage() {
     queryFn: () => performAuthenticatedRequest((token) => fetchEventPasses(token)),
   })
 
-  const restoredCheckoutQuery = useQuery({
-    queryKey: ['client', 'checkout-session-status', checkoutIntentId],
-    enabled: Boolean(checkoutIntentId),
-    queryFn: () =>
-      performAuthenticatedRequest((token) =>
-        fetchEventPassCheckoutStatus(token, checkoutIntentId!),
-      ),
-  })
-
   const createEventMutation = useMutation({
     mutationFn: async (input: ClientEventInput) => {
-      if (!input.unlockWithEventPass) {
-        const event = await performAuthenticatedRequest((token) =>
-          createEvent(token, input),
-        )
-
-        return {
-          kind: 'created' as const,
-          eventId: event.id,
+      if (input.unlockWithEventPass) {
+        const passes = await performAuthenticatedRequest((token) => fetchEventPasses(token))
+        if (passes.availableCount === 0) {
+          throw new Error('Create a free event, then open it in the Picsa mobile app to purchase Pro.')
         }
       }
 
-      const passInventory =
-        eventPassesQuery.data ??
-        (await performAuthenticatedRequest((token) => fetchEventPasses(token)))
-
-      if (passInventory.availableCount > 0) {
-        const event = await performAuthenticatedRequest((token) =>
-          createEvent(token, {
-            ...input,
-            unlockWithEventPass: true,
-          }),
-        )
-
-        return {
-          kind: 'created' as const,
-          eventId: event.id,
-        }
-      }
-
-      const checkout = await performAuthenticatedRequest((token) =>
-        createEventPassCheckoutSession(token, {
-          flow: 'create_event_pro',
-          draftEvent: input,
-          returnPath: '/payments/return',
-        }),
-      )
-
-      if (checkout.mode === 'existing_pass') {
-        const event = await performAuthenticatedRequest((token) =>
-          createEvent(token, {
-            ...input,
-            unlockWithEventPass: true,
-          }),
-        )
-
-        return {
-          kind: 'created' as const,
-          eventId: event.id,
-        }
-      }
-
-      if (checkout.mode === 'checkout' && checkout.checkoutUrl) {
-        window.location.assign(checkout.checkoutUrl)
-
-        return {
-          kind: 'redirected' as const,
-        }
-      }
-
-      throw new Error('Unable to start Pro checkout')
+      return performAuthenticatedRequest((token) => createEvent(token, input))
     },
-    onSuccess: (result) => {
-      if (result.kind === 'created') {
-        toast.success('Event created')
-        navigate({ to: `/events/${result.eventId}` })
-      }
+    onSuccess: (event) => {
+      toast.success('Event created')
+      navigate({ to: '/app/events/$eventId', params: { eventId: event.id } })
     },
     onError: (error) => {
       toast.error(
@@ -120,14 +51,6 @@ export function ClientNewEventPage() {
       )
     },
   })
-
-  const restoredDraft = useMemo(() => {
-    if (restoredCheckoutQuery.data?.flow !== 'create_event_pro') {
-      return null
-    }
-
-    return restoredCheckoutQuery.data.draftEvent
-  }, [restoredCheckoutQuery.data])
 
   return (
     <div className="space-y-6">
@@ -173,34 +96,14 @@ export function ClientNewEventPage() {
           </div>
         </div>
 
-        {checkoutIntentId && restoredCheckoutQuery.data ? (
-          <div className="mb-8 rounded-3xl border border-border/70 bg-background/70 p-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">
-              Checkout draft
-            </p>
-            <h2 className="mt-2 font-serif text-2xl font-semibold tracking-tight">
-              Your event draft has been restored
-            </h2>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              {restoredCheckoutQuery.data.status === 'CANCELLED'
-                ? 'Checkout was cancelled, so nothing was created. You can keep editing below and try again whenever you are ready.'
-                : restoredCheckoutQuery.data.status === 'FAILED'
-                  ? restoredCheckoutQuery.data.errorMessage ??
-                    'Checkout did not finish successfully, so the draft is still here for you to adjust and retry.'
-                  : 'We pulled your most recent event draft back into the form so you can continue from where you left off.'}
-            </p>
-          </div>
-        ) : null}
-
         <ClientEventForm
           appConfig={appConfigQuery.data}
           availablePassCount={eventPassesQuery.data?.availableCount ?? 0}
-          initialInput={restoredDraft}
           isSubmitting={createEventMutation.isPending}
           mode="create"
           submitLabel={createEventMutation.isPending ? 'Working...' : undefined}
           onSubmit={async (input) => {
-            await createEventMutation.mutateAsync(input)
+            createEventMutation.mutate(input)
           }}
         />
       </ClientSurface>

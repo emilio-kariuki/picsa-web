@@ -114,6 +114,7 @@ export interface ClientEventInput {
   settings?: Partial<ClientEventSettings>
 }
 
+// Retained for purchase history from the former website checkout.
 export type ClientEventPassProvider = 'REVENUECAT' | 'DODO'
 export type ClientEventPassPaymentStatus =
   | 'pending'
@@ -144,37 +145,6 @@ export interface ClientEventPassPurchase {
   revokedAt: string | null
   revocationReason: string | null
   isClaimed: boolean
-}
-
-export type ClientCheckoutFlow = 'create_event_pro' | 'upgrade_event_pro'
-export type ClientCheckoutSessionMode = 'checkout' | 'existing_pass' | 'already_unlocked'
-export type ClientCheckoutSessionStatus =
-  | 'PENDING'
-  | 'PROCESSING'
-  | 'SUCCEEDED'
-  | 'FAILED'
-  | 'CANCELLED'
-
-export interface ClientCheckoutSessionCreateResult {
-  mode: ClientCheckoutSessionMode
-  checkoutIntentId: string | null
-  checkoutSessionId: string | null
-  checkoutUrl: string | null
-  availablePassCount: number
-  eventId: string | null
-}
-
-export interface ClientCheckoutSessionStatusResult {
-  status: ClientCheckoutSessionStatus
-  flow: ClientCheckoutFlow
-  checkoutIntentId: string
-  checkoutSessionId: string | null
-  eventId: string | null
-  billing: ClientEventBilling | null
-  availablePassCount: number
-  errorCode: string | null
-  errorMessage: string | null
-  draftEvent: ClientEventInput | null
 }
 
 export type ImageStatus = 'UPLOADING' | 'PROCESSING' | 'READY' | 'FAILED' | 'DELETED'
@@ -288,10 +258,6 @@ export interface ClientAppConfigLinks {
   supportPhone: string | null
 }
 
-export interface ClientAppConfigPayments {
-  mobileDodoEventPassEnabled: boolean
-}
-
 export interface ClientAppConfigFeatures {
   mobileEventStoriesEnabled: boolean
 }
@@ -315,7 +281,6 @@ export interface ClientAppConfig {
   plan: ClientAppConfigPlan
   uploads: ClientAppConfigUploads
   links: ClientAppConfigLinks
-  payments: ClientAppConfigPayments
   features: ClientAppConfigFeatures
   updates: ClientAppConfigUpdates
 }

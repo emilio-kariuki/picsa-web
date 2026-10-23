@@ -1,9 +1,6 @@
 import { apiRequest, type ApiSuccessResponse } from '@/lib/api'
 import type {
   ClientAppConfig,
-  ClientCheckoutFlow,
-  ClientCheckoutSessionCreateResult,
-  ClientCheckoutSessionStatusResult,
   ClientEvent,
   ClientEventInput,
   ClientEventPassPurchase,
@@ -81,38 +78,6 @@ export async function claimEventPassForEvent(accessToken: string, eventId: strin
     method: 'POST',
     accessToken,
   })
-
-  return response.data
-}
-
-export async function createEventPassCheckoutSession(
-  accessToken: string,
-  input: {
-    flow: ClientCheckoutFlow
-    eventId?: string | null
-    draftEvent?: ClientEventInput | null
-    returnPath?: string | null
-  },
-) {
-  const response = await apiRequest<ApiSuccessResponse<ClientCheckoutSessionCreateResult>>(
-    '/payments/event-passes/checkout-sessions',
-    {
-      method: 'POST',
-      accessToken,
-      body: input,
-    },
-  )
-
-  return response.data
-}
-
-export async function fetchEventPassCheckoutStatus(accessToken: string, identifier: string) {
-  const response = await apiRequest<ApiSuccessResponse<ClientCheckoutSessionStatusResult>>(
-    `/payments/event-passes/checkout-sessions/${identifier}`,
-    {
-      accessToken,
-    },
-  )
 
   return response.data
 }

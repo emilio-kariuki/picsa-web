@@ -27,7 +27,6 @@ import { Route as MarketingTermsOfServiceRouteImport } from './app/_marketing/te
 import { Route as MarketingPrivacyPolicyRouteImport } from './app/_marketing/privacy-policy'
 import { Route as MarketingDeleteAccountRouteImport } from './app/_marketing/delete-account'
 import { Route as AdminDashboardIndexRouteImport } from './app/admin/dashboard/index'
-import { Route as AppPaymentsReturnRouteImport } from './app/app/payments.return'
 import { Route as AppEventsNewRouteImport } from './app/app/events.new'
 import { Route as AppEventsEventIdRouteImport } from './app/app/events.$eventId'
 import { Route as ApiWellKnownAssetlinksRouteImport } from './app/api/well-known.assetlinks'
@@ -40,7 +39,6 @@ import { Route as AdminDashboardNotificationsRouteImport } from './app/admin/das
 import { Route as AdminDashboardMediaRouteImport } from './app/admin/dashboard/media'
 import { Route as AdminDashboardEventsRouteImport } from './app/admin/dashboard/events'
 import { Route as AdminDashboardAuditLogRouteImport } from './app/admin/dashboard/audit-log'
-import { Route as MarketingPaymentsReturnRouteImport } from './app/_marketing/payments.return'
 import { Route as MarketingJoinInviteIdRouteImport } from './app/_marketing/join.$inviteId'
 import { Route as AppEventsInvitationsAcceptRouteImport } from './app/app/events.invitations.accept'
 import { Route as AdminDashboardUsersUserIdRouteImport } from './app/admin/dashboard/users.$userId'
@@ -137,11 +135,6 @@ const AdminDashboardIndexRoute = AdminDashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminDashboardRoute,
 } as any)
-const AppPaymentsReturnRoute = AppPaymentsReturnRouteImport.update({
-  id: '/payments/return',
-  path: '/payments/return',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppEventsNewRoute = AppEventsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -204,11 +197,6 @@ const AdminDashboardAuditLogRoute = AdminDashboardAuditLogRouteImport.update({
   path: '/audit-log',
   getParentRoute: () => AdminDashboardRoute,
 } as any)
-const MarketingPaymentsReturnRoute = MarketingPaymentsReturnRouteImport.update({
-  id: '/payments/return',
-  path: '/payments/return',
-  getParentRoute: () => MarketingRoute,
-} as any)
 const MarketingJoinInviteIdRoute = MarketingJoinInviteIdRouteImport.update({
   id: '/join/$inviteId',
   path: '/join/$inviteId',
@@ -257,7 +245,6 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/join/$inviteId': typeof MarketingJoinInviteIdRoute
-  '/payments/return': typeof MarketingPaymentsReturnRoute
   '/admin/dashboard/audit-log': typeof AdminDashboardAuditLogRoute
   '/admin/dashboard/events': typeof AdminDashboardEventsRouteWithChildren
   '/admin/dashboard/media': typeof AdminDashboardMediaRoute
@@ -270,7 +257,6 @@ export interface FileRoutesByFullPath {
   '/api/well-known/assetlinks': typeof ApiWellKnownAssetlinksRoute
   '/app/events/$eventId': typeof AppEventsEventIdRoute
   '/app/events/new': typeof AppEventsNewRoute
-  '/app/payments/return': typeof AppPaymentsReturnRoute
   '/admin/dashboard/': typeof AdminDashboardIndexRoute
   '/admin/dashboard/events/$eventId': typeof AdminDashboardEventsEventIdRoute
   '/admin/dashboard/tickets/$ticketId': typeof AdminDashboardTicketsTicketIdRoute
@@ -292,7 +278,6 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/app': typeof AppIndexRoute
   '/join/$inviteId': typeof MarketingJoinInviteIdRoute
-  '/payments/return': typeof MarketingPaymentsReturnRoute
   '/admin/dashboard/audit-log': typeof AdminDashboardAuditLogRoute
   '/admin/dashboard/events': typeof AdminDashboardEventsRouteWithChildren
   '/admin/dashboard/media': typeof AdminDashboardMediaRoute
@@ -305,7 +290,6 @@ export interface FileRoutesByTo {
   '/api/well-known/assetlinks': typeof ApiWellKnownAssetlinksRoute
   '/app/events/$eventId': typeof AppEventsEventIdRoute
   '/app/events/new': typeof AppEventsNewRoute
-  '/app/payments/return': typeof AppPaymentsReturnRoute
   '/admin/dashboard': typeof AdminDashboardIndexRoute
   '/admin/dashboard/events/$eventId': typeof AdminDashboardEventsEventIdRoute
   '/admin/dashboard/tickets/$ticketId': typeof AdminDashboardTicketsTicketIdRoute
@@ -332,7 +316,6 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/app/': typeof AppIndexRoute
   '/_marketing/join/$inviteId': typeof MarketingJoinInviteIdRoute
-  '/_marketing/payments/return': typeof MarketingPaymentsReturnRoute
   '/admin/dashboard/audit-log': typeof AdminDashboardAuditLogRoute
   '/admin/dashboard/events': typeof AdminDashboardEventsRouteWithChildren
   '/admin/dashboard/media': typeof AdminDashboardMediaRoute
@@ -345,7 +328,6 @@ export interface FileRoutesById {
   '/api/well-known/assetlinks': typeof ApiWellKnownAssetlinksRoute
   '/app/events/$eventId': typeof AppEventsEventIdRoute
   '/app/events/new': typeof AppEventsNewRoute
-  '/app/payments/return': typeof AppPaymentsReturnRoute
   '/admin/dashboard/': typeof AdminDashboardIndexRoute
   '/admin/dashboard/events/$eventId': typeof AdminDashboardEventsEventIdRoute
   '/admin/dashboard/tickets/$ticketId': typeof AdminDashboardTicketsTicketIdRoute
@@ -372,7 +354,6 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/app/'
     | '/join/$inviteId'
-    | '/payments/return'
     | '/admin/dashboard/audit-log'
     | '/admin/dashboard/events'
     | '/admin/dashboard/media'
@@ -385,7 +366,6 @@ export interface FileRouteTypes {
     | '/api/well-known/assetlinks'
     | '/app/events/$eventId'
     | '/app/events/new'
-    | '/app/payments/return'
     | '/admin/dashboard/'
     | '/admin/dashboard/events/$eventId'
     | '/admin/dashboard/tickets/$ticketId'
@@ -407,7 +387,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/app'
     | '/join/$inviteId'
-    | '/payments/return'
     | '/admin/dashboard/audit-log'
     | '/admin/dashboard/events'
     | '/admin/dashboard/media'
@@ -420,7 +399,6 @@ export interface FileRouteTypes {
     | '/api/well-known/assetlinks'
     | '/app/events/$eventId'
     | '/app/events/new'
-    | '/app/payments/return'
     | '/admin/dashboard'
     | '/admin/dashboard/events/$eventId'
     | '/admin/dashboard/tickets/$ticketId'
@@ -446,7 +424,6 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/app/'
     | '/_marketing/join/$inviteId'
-    | '/_marketing/payments/return'
     | '/admin/dashboard/audit-log'
     | '/admin/dashboard/events'
     | '/admin/dashboard/media'
@@ -459,7 +436,6 @@ export interface FileRouteTypes {
     | '/api/well-known/assetlinks'
     | '/app/events/$eventId'
     | '/app/events/new'
-    | '/app/payments/return'
     | '/admin/dashboard/'
     | '/admin/dashboard/events/$eventId'
     | '/admin/dashboard/tickets/$ticketId'
@@ -604,13 +580,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardIndexRouteImport
       parentRoute: typeof AdminDashboardRoute
     }
-    '/app/payments/return': {
-      id: '/app/payments/return'
-      path: '/payments/return'
-      fullPath: '/app/payments/return'
-      preLoaderRoute: typeof AppPaymentsReturnRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/app/events/new': {
       id: '/app/events/new'
       path: '/new'
@@ -695,13 +664,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardAuditLogRouteImport
       parentRoute: typeof AdminDashboardRoute
     }
-    '/_marketing/payments/return': {
-      id: '/_marketing/payments/return'
-      path: '/payments/return'
-      fullPath: '/payments/return'
-      preLoaderRoute: typeof MarketingPaymentsReturnRouteImport
-      parentRoute: typeof MarketingRoute
-    }
     '/_marketing/join/$inviteId': {
       id: '/_marketing/join/$inviteId'
       path: '/join/$inviteId'
@@ -746,7 +708,6 @@ interface MarketingRouteChildren {
   MarketingTermsOfServiceRoute: typeof MarketingTermsOfServiceRoute
   MarketingIndexRoute: typeof MarketingIndexRoute
   MarketingJoinInviteIdRoute: typeof MarketingJoinInviteIdRoute
-  MarketingPaymentsReturnRoute: typeof MarketingPaymentsReturnRoute
 }
 
 const MarketingRouteChildren: MarketingRouteChildren = {
@@ -755,7 +716,6 @@ const MarketingRouteChildren: MarketingRouteChildren = {
   MarketingTermsOfServiceRoute: MarketingTermsOfServiceRoute,
   MarketingIndexRoute: MarketingIndexRoute,
   MarketingJoinInviteIdRoute: MarketingJoinInviteIdRoute,
-  MarketingPaymentsReturnRoute: MarketingPaymentsReturnRoute,
 }
 
 const MarketingRouteWithChildren = MarketingRoute._addFileChildren(
@@ -862,7 +822,6 @@ interface AppRouteChildren {
   AppNotificationsRoute: typeof AppNotificationsRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppIndexRoute: typeof AppIndexRoute
-  AppPaymentsReturnRoute: typeof AppPaymentsReturnRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -872,7 +831,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppNotificationsRoute: AppNotificationsRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppIndexRoute: AppIndexRoute,
-  AppPaymentsReturnRoute: AppPaymentsReturnRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

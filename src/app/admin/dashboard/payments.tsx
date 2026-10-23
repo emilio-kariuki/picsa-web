@@ -87,7 +87,7 @@ const mrrChartConfig = {
 } satisfies ChartConfig
 
 const providerChartConfig = {
-  DODO: { label: 'Dodo', color: chartColors.indigo },
+  DODO: { label: 'Legacy checkout', color: chartColors.indigo },
   REVENUECAT: { label: 'RevenueCat', color: chartColors.sky },
 } satisfies ChartConfig
 
@@ -145,7 +145,7 @@ function storeLabel(store: string | null) {
     case 'play_store':
       return 'Play Store'
     case 'dodo':
-      return 'Dodo'
+      return 'Legacy checkout'
     default:
       return store ?? '—'
   }
@@ -312,7 +312,7 @@ function EventPassPaymentsTable({ items }: { items: AdminEventPassPayment[] }) {
     return (
       <EmptyTable
         title="No event pass payments yet"
-        description="Dodo web checkouts and RevenueCat event passes will show up here."
+        description="Event Pass purchases and historical transactions will show up here."
       />
     )
   }
@@ -971,7 +971,7 @@ function AdminPaymentsPage() {
                 <SelectContent>
                   <SelectItem value="all">All providers</SelectItem>
                   <SelectItem value="REVENUECAT">RevenueCat</SelectItem>
-                  <SelectItem value="DODO">Dodo</SelectItem>
+                  <SelectItem value="DODO">Legacy checkout</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -1029,7 +1029,7 @@ function AdminPaymentsPage() {
                 <SelectContent>
                   <SelectItem value="all">All providers</SelectItem>
                   <SelectItem value="REVENUECAT">RevenueCat</SelectItem>
-                  <SelectItem value="DODO">Dodo</SelectItem>
+                  <SelectItem value="DODO">Legacy checkout</SelectItem>
                 </SelectContent>
               </Select>
 

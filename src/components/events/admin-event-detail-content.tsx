@@ -532,7 +532,7 @@ function storeLabel(store: string | null) {
   switch (store.toLowerCase()) {
     case 'app_store': return 'App Store'
     case 'play_store': return 'Play Store'
-    case 'dodo': return 'Dodo'
+    case 'dodo': return 'Legacy checkout'
     default: return store
   }
 }
