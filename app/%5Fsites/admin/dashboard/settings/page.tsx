@@ -35,7 +35,6 @@ import {
   BellIcon,
   BuildingIcon,
   CircleAlertIcon,
-  CreditCardIcon,
   KeyIcon,
   LoaderCircleIcon,
   LockIcon,
@@ -78,9 +77,6 @@ interface AppConfigDraft {
     twitterUrl: string
     supportEmail: string
     supportPhone: string
-  }
-  payments: {
-    mobileDodoEventPassEnabled: boolean
   }
   features: {
     mobileEventStoriesEnabled: boolean
@@ -223,9 +219,6 @@ function buildAppConfigDraft(config: ClientAppConfig): AppConfigDraft {
       twitterUrl: config.links.twitterUrl,
       supportEmail: config.links.supportEmail ?? '',
       supportPhone: config.links.supportPhone ?? '',
-    },
-    payments: {
-      mobileDodoEventPassEnabled: config.payments.mobileDodoEventPassEnabled,
     },
     features: {
       mobileEventStoriesEnabled: config.features.mobileEventStoriesEnabled,
@@ -425,9 +418,6 @@ function buildEditableAppConfigPayload(
         twitterUrl: draft.links.twitterUrl.trim(),
         supportEmail,
         supportPhone: toOptionalText(draft.links.supportPhone),
-      },
-      payments: {
-        mobileDodoEventPassEnabled: draft.payments.mobileDodoEventPassEnabled,
       },
       features: {
         mobileEventStoriesEnabled: draft.features.mobileEventStoriesEnabled,
@@ -990,27 +980,6 @@ export default function SettingsPage() {
                           features: {
                             ...current.features,
                             mobileEventStoriesEnabled: checked,
-                          },
-                        }))
-                      }
-                    />
-                  </EditableSectionCard>
-
-                  <EditableSectionCard
-                    title="Payments"
-                    description="Choose whether mobile event-pass purchases should go through the hosted Dodo checkout flow or stay on the native RevenueCat store flow."
-                    icon={<CreditCardIcon className="h-4 w-4" />}
-                  >
-                    <ToggleField
-                      label="Enable Dodo event-pass checkout on mobile"
-                      description="When enabled, iOS and Android use Dodo hosted checkout for event-pass purchases. When disabled, mobile falls back to RevenueCat."
-                      checked={appConfigDraft.payments.mobileDodoEventPassEnabled}
-                      onCheckedChange={(checked) =>
-                        updateDraft((current) => ({
-                          ...current,
-                          payments: {
-                            ...current.payments,
-                            mobileDodoEventPassEnabled: checked,
                           },
                         }))
                       }

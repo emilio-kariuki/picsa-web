@@ -3,7 +3,6 @@ import type {
   ClientAppConfig,
   ClientAppConfigFeatures,
   ClientAppConfigLinks,
-  ClientAppConfigPayments,
   ClientAppConfigPlan,
   ClientAppConfigUpdates,
   ClientAppConfigUploads,
@@ -13,7 +12,6 @@ export interface EditableAdminAppConfig {
   plan: ClientAppConfigPlan
   uploads: ClientAppConfigUploads
   links: ClientAppConfigLinks
-  payments: ClientAppConfigPayments
   features: ClientAppConfigFeatures
   updates: ClientAppConfigUpdates
 }

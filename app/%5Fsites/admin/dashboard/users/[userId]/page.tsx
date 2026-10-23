@@ -661,7 +661,7 @@ function UserDetailContent({
                                   : 'bg-sky-100 text-sky-700'
                               }
                             >
-                              {tx.provider}
+                              {tx.provider === 'DODO' ? 'Legacy checkout' : tx.provider}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-sm">
@@ -721,7 +721,7 @@ function UserDetailContent({
                                   : 'bg-sky-100 text-sky-700'
                               }
                             >
-                              {pass.provider}
+                              {pass.provider === 'DODO' ? 'Legacy checkout' : pass.provider}
                             </Badge>
                           </TableCell>
                           <TableCell>

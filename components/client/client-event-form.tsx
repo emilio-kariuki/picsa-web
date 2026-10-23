@@ -71,7 +71,7 @@ function readNumericInput(value: string) {
   return Number.isFinite(parsed) ? parsed : Number.NaN
 }
 
-function buildInitialDraft(initialEvent?: ClientEvent | null, initialInput?: ClientEventInput | null) {
+function buildInitialDraft(initialEvent?: ClientEvent | null) {
   if (initialEvent) {
     return {
       name: initialEvent.name,
@@ -89,17 +89,14 @@ function buildInitialDraft(initialEvent?: ClientEvent | null, initialInput?: Cli
   }
 
   return {
-    name: initialInput?.name ?? '',
-    description: initialInput?.description ?? '',
-    maxGuests: initialInput?.maxGuests ? String(initialInput.maxGuests) : '',
-    maxImages: initialInput?.maxImages ? String(initialInput.maxImages) : '',
-    startAt: toInputDateTimeValue(initialInput?.startAt),
-    endAt: toInputDateTimeValue(initialInput?.endAt),
-    settings: {
-      ...defaultSettings,
-      ...(initialInput?.settings ?? {}),
-    },
-    unlockWithEventPass: initialInput?.unlockWithEventPass === true,
+    name: '',
+    description: '',
+    maxGuests: '',
+    maxImages: '',
+    startAt: '',
+    endAt: '',
+    settings: { ...defaultSettings },
+    unlockWithEventPass: false,
   }
 }
 
@@ -107,7 +104,6 @@ export function ClientEventForm({
   appConfig,
   availablePassCount = 0,
   initialEvent,
-  initialInput,
   isSubmitting,
   mode = initialEvent ? 'edit' : 'create',
   onSubmit,
@@ -116,15 +112,14 @@ export function ClientEventForm({
   appConfig?: ClientAppConfig | null
   availablePassCount?: number
   initialEvent?: ClientEvent | null
-  initialInput?: ClientEventInput | null
   isSubmitting?: boolean
   mode?: 'create' | 'edit'
   onSubmit: (input: ClientEventInput) => Promise<void>
   submitLabel?: string
 }) {
   const initialDraft = useMemo(
-    () => buildInitialDraft(initialEvent, initialInput),
-    [initialEvent, initialInput],
+    () => buildInitialDraft(initialEvent),
+    [initialEvent],
   )
 
   const [name, setName] = useState(initialDraft.name)
@@ -204,14 +199,14 @@ export function ClientEventForm({
       ? unlockWithEventPass
         ? availablePassCount > 0
           ? 'Create Pro event'
-          : 'Continue to Pro checkout'
+          : 'Pro requires an Event Pass'
         : 'Create free event'
       : 'Save changes')
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    if (validationMessages.length > 0) {
+    if (validationMessages.length > 0 || (isCreateMode && unlockWithEventPass && availablePassCount === 0)) {
       return
     }
 
@@ -268,7 +263,7 @@ export function ClientEventForm({
                 </h2>
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
                   {unlockWithEventPass
-                    ? 'Pro unlocks image sharing, up to 100 guests, and up to 2500 uploads. If you do not already have an event pass, checkout happens before the event is created.'
+                    ? `Pro unlocks image sharing, up to ${proLimits.guests} guests, and up to ${proLimits.images} uploads. Use an available Event Pass, or create a free event and unlock it in the mobile app.`
                     : `Free events cover up to ${freeLimits.guests} guests and ${freeLimits.images} uploads. You can still switch to Pro here if you need more room before launch.`}
                 </p>
               </div>
@@ -278,7 +273,7 @@ export function ClientEventForm({
                 <Switch checked={unlockWithEventPass} onCheckedChange={handlePlanToggle} />
                 <div>
                   <p className="text-sm font-semibold text-foreground">Make this event Pro</p>
-                  <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">$12 per event pass</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">One Event Pass per event</p>
                 </div>
               </div>
               <div className="grid w-full gap-2 text-sm text-muted-foreground">
@@ -524,7 +519,7 @@ export function ClientEventForm({
             ? unlockWithEventPass
               ? availablePassCount > 0
                 ? 'You already have an unclaimed event pass, so this event can unlock Pro immediately.'
-                : 'You will be taken to secure checkout before the Pro event is created.'
+                : 'Create a free event, then open it in the Picsa mobile app to purchase Pro.'
               : 'Start free now, then unlock Pro later if the event grows.'
             : isProEvent
               ? 'This event already has Pro unlocked.'
@@ -532,7 +527,7 @@ export function ClientEventForm({
         </p>
         <Button
           type="submit"
-          disabled={isSubmitting || validationMessages.length > 0}
+          disabled={isSubmitting || validationMessages.length > 0 || (isCreateMode && unlockWithEventPass && availablePassCount === 0)}
           className="rounded-full bg-primary px-6 text-primary-foreground hover:bg-accent hover:text-accent-foreground"
         >
           {resolvedSubmitLabel}

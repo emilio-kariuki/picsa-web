@@ -51,12 +51,12 @@ import { ClientEventForm } from '@/components/client/client-event-form'
 import { ClientImageUploader } from '@/components/client/client-image-uploader'
 import { ClientMetricCard, ClientPageHeader, ClientSurface } from '@/components/client/client-page-chrome'
 import { useClientAuth } from '@/hooks/use-client-auth'
+import { buildEventDeepLink } from '@/lib/app-links'
 import {
   approveEventJoinRequest,
   approveImage,
   claimEventPassForEvent,
   createEventInvitation,
-  createEventPassCheckoutSession,
   createImageShareLink,
   deleteEvent,
   deleteImage,
@@ -406,62 +406,12 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
   })
 
   const unlockEventMutation = useMutation({
-    mutationFn: async () => {
-      const passInventory =
-        eventPassesQuery.data ??
-        (await performAuthenticatedRequest((token) => fetchEventPasses(token)))
-
-      if (passInventory.availableCount > 0) {
-        await performAuthenticatedRequest((token) => claimEventPassForEvent(token, eventId))
-
-        return {
-          kind: 'claimed' as const,
-        }
-      }
-
-      const checkout = await performAuthenticatedRequest((token) =>
-        createEventPassCheckoutSession(token, {
-          flow: 'upgrade_event_pro',
-          eventId,
-          returnPath: '/payments/return',
-        }),
-      )
-
-      if (checkout.mode === 'already_unlocked') {
-        return {
-          kind: 'already_unlocked' as const,
-        }
-      }
-
-      if (checkout.mode === 'existing_pass') {
-        await performAuthenticatedRequest((token) => claimEventPassForEvent(token, eventId))
-
-        return {
-          kind: 'claimed' as const,
-        }
-      }
-
-      if (checkout.mode === 'checkout' && checkout.checkoutUrl) {
-        window.location.assign(checkout.checkoutUrl)
-
-        return {
-          kind: 'redirected' as const,
-        }
-      }
-
-      throw new Error('Unable to start Pro checkout')
-    },
-    onSuccess: (result) => {
-      if (result.kind === 'claimed') {
-        toast.success('Pro unlocked for this event')
-        refreshWorkspace()
-        void queryClient.invalidateQueries({ queryKey: ['client', 'event-passes'] })
-      }
-
-      if (result.kind === 'already_unlocked') {
-        toast.success('This event is already on Pro')
-        refreshWorkspace()
-      }
+    mutationFn: () =>
+      performAuthenticatedRequest((token) => claimEventPassForEvent(token, eventId)),
+    onSuccess: () => {
+      toast.success('Pro unlocked for this event')
+      refreshWorkspace()
+      void queryClient.invalidateQueries({ queryKey: ['client', 'event-passes'] })
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : 'Unable to unlock Pro')
@@ -637,26 +587,33 @@ export function ClientEventWorkspacePage({ eventId }: { eventId: string }) {
                   </p>
                   <div className="mt-5 flex flex-wrap gap-2">
                     <Badge variant="outline" className="rounded-full border-accent/35 bg-accent/10 px-3 py-1 text-accent">
-                      $12 per event
+                      One Event Pass per event
                     </Badge>
                     <Badge variant="outline" className="rounded-full border-accent/35 bg-accent/10 px-3 py-1 text-accent">
                       {eventPassesQuery.data?.availableCount
                         ? `${eventPassesQuery.data.availableCount} pass ready`
-                        : 'Hosted checkout ready'}
+                        : 'Purchase in the mobile app'}
                     </Badge>
                   </div>
-                  <Button
-                    className="mt-5 rounded-full bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground"
-                    disabled={unlockEventMutation.isPending}
-                    onClick={() => unlockEventMutation.mutate()}
-                  >
-                    <SparklesIcon className="mr-2 h-4 w-4" />
-                    {unlockEventMutation.isPending
-                      ? 'Preparing Pro...'
-                      : eventPassesQuery.data?.availableCount
-                        ? 'Use existing pass'
-                        : 'Unlock Pro'}
-                  </Button>
+                  {eventPassesQuery.data?.availableCount ? (
+                    <Button
+                      className="mt-5 rounded-full bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground"
+                      disabled={unlockEventMutation.isPending}
+                      onClick={() => unlockEventMutation.mutate()}
+                    >
+                      <SparklesIcon className="mr-2 h-4 w-4" />
+                      {unlockEventMutation.isPending ? 'Unlocking Pro...' : 'Use existing pass'}
+                    </Button>
+                  ) : (
+                    <>
+                      <p className="mt-4 text-sm text-muted-foreground">
+                        Open this event in the Picsa mobile app to purchase an Event Pass.
+                      </p>
+                      <Button asChild className="mt-5 rounded-full">
+                        <a href={buildEventDeepLink(eventId)}>Open in Picsa</a>
+                      </Button>
+                    </>
+                  )}
                 </ClientSurface>
               ) : (
                 <ClientSurface className="border-emerald-300/50 bg-emerald-500/5">
