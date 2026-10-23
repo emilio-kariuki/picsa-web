@@ -61,7 +61,13 @@ export function Footer() {
           </div>
         </div>
 
-        <p className="text-center text-xs text-muted-foreground mt-8">
+        <p id="support" className="text-center text-sm text-muted-foreground mt-8">
+          Need help with Picsa?{' '}
+          <a href="mailto:picsa.webiste@gmail.com" className="underline underline-offset-4 hover:text-foreground">
+            picsa.webiste@gmail.com
+          </a>
+        </p>
+        <p className="text-center text-xs text-muted-foreground mt-4">
           &copy; {new Date().getFullYear()} Picsa. All rights reserved. Made with care for the moments that matter.
         </p>
       </div>
