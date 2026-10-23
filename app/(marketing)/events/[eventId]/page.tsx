@@ -6,8 +6,8 @@ import { Footer } from '@/components/marketing/footer'
 import { Nav } from '@/components/marketing/nav'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { getAdminApiBaseUrl } from '@/lib/api'
-import { APP_STORE_URL, buildAppClipBanner, buildEventDeepLink } from '@/lib/app-links'
+import { getApiBaseUrl } from '@/lib/api'
+import { buildAppClipBanner, buildEventDeepLink } from '@/lib/app-links'
 
 interface EventPreviewPageProps {
   params: Promise<{ eventId: string }>
@@ -27,7 +27,7 @@ interface EventPreview {
 
 async function fetchEventPreview(eventId: string): Promise<EventPreview | null> {
   try {
-    const baseUrl = getAdminApiBaseUrl()
+    const baseUrl = getApiBaseUrl()
     const res = await fetch(`${baseUrl}/public/events/${encodeURIComponent(eventId)}`, {
       next: { revalidate: 300 },
     })
@@ -157,8 +157,8 @@ export default async function EventPreviewPage({ params }: EventPreviewPageProps
                 </a>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-full px-6">
-                <a href={APP_STORE_URL}>
-                  Get the app
+                <a href="/#download">
+                  Get Picsa
                 </a>
               </Button>
             </div>

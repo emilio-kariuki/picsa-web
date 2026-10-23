@@ -1,141 +1,44 @@
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 
-const INTERNAL_PREFIX = '/_sites'
-const ADMIN_HOST = 'admin.picsa.pro'
-const CLIENT_HOST = 'app.picsa.pro'
-const MARKETING_HOST = 'picsa.pro'
-const LOCAL_ADMIN_HOST = 'admin.localhost'
-const LOCAL_CLIENT_HOST = 'app.localhost'
-const LOCAL_MARKETING_HOSTS = new Set(['localhost', '127.0.0.1'])
-const MARKETING_ONLY_PATHS = new Set([
-  '/delete-account',
-  '/privacy-policy',
-  '/terms-of-service',
+const PORTAL_HOSTS = new Set([
+  'admin.picsa.pro', 'app.picsa.pro', 'admin.localhost', 'app.localhost',
 ])
-const DIRECT_ROUTE_PATHS = new Set(['/apple-app-site-association'])
+const PUBLIC_PAGES = new Set([
+  '/delete-account', '/privacy-policy', '/terms-of-service',
+])
+const PUBLIC_EVENT_PATH = /^\/(?:join|events?|camera)\/[a-zA-Z0-9_-]+$/
+const PORTAL_PATH = /^\/(?:app|admin|dashboard|login|events|images|notifications|settings|payments|auth)(?:\/|$)/
 
-function getHostname(request: NextRequest) {
-  const forwardedHost = request.headers.get('x-forwarded-host')
-  const hostHeader = forwardedHost ?? request.headers.get('host') ?? ''
-
-  return hostHeader
-    .split(',')[0]
-    .trim()
-    .split(':')[0]
-    .toLowerCase()
-}
-
-function isLocalHost(hostname: string) {
-  return hostname.endsWith('.localhost') || LOCAL_MARKETING_HOSTS.has(hostname)
-}
-
-function isAdminHost(hostname: string) {
-  return hostname === ADMIN_HOST || hostname === LOCAL_ADMIN_HOST
-}
-
-function isClientHost(hostname: string) {
-  return hostname === CLIENT_HOST || hostname === LOCAL_CLIENT_HOST
-}
-
-function isAdminPath(pathname: string) {
-  return pathname === '/dashboard' || pathname.startsWith('/dashboard/')
-}
-
-function isClientPath(pathname: string) {
-  if (isPublicEventPath(pathname)) return false
-
-  return (
-    pathname === '/login' ||
-    pathname === '/events' ||
-    pathname.startsWith('/events/') ||
-    pathname === '/images' ||
-    pathname.startsWith('/images/') ||
-    pathname === '/notifications' ||
-    pathname.startsWith('/notifications/') ||
-    pathname === '/settings' ||
-    pathname.startsWith('/settings/')
-  )
-}
-
-function isMarketingOnlyPath(pathname: string) {
-  return (
-    MARKETING_ONLY_PATHS.has(pathname) ||
-    DIRECT_ROUTE_PATHS.has(pathname) ||
-    pathname === '/join' ||
-    pathname.startsWith('/join/') ||
-    isPublicEventPath(pathname)
-  )
-}
-
-const PUBLIC_EVENT_PATH_RE = /^\/(?:events?|camera)\/[a-zA-Z0-9_-]+$/
-
-function isPublicEventPath(pathname: string) {
-  return PUBLIC_EVENT_PATH_RE.test(pathname)
-}
-
-function buildSitePath(site: 'admin' | 'marketing' | 'client', pathname: string) {
-  return pathname === '/' ? `${INTERNAL_PREFIX}/${site}` : `${INTERNAL_PREFIX}/${site}${pathname}`
-}
-
-function redirectToHost(request: NextRequest, hostname: string) {
-  const url = request.nextUrl.clone()
-  url.protocol = isLocalHost(hostname) ? 'http' : 'https'
-  url.hostname = hostname
-  url.port = isLocalHost(hostname) ? request.nextUrl.port : ''
-  return NextResponse.redirect(url)
-}
-
-function proxy(request: NextRequest) {
-  const hostname = getHostname(request)
-  const { pathname } = request.nextUrl
-
-  if (pathname === INTERNAL_PREFIX || pathname.startsWith(`${INTERNAL_PREFIX}/`)) {
+export function proxy(request: NextRequest) {
+  const pathname = request.nextUrl.pathname.replace(/\/$/, '') || '/'
+  if (pathname === '/_sites' || pathname.startsWith('/_sites/')) {
     return new NextResponse('Not found', { status: 404 })
   }
+  if (pathname === '/apple-app-site-association') return NextResponse.next()
 
-  if (DIRECT_ROUTE_PATHS.has(pathname)) {
-    return NextResponse.next()
+  const hostname = (request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? '')
+    .split(',')[0].trim().split(':')[0].toLowerCase()
+  const portalHost = PORTAL_HOSTS.has(hostname)
+  const publicEvent = pathname !== '/events/new' && PUBLIC_EVENT_PATH.test(pathname)
+  const portalPath = !publicEvent && PORTAL_PATH.test(pathname)
+  if (!portalHost && !portalPath) return NextResponse.next()
+
+  const target = request.nextUrl.clone()
+  if (portalHost) {
+    const local = hostname.endsWith('.localhost')
+    target.protocol = local ? 'http' : 'https'
+    target.hostname = local ? 'localhost' : 'picsa.pro'
+    target.port = local ? request.nextUrl.port : ''
   }
-
-  if (isAdminHost(hostname)) {
-    if (isMarketingOnlyPath(pathname)) {
-      const targetHost = hostname === LOCAL_ADMIN_HOST ? 'localhost' : MARKETING_HOST
-      return redirectToHost(request, targetHost)
-    }
-
-    const url = request.nextUrl.clone()
-    url.pathname = buildSitePath('admin', pathname)
-    return NextResponse.rewrite(url)
+  if (!publicEvent && !PUBLIC_PAGES.has(pathname)) {
+    target.pathname = '/'
+    target.search = ''
+    target.hash = 'download'
   }
-
-  if (isClientHost(hostname)) {
-    if (isMarketingOnlyPath(pathname)) {
-      const targetHost = hostname === LOCAL_CLIENT_HOST ? 'localhost' : MARKETING_HOST
-      return redirectToHost(request, targetHost)
-    }
-
-    const url = request.nextUrl.clone()
-    url.pathname = buildSitePath('client', pathname)
-    return NextResponse.rewrite(url)
-  }
-
-  if (isAdminPath(pathname)) {
-    const targetHost = isLocalHost(hostname) ? LOCAL_ADMIN_HOST : ADMIN_HOST
-    return redirectToHost(request, targetHost)
-  }
-
-  if (isClientPath(pathname)) {
-    const targetHost = isLocalHost(hostname) ? LOCAL_CLIENT_HOST : CLIENT_HOST
-    return redirectToHost(request, targetHost)
-  }
-
-  const url = request.nextUrl.clone()
-  url.pathname = buildSitePath('marketing', pathname)
-  return NextResponse.rewrite(url)
+  return NextResponse.redirect(target, 308)
 }
 
-export { proxy }
 export default proxy
 
 export const config = {

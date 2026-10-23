@@ -1,13 +1,12 @@
 import Link from 'next/link'
 import { Instagram, Twitter, Github } from '@/components/ui/icons'
-import { CLIENT_LOGIN_PATH } from '@/lib/site-urls'
 import { AppStoreButtons } from './app-store-buttons'
 
 const footerLinks = [
   { label: 'Features', href: '/#features' },
   { label: 'How it works', href: '/#how-it-works' },
   { label: 'Pricing', href: '/#pricing' },
-  { label: 'Log in', href: CLIENT_LOGIN_PATH },
+  { label: 'Get Picsa', href: '/#download' },
   { label: 'Delete Account', href: '/delete-account' },
   { label: 'Privacy Policy', href: '/privacy-policy' },
   { label: 'Terms', href: '/terms-of-service' },

@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Play } from '@/components/ui/icons'
-import { CLIENT_CREATE_EVENT_PATH } from '@/lib/site-urls'
 import { AppStoreButtons } from './app-store-buttons'
 
 export function Hero() {
@@ -22,7 +21,7 @@ export function Hero() {
           {/* Pill badge */}
           <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-secondary px-4 py-1.5 text-xs font-medium text-muted-foreground">
             <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-            Now available — Free to start
+            Your event, through everyone’s eyes
           </div>
 
           <h1 className="font-serif text-5xl lg:text-6xl xl:text-7xl font-black leading-[1.05] text-foreground text-balance">
@@ -44,8 +43,8 @@ export function Hero() {
               size="lg"
               className="bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200 rounded-full px-8 text-base font-semibold group"
             >
-              <a href={CLIENT_CREATE_EVENT_PATH}>
-                Start an Event
+              <a href="/#download">
+                Get Picsa
                 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </a>
             </Button>

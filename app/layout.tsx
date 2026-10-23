@@ -30,7 +30,7 @@ const jakartaSans = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: 'Picsa',
-  description: 'Picsa brings event memories and admin operations into one platform.',
+  description: 'Collect and share every photo from your event with Picsa.',
   other: {
     'apple-itunes-app': buildAppClipBanner(),
   },
