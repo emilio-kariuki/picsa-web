@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button'
 import { Check, Crown } from '@/components/ui/icons'
-import { CLIENT_CREATE_EVENT_PATH } from '@/lib/site-urls'
 
 const plans = [
   {
@@ -8,7 +7,7 @@ const plans = [
     price: '$0',
     period: 'forever',
     tagline: 'Perfect for getting started',
-    cta: 'Start for free',
+    cta: 'Get Picsa',
     ctaVariant: 'outline' as const,
     highlight: false,
     features: [
@@ -26,7 +25,7 @@ const plans = [
     price: '$12',
     period: 'per event',
     tagline: 'For events that deserve more',
-    cta: 'Start with Pro',
+    cta: 'Get Picsa',
     ctaVariant: 'default' as const,
     highlight: true,
     features: [
@@ -56,7 +55,7 @@ export function Pricing() {
             Simple, honest pricing
           </h2>
           <p className="text-muted-foreground mt-4 text-lg leading-relaxed">
-            Start for free. Upgrade when your event calls for it.
+            Create free events in the app. Upgrade an event with an Event Pass. Local prices are shown before purchase.
           </p>
         </div>
 
@@ -127,7 +126,7 @@ export function Pricing() {
                     : 'border-border hover:bg-secondary'
                 }`}
               >
-                <a href={CLIENT_CREATE_EVENT_PATH}>
+                <a href="/#download">
                   {plan.cta}
                 </a>
               </Button>

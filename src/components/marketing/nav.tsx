@@ -2,13 +2,12 @@ import { useState, useEffect } from 'react'
 import { Link } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { Menu, X } from '@/components/ui/icons'
-import { CLIENT_CREATE_EVENT_PATH, CLIENT_LOGIN_PATH } from '@/lib/site-urls'
 
 const links = [
-  { label: 'Features', href: '#features' },
-  { label: 'How it works', href: '#how-it-works' },
-  { label: 'Pricing', href: '#pricing' },
-  { label: 'FAQ', href: '#faq' },
+  { label: 'Features', href: '/#features' },
+  { label: 'How it works', href: '/#how-it-works' },
+  { label: 'Pricing', href: '/#pricing' },
+  { label: 'FAQ', href: '/#faq' },
 ]
 
 export function Nav() {
@@ -55,18 +54,13 @@ export function Nav() {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
-          <Button asChild variant="ghost" size="sm" className="text-foreground">
-            <a href={CLIENT_LOGIN_PATH}>
-              Log in
-            </a>
-          </Button>
           <Button
             asChild
             size="sm"
             className="bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors rounded-full px-5"
           >
-            <a href={CLIENT_CREATE_EVENT_PATH}>
-              Start an Event
+            <a href="/#download">
+              Get Picsa
             </a>
           </Button>
         </div>
@@ -76,6 +70,7 @@ export function Nav() {
           className="md:hidden p-2 text-foreground"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
+          aria-expanded={menuOpen}
         >
           {menuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
@@ -99,8 +94,8 @@ export function Nav() {
             size="sm"
             className="bg-primary text-primary-foreground rounded-full mt-2"
           >
-            <a href={CLIENT_CREATE_EVENT_PATH}>
-              Start an Event
+            <a href="/#download">
+              Get Picsa
             </a>
           </Button>
         </div>

@@ -1,9 +1,13 @@
 type AppleAppSiteAssociation = {
   applinks: {
-    apps: [];
     details: Array<{
-      appID: string;
-      paths: string[];
+      appIDs: string[];
+      components: Array<{
+        '/'?: string;
+        '#'?: string;
+        exclude?: boolean;
+        comment?: string;
+      }>;
     }>;
   };
   appclips: {
@@ -20,9 +24,11 @@ type AssetLinks = Array<{
   };
 }>
 
-const DEFAULT_APPLE_TEAM_ID = '4Q267QMF86'
-const DEFAULT_IOS_BUNDLE_ID = 'com.ecoville.picsa'
-const DEFAULT_IOS_APP_CLIP_BUNDLE_ID = 'com.ecoville.picsa.camera'
+const DEFAULT_APPLE_TEAM_ID = 'RLHUQBL2FQ'
+export const APP_STORE_ID = '6825893560'
+export const APP_STORE_URL = `https://apps.apple.com/app/id${APP_STORE_ID}`
+const DEFAULT_IOS_BUNDLE_ID = 'com.emiliokariuki.picsa'
+const DEFAULT_IOS_APP_CLIP_BUNDLE_ID = 'com.emiliokariuki.picsa.camera'
 const DEFAULT_ANDROID_PACKAGE_NAME = 'com.ecoville.picsa'
 const DEFAULT_ANDROID_SHA256_CERT_FINGERPRINTS = [
   '2B:79:7E:06:EE:D7:1F:BD:85:75:04:5F:48:C3:82:19:2D:E8:B6:B3:31:1E:5B:71:72:1C:80:DA:54:9C:2D:14',
@@ -30,12 +36,12 @@ const DEFAULT_ANDROID_SHA256_CERT_FINGERPRINTS = [
 const UNIVERSAL_LINK_PATHS = ['/join/*', '/event/*', '/events/*', '/camera/*']
 
 function readEnvValue(key: string, fallback: string) {
-  const value = process.env[key]?.trim()
+  const value = typeof process === 'undefined' ? undefined : process.env[key]?.trim()
   return value && value.length > 0 ? value : fallback
 }
 
 function readEnvList(key: string, fallback: string[]) {
-  const value = process.env[key]
+  const value = (typeof process === 'undefined' ? undefined : process.env[key])
     ?.split(',')
     .map((item) => item.trim())
     .filter((item) => item.length > 0)
@@ -59,21 +65,28 @@ const androidSha256CertFingerprints = readEnvList(
 )
 
 export function getAppleAppSiteAssociation(): AppleAppSiteAssociation {
-  const appIds = [
-    `${appleTeamId}.${iosBundleId}`,
-    `${appleTeamId}.${iosAppClipBundleId}`,
-  ]
+  const mainAppId = `${appleTeamId}.${iosBundleId}`
 
   return {
     applinks: {
-      apps: [],
-      details: appIds.map((appID) => ({
-        appID,
-        paths: UNIVERSAL_LINK_PATHS,
-      })),
+      details: [
+        {
+          appIDs: Array.from(new Set([mainAppId, '4Q267QMF86.com.ecoville.picsa'])),
+          components: [
+            { '#': 'no_universal_links', exclude: true, comment: 'Exclude URLs with no_universal_links fragment' },
+            ...UNIVERSAL_LINK_PATHS.map((path) => ({
+              '/': path,
+              comment: `Matches ${path}`,
+            })),
+          ],
+        },
+      ],
     },
     appclips: {
-      apps: [`${appleTeamId}.${iosAppClipBundleId}`],
+      apps: Array.from(new Set([
+        `${appleTeamId}.${iosAppClipBundleId}`,
+        '4Q267QMF86.com.ecoville.picsa.camera',
+      ])),
     },
   }
 }
@@ -99,4 +112,12 @@ export function buildJoinDeepLink(eventId: string) {
 
 export function buildEventDeepLink(eventId: string) {
   return `customscheme://event/${encodeURIComponent(eventId)}`
+}
+
+export function buildAppClipBanner(appArgument?: string) {
+  return [
+    `app-id=${APP_STORE_ID}`,
+    `app-clip-bundle-id=${iosAppClipBundleId}`,
+    ...(appArgument ? ['app-clip-display=card', `app-argument=${appArgument}`] : []),
+  ].join(', ')
 }

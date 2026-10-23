@@ -9,95 +9,35 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './app/__root'
-import { Route as AppRouteImport } from './app/app'
-import { Route as AdminRouteImport } from './app/admin'
+import { Route as AppleAppSiteAssociationRouteImport } from './app/apple-app-site-association'
 import { Route as MarketingRouteImport } from './app/_marketing'
-import { Route as AppIndexRouteImport } from './app/app/index'
-import { Route as AdminIndexRouteImport } from './app/admin/index'
 import { Route as MarketingIndexRouteImport } from './app/_marketing/index'
-import { Route as AppSettingsRouteImport } from './app/app/settings'
-import { Route as AppNotificationsRouteImport } from './app/app/notifications'
-import { Route as AppLoginRouteImport } from './app/app/login'
-import { Route as AppImagesRouteImport } from './app/app/images'
-import { Route as AppEventsRouteImport } from './app/app/events'
 import { Route as ApiAppleAppSiteAssociationRouteImport } from './app/api/apple-app-site-association'
-import { Route as AdminLoginRouteImport } from './app/admin/login'
-import { Route as AdminDashboardRouteImport } from './app/admin/dashboard'
 import { Route as MarketingTermsOfServiceRouteImport } from './app/_marketing/terms-of-service'
 import { Route as MarketingPrivacyPolicyRouteImport } from './app/_marketing/privacy-policy'
 import { Route as MarketingDeleteAccountRouteImport } from './app/_marketing/delete-account'
-import { Route as AdminDashboardIndexRouteImport } from './app/admin/dashboard/index'
-import { Route as AppEventsNewRouteImport } from './app/app/events.new'
-import { Route as AppEventsEventIdRouteImport } from './app/app/events.$eventId'
+import { Route as DotwellKnownAssetlinksDotjsonRouteImport } from './app/[.]well-known.assetlinks[.]json'
+import { Route as DotwellKnownAppleAppSiteAssociationRouteImport } from './app/[.]well-known.apple-app-site-association'
 import { Route as ApiWellKnownAssetlinksRouteImport } from './app/api/well-known.assetlinks'
 import { Route as ApiWellKnownAppleAppSiteAssociationRouteImport } from './app/api/well-known.apple-app-site-association'
-import { Route as AdminDashboardUsersRouteImport } from './app/admin/dashboard/users'
-import { Route as AdminDashboardTicketsRouteImport } from './app/admin/dashboard/tickets'
-import { Route as AdminDashboardSettingsRouteImport } from './app/admin/dashboard/settings'
-import { Route as AdminDashboardPaymentsRouteImport } from './app/admin/dashboard/payments'
-import { Route as AdminDashboardNotificationsRouteImport } from './app/admin/dashboard/notifications'
-import { Route as AdminDashboardMediaRouteImport } from './app/admin/dashboard/media'
-import { Route as AdminDashboardEventsRouteImport } from './app/admin/dashboard/events'
-import { Route as AdminDashboardAuditLogRouteImport } from './app/admin/dashboard/audit-log'
 import { Route as MarketingJoinInviteIdRouteImport } from './app/_marketing/join.$inviteId'
-import { Route as AppEventsInvitationsAcceptRouteImport } from './app/app/events.invitations.accept'
-import { Route as AdminDashboardUsersUserIdRouteImport } from './app/admin/dashboard/users.$userId'
-import { Route as AdminDashboardTicketsTicketIdRouteImport } from './app/admin/dashboard/tickets.$ticketId'
-import { Route as AdminDashboardEventsEventIdRouteImport } from './app/admin/dashboard/events.$eventId'
+import { Route as MarketingEventsEventIdRouteImport } from './app/_marketing/events.$eventId'
+import { Route as MarketingEventEventIdRouteImport } from './app/_marketing/event.$eventId'
+import { Route as MarketingCameraInviteIdRouteImport } from './app/_marketing/camera.$inviteId'
 
-const AppRoute = AppRouteImport.update({
-  id: '/app',
-  path: '/app',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const AppleAppSiteAssociationRoute = AppleAppSiteAssociationRouteImport.update({
+  id: '/apple-app-site-association',
+  path: '/apple-app-site-association',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketingRoute = MarketingRouteImport.update({
   id: '/_marketing',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppIndexRoute = AppIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AppRoute,
-} as any)
-const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AdminRoute,
-} as any)
 const MarketingIndexRoute = MarketingIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => MarketingRoute,
-} as any)
-const AppSettingsRoute = AppSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppNotificationsRoute = AppNotificationsRouteImport.update({
-  id: '/notifications',
-  path: '/notifications',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppLoginRoute = AppLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppImagesRoute = AppImagesRouteImport.update({
-  id: '/images',
-  path: '/images',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppEventsRoute = AppEventsRouteImport.update({
-  id: '/events',
-  path: '/events',
-  getParentRoute: () => AppRoute,
 } as any)
 const ApiAppleAppSiteAssociationRoute =
   ApiAppleAppSiteAssociationRouteImport.update({
@@ -105,16 +45,6 @@ const ApiAppleAppSiteAssociationRoute =
     path: '/api/apple-app-site-association',
     getParentRoute: () => rootRouteImport,
   } as any)
-const AdminLoginRoute = AdminLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminDashboardRoute = AdminDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AdminRoute,
-} as any)
 const MarketingTermsOfServiceRoute = MarketingTermsOfServiceRouteImport.update({
   id: '/terms-of-service',
   path: '/terms-of-service',
@@ -130,21 +60,18 @@ const MarketingDeleteAccountRoute = MarketingDeleteAccountRouteImport.update({
   path: '/delete-account',
   getParentRoute: () => MarketingRoute,
 } as any)
-const AdminDashboardIndexRoute = AdminDashboardIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AdminDashboardRoute,
-} as any)
-const AppEventsNewRoute = AppEventsNewRouteImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => AppEventsRoute,
-} as any)
-const AppEventsEventIdRoute = AppEventsEventIdRouteImport.update({
-  id: '/$eventId',
-  path: '/$eventId',
-  getParentRoute: () => AppEventsRoute,
-} as any)
+const DotwellKnownAssetlinksDotjsonRoute =
+  DotwellKnownAssetlinksDotjsonRouteImport.update({
+    id: '/.well-known/assetlinks.json',
+    path: '/.well-known/assetlinks.json',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DotwellKnownAppleAppSiteAssociationRoute =
+  DotwellKnownAppleAppSiteAssociationRouteImport.update({
+    id: '/.well-known/apple-app-site-association',
+    path: '/.well-known/apple-app-site-association',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiWellKnownAssetlinksRoute = ApiWellKnownAssetlinksRouteImport.update({
   id: '/api/well-known/assetlinks',
   path: '/api/well-known/assetlinks',
@@ -156,297 +83,134 @@ const ApiWellKnownAppleAppSiteAssociationRoute =
     path: '/api/well-known/apple-app-site-association',
     getParentRoute: () => rootRouteImport,
   } as any)
-const AdminDashboardUsersRoute = AdminDashboardUsersRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => AdminDashboardRoute,
-} as any)
-const AdminDashboardTicketsRoute = AdminDashboardTicketsRouteImport.update({
-  id: '/tickets',
-  path: '/tickets',
-  getParentRoute: () => AdminDashboardRoute,
-} as any)
-const AdminDashboardSettingsRoute = AdminDashboardSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AdminDashboardRoute,
-} as any)
-const AdminDashboardPaymentsRoute = AdminDashboardPaymentsRouteImport.update({
-  id: '/payments',
-  path: '/payments',
-  getParentRoute: () => AdminDashboardRoute,
-} as any)
-const AdminDashboardNotificationsRoute =
-  AdminDashboardNotificationsRouteImport.update({
-    id: '/notifications',
-    path: '/notifications',
-    getParentRoute: () => AdminDashboardRoute,
-  } as any)
-const AdminDashboardMediaRoute = AdminDashboardMediaRouteImport.update({
-  id: '/media',
-  path: '/media',
-  getParentRoute: () => AdminDashboardRoute,
-} as any)
-const AdminDashboardEventsRoute = AdminDashboardEventsRouteImport.update({
-  id: '/events',
-  path: '/events',
-  getParentRoute: () => AdminDashboardRoute,
-} as any)
-const AdminDashboardAuditLogRoute = AdminDashboardAuditLogRouteImport.update({
-  id: '/audit-log',
-  path: '/audit-log',
-  getParentRoute: () => AdminDashboardRoute,
-} as any)
 const MarketingJoinInviteIdRoute = MarketingJoinInviteIdRouteImport.update({
   id: '/join/$inviteId',
   path: '/join/$inviteId',
   getParentRoute: () => MarketingRoute,
 } as any)
-const AppEventsInvitationsAcceptRoute =
-  AppEventsInvitationsAcceptRouteImport.update({
-    id: '/invitations/accept',
-    path: '/invitations/accept',
-    getParentRoute: () => AppEventsRoute,
-  } as any)
-const AdminDashboardUsersUserIdRoute =
-  AdminDashboardUsersUserIdRouteImport.update({
-    id: '/$userId',
-    path: '/$userId',
-    getParentRoute: () => AdminDashboardUsersRoute,
-  } as any)
-const AdminDashboardTicketsTicketIdRoute =
-  AdminDashboardTicketsTicketIdRouteImport.update({
-    id: '/$ticketId',
-    path: '/$ticketId',
-    getParentRoute: () => AdminDashboardTicketsRoute,
-  } as any)
-const AdminDashboardEventsEventIdRoute =
-  AdminDashboardEventsEventIdRouteImport.update({
-    id: '/$eventId',
-    path: '/$eventId',
-    getParentRoute: () => AdminDashboardEventsRoute,
-  } as any)
+const MarketingEventsEventIdRoute = MarketingEventsEventIdRouteImport.update({
+  id: '/events/$eventId',
+  path: '/events/$eventId',
+  getParentRoute: () => MarketingRoute,
+} as any)
+const MarketingEventEventIdRoute = MarketingEventEventIdRouteImport.update({
+  id: '/event/$eventId',
+  path: '/event/$eventId',
+  getParentRoute: () => MarketingRoute,
+} as any)
+const MarketingCameraInviteIdRoute = MarketingCameraInviteIdRouteImport.update({
+  id: '/camera/$inviteId',
+  path: '/camera/$inviteId',
+  getParentRoute: () => MarketingRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof MarketingIndexRoute
-  '/admin': typeof AdminRouteWithChildren
-  '/app': typeof AppRouteWithChildren
+  '/apple-app-site-association': typeof AppleAppSiteAssociationRoute
+  '/.well-known/apple-app-site-association': typeof DotwellKnownAppleAppSiteAssociationRoute
+  '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/delete-account': typeof MarketingDeleteAccountRoute
   '/privacy-policy': typeof MarketingPrivacyPolicyRoute
   '/terms-of-service': typeof MarketingTermsOfServiceRoute
-  '/admin/dashboard': typeof AdminDashboardRouteWithChildren
-  '/admin/login': typeof AdminLoginRoute
   '/api/apple-app-site-association': typeof ApiAppleAppSiteAssociationRoute
-  '/app/events': typeof AppEventsRouteWithChildren
-  '/app/images': typeof AppImagesRoute
-  '/app/login': typeof AppLoginRoute
-  '/app/notifications': typeof AppNotificationsRoute
-  '/app/settings': typeof AppSettingsRoute
-  '/admin/': typeof AdminIndexRoute
-  '/app/': typeof AppIndexRoute
+  '/camera/$inviteId': typeof MarketingCameraInviteIdRoute
+  '/event/$eventId': typeof MarketingEventEventIdRoute
+  '/events/$eventId': typeof MarketingEventsEventIdRoute
   '/join/$inviteId': typeof MarketingJoinInviteIdRoute
-  '/admin/dashboard/audit-log': typeof AdminDashboardAuditLogRoute
-  '/admin/dashboard/events': typeof AdminDashboardEventsRouteWithChildren
-  '/admin/dashboard/media': typeof AdminDashboardMediaRoute
-  '/admin/dashboard/notifications': typeof AdminDashboardNotificationsRoute
-  '/admin/dashboard/payments': typeof AdminDashboardPaymentsRoute
-  '/admin/dashboard/settings': typeof AdminDashboardSettingsRoute
-  '/admin/dashboard/tickets': typeof AdminDashboardTicketsRouteWithChildren
-  '/admin/dashboard/users': typeof AdminDashboardUsersRouteWithChildren
   '/api/well-known/apple-app-site-association': typeof ApiWellKnownAppleAppSiteAssociationRoute
   '/api/well-known/assetlinks': typeof ApiWellKnownAssetlinksRoute
-  '/app/events/$eventId': typeof AppEventsEventIdRoute
-  '/app/events/new': typeof AppEventsNewRoute
-  '/admin/dashboard/': typeof AdminDashboardIndexRoute
-  '/admin/dashboard/events/$eventId': typeof AdminDashboardEventsEventIdRoute
-  '/admin/dashboard/tickets/$ticketId': typeof AdminDashboardTicketsTicketIdRoute
-  '/admin/dashboard/users/$userId': typeof AdminDashboardUsersUserIdRoute
-  '/app/events/invitations/accept': typeof AppEventsInvitationsAcceptRoute
 }
 export interface FileRoutesByTo {
+  '/apple-app-site-association': typeof AppleAppSiteAssociationRoute
+  '/.well-known/apple-app-site-association': typeof DotwellKnownAppleAppSiteAssociationRoute
+  '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/delete-account': typeof MarketingDeleteAccountRoute
   '/privacy-policy': typeof MarketingPrivacyPolicyRoute
   '/terms-of-service': typeof MarketingTermsOfServiceRoute
-  '/admin/login': typeof AdminLoginRoute
   '/api/apple-app-site-association': typeof ApiAppleAppSiteAssociationRoute
-  '/app/events': typeof AppEventsRouteWithChildren
-  '/app/images': typeof AppImagesRoute
-  '/app/login': typeof AppLoginRoute
-  '/app/notifications': typeof AppNotificationsRoute
-  '/app/settings': typeof AppSettingsRoute
   '/': typeof MarketingIndexRoute
-  '/admin': typeof AdminIndexRoute
-  '/app': typeof AppIndexRoute
+  '/camera/$inviteId': typeof MarketingCameraInviteIdRoute
+  '/event/$eventId': typeof MarketingEventEventIdRoute
+  '/events/$eventId': typeof MarketingEventsEventIdRoute
   '/join/$inviteId': typeof MarketingJoinInviteIdRoute
-  '/admin/dashboard/audit-log': typeof AdminDashboardAuditLogRoute
-  '/admin/dashboard/events': typeof AdminDashboardEventsRouteWithChildren
-  '/admin/dashboard/media': typeof AdminDashboardMediaRoute
-  '/admin/dashboard/notifications': typeof AdminDashboardNotificationsRoute
-  '/admin/dashboard/payments': typeof AdminDashboardPaymentsRoute
-  '/admin/dashboard/settings': typeof AdminDashboardSettingsRoute
-  '/admin/dashboard/tickets': typeof AdminDashboardTicketsRouteWithChildren
-  '/admin/dashboard/users': typeof AdminDashboardUsersRouteWithChildren
   '/api/well-known/apple-app-site-association': typeof ApiWellKnownAppleAppSiteAssociationRoute
   '/api/well-known/assetlinks': typeof ApiWellKnownAssetlinksRoute
-  '/app/events/$eventId': typeof AppEventsEventIdRoute
-  '/app/events/new': typeof AppEventsNewRoute
-  '/admin/dashboard': typeof AdminDashboardIndexRoute
-  '/admin/dashboard/events/$eventId': typeof AdminDashboardEventsEventIdRoute
-  '/admin/dashboard/tickets/$ticketId': typeof AdminDashboardTicketsTicketIdRoute
-  '/admin/dashboard/users/$userId': typeof AdminDashboardUsersUserIdRoute
-  '/app/events/invitations/accept': typeof AppEventsInvitationsAcceptRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_marketing': typeof MarketingRouteWithChildren
-  '/admin': typeof AdminRouteWithChildren
-  '/app': typeof AppRouteWithChildren
+  '/apple-app-site-association': typeof AppleAppSiteAssociationRoute
+  '/.well-known/apple-app-site-association': typeof DotwellKnownAppleAppSiteAssociationRoute
+  '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/_marketing/delete-account': typeof MarketingDeleteAccountRoute
   '/_marketing/privacy-policy': typeof MarketingPrivacyPolicyRoute
   '/_marketing/terms-of-service': typeof MarketingTermsOfServiceRoute
-  '/admin/dashboard': typeof AdminDashboardRouteWithChildren
-  '/admin/login': typeof AdminLoginRoute
   '/api/apple-app-site-association': typeof ApiAppleAppSiteAssociationRoute
-  '/app/events': typeof AppEventsRouteWithChildren
-  '/app/images': typeof AppImagesRoute
-  '/app/login': typeof AppLoginRoute
-  '/app/notifications': typeof AppNotificationsRoute
-  '/app/settings': typeof AppSettingsRoute
   '/_marketing/': typeof MarketingIndexRoute
-  '/admin/': typeof AdminIndexRoute
-  '/app/': typeof AppIndexRoute
+  '/_marketing/camera/$inviteId': typeof MarketingCameraInviteIdRoute
+  '/_marketing/event/$eventId': typeof MarketingEventEventIdRoute
+  '/_marketing/events/$eventId': typeof MarketingEventsEventIdRoute
   '/_marketing/join/$inviteId': typeof MarketingJoinInviteIdRoute
-  '/admin/dashboard/audit-log': typeof AdminDashboardAuditLogRoute
-  '/admin/dashboard/events': typeof AdminDashboardEventsRouteWithChildren
-  '/admin/dashboard/media': typeof AdminDashboardMediaRoute
-  '/admin/dashboard/notifications': typeof AdminDashboardNotificationsRoute
-  '/admin/dashboard/payments': typeof AdminDashboardPaymentsRoute
-  '/admin/dashboard/settings': typeof AdminDashboardSettingsRoute
-  '/admin/dashboard/tickets': typeof AdminDashboardTicketsRouteWithChildren
-  '/admin/dashboard/users': typeof AdminDashboardUsersRouteWithChildren
   '/api/well-known/apple-app-site-association': typeof ApiWellKnownAppleAppSiteAssociationRoute
   '/api/well-known/assetlinks': typeof ApiWellKnownAssetlinksRoute
-  '/app/events/$eventId': typeof AppEventsEventIdRoute
-  '/app/events/new': typeof AppEventsNewRoute
-  '/admin/dashboard/': typeof AdminDashboardIndexRoute
-  '/admin/dashboard/events/$eventId': typeof AdminDashboardEventsEventIdRoute
-  '/admin/dashboard/tickets/$ticketId': typeof AdminDashboardTicketsTicketIdRoute
-  '/admin/dashboard/users/$userId': typeof AdminDashboardUsersUserIdRoute
-  '/app/events/invitations/accept': typeof AppEventsInvitationsAcceptRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/admin'
-    | '/app'
+    | '/apple-app-site-association'
+    | '/.well-known/apple-app-site-association'
+    | '/.well-known/assetlinks.json'
     | '/delete-account'
     | '/privacy-policy'
     | '/terms-of-service'
-    | '/admin/dashboard'
-    | '/admin/login'
     | '/api/apple-app-site-association'
-    | '/app/events'
-    | '/app/images'
-    | '/app/login'
-    | '/app/notifications'
-    | '/app/settings'
-    | '/admin/'
-    | '/app/'
+    | '/camera/$inviteId'
+    | '/event/$eventId'
+    | '/events/$eventId'
     | '/join/$inviteId'
-    | '/admin/dashboard/audit-log'
-    | '/admin/dashboard/events'
-    | '/admin/dashboard/media'
-    | '/admin/dashboard/notifications'
-    | '/admin/dashboard/payments'
-    | '/admin/dashboard/settings'
-    | '/admin/dashboard/tickets'
-    | '/admin/dashboard/users'
     | '/api/well-known/apple-app-site-association'
     | '/api/well-known/assetlinks'
-    | '/app/events/$eventId'
-    | '/app/events/new'
-    | '/admin/dashboard/'
-    | '/admin/dashboard/events/$eventId'
-    | '/admin/dashboard/tickets/$ticketId'
-    | '/admin/dashboard/users/$userId'
-    | '/app/events/invitations/accept'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/apple-app-site-association'
+    | '/.well-known/apple-app-site-association'
+    | '/.well-known/assetlinks.json'
     | '/delete-account'
     | '/privacy-policy'
     | '/terms-of-service'
-    | '/admin/login'
     | '/api/apple-app-site-association'
-    | '/app/events'
-    | '/app/images'
-    | '/app/login'
-    | '/app/notifications'
-    | '/app/settings'
     | '/'
-    | '/admin'
-    | '/app'
+    | '/camera/$inviteId'
+    | '/event/$eventId'
+    | '/events/$eventId'
     | '/join/$inviteId'
-    | '/admin/dashboard/audit-log'
-    | '/admin/dashboard/events'
-    | '/admin/dashboard/media'
-    | '/admin/dashboard/notifications'
-    | '/admin/dashboard/payments'
-    | '/admin/dashboard/settings'
-    | '/admin/dashboard/tickets'
-    | '/admin/dashboard/users'
     | '/api/well-known/apple-app-site-association'
     | '/api/well-known/assetlinks'
-    | '/app/events/$eventId'
-    | '/app/events/new'
-    | '/admin/dashboard'
-    | '/admin/dashboard/events/$eventId'
-    | '/admin/dashboard/tickets/$ticketId'
-    | '/admin/dashboard/users/$userId'
-    | '/app/events/invitations/accept'
   id:
     | '__root__'
     | '/_marketing'
-    | '/admin'
-    | '/app'
+    | '/apple-app-site-association'
+    | '/.well-known/apple-app-site-association'
+    | '/.well-known/assetlinks.json'
     | '/_marketing/delete-account'
     | '/_marketing/privacy-policy'
     | '/_marketing/terms-of-service'
-    | '/admin/dashboard'
-    | '/admin/login'
     | '/api/apple-app-site-association'
-    | '/app/events'
-    | '/app/images'
-    | '/app/login'
-    | '/app/notifications'
-    | '/app/settings'
     | '/_marketing/'
-    | '/admin/'
-    | '/app/'
+    | '/_marketing/camera/$inviteId'
+    | '/_marketing/event/$eventId'
+    | '/_marketing/events/$eventId'
     | '/_marketing/join/$inviteId'
-    | '/admin/dashboard/audit-log'
-    | '/admin/dashboard/events'
-    | '/admin/dashboard/media'
-    | '/admin/dashboard/notifications'
-    | '/admin/dashboard/payments'
-    | '/admin/dashboard/settings'
-    | '/admin/dashboard/tickets'
-    | '/admin/dashboard/users'
     | '/api/well-known/apple-app-site-association'
     | '/api/well-known/assetlinks'
-    | '/app/events/$eventId'
-    | '/app/events/new'
-    | '/admin/dashboard/'
-    | '/admin/dashboard/events/$eventId'
-    | '/admin/dashboard/tickets/$ticketId'
-    | '/admin/dashboard/users/$userId'
-    | '/app/events/invitations/accept'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   MarketingRoute: typeof MarketingRouteWithChildren
-  AdminRoute: typeof AdminRouteWithChildren
-  AppRoute: typeof AppRouteWithChildren
+  AppleAppSiteAssociationRoute: typeof AppleAppSiteAssociationRoute
+  DotwellKnownAppleAppSiteAssociationRoute: typeof DotwellKnownAppleAppSiteAssociationRoute
+  DotwellKnownAssetlinksDotjsonRoute: typeof DotwellKnownAssetlinksDotjsonRoute
   ApiAppleAppSiteAssociationRoute: typeof ApiAppleAppSiteAssociationRoute
   ApiWellKnownAppleAppSiteAssociationRoute: typeof ApiWellKnownAppleAppSiteAssociationRoute
   ApiWellKnownAssetlinksRoute: typeof ApiWellKnownAssetlinksRoute
@@ -454,18 +218,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/app': {
-      id: '/app'
-      path: '/app'
-      fullPath: '/app'
-      preLoaderRoute: typeof AppRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
+    '/apple-app-site-association': {
+      id: '/apple-app-site-association'
+      path: '/apple-app-site-association'
+      fullPath: '/apple-app-site-association'
+      preLoaderRoute: typeof AppleAppSiteAssociationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_marketing': {
@@ -475,20 +232,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/app/': {
-      id: '/app/'
-      path: '/'
-      fullPath: '/app/'
-      preLoaderRoute: typeof AppIndexRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/admin/': {
-      id: '/admin/'
-      path: '/'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/_marketing/': {
       id: '/_marketing/'
       path: '/'
@@ -496,61 +239,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingIndexRouteImport
       parentRoute: typeof MarketingRoute
     }
-    '/app/settings': {
-      id: '/app/settings'
-      path: '/settings'
-      fullPath: '/app/settings'
-      preLoaderRoute: typeof AppSettingsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/notifications': {
-      id: '/app/notifications'
-      path: '/notifications'
-      fullPath: '/app/notifications'
-      preLoaderRoute: typeof AppNotificationsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/login': {
-      id: '/app/login'
-      path: '/login'
-      fullPath: '/app/login'
-      preLoaderRoute: typeof AppLoginRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/images': {
-      id: '/app/images'
-      path: '/images'
-      fullPath: '/app/images'
-      preLoaderRoute: typeof AppImagesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/events': {
-      id: '/app/events'
-      path: '/events'
-      fullPath: '/app/events'
-      preLoaderRoute: typeof AppEventsRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/api/apple-app-site-association': {
       id: '/api/apple-app-site-association'
       path: '/api/apple-app-site-association'
       fullPath: '/api/apple-app-site-association'
       preLoaderRoute: typeof ApiAppleAppSiteAssociationRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/admin/login': {
-      id: '/admin/login'
-      path: '/login'
-      fullPath: '/admin/login'
-      preLoaderRoute: typeof AdminLoginRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/dashboard': {
-      id: '/admin/dashboard'
-      path: '/dashboard'
-      fullPath: '/admin/dashboard'
-      preLoaderRoute: typeof AdminDashboardRouteImport
-      parentRoute: typeof AdminRoute
     }
     '/_marketing/terms-of-service': {
       id: '/_marketing/terms-of-service'
@@ -573,26 +267,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingDeleteAccountRouteImport
       parentRoute: typeof MarketingRoute
     }
-    '/admin/dashboard/': {
-      id: '/admin/dashboard/'
-      path: '/'
-      fullPath: '/admin/dashboard/'
-      preLoaderRoute: typeof AdminDashboardIndexRouteImport
-      parentRoute: typeof AdminDashboardRoute
+    '/.well-known/assetlinks.json': {
+      id: '/.well-known/assetlinks.json'
+      path: '/.well-known/assetlinks.json'
+      fullPath: '/.well-known/assetlinks.json'
+      preLoaderRoute: typeof DotwellKnownAssetlinksDotjsonRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/app/events/new': {
-      id: '/app/events/new'
-      path: '/new'
-      fullPath: '/app/events/new'
-      preLoaderRoute: typeof AppEventsNewRouteImport
-      parentRoute: typeof AppEventsRoute
-    }
-    '/app/events/$eventId': {
-      id: '/app/events/$eventId'
-      path: '/$eventId'
-      fullPath: '/app/events/$eventId'
-      preLoaderRoute: typeof AppEventsEventIdRouteImport
-      parentRoute: typeof AppEventsRoute
+    '/.well-known/apple-app-site-association': {
+      id: '/.well-known/apple-app-site-association'
+      path: '/.well-known/apple-app-site-association'
+      fullPath: '/.well-known/apple-app-site-association'
+      preLoaderRoute: typeof DotwellKnownAppleAppSiteAssociationRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/well-known/assetlinks': {
       id: '/api/well-known/assetlinks'
@@ -608,62 +295,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiWellKnownAppleAppSiteAssociationRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/dashboard/users': {
-      id: '/admin/dashboard/users'
-      path: '/users'
-      fullPath: '/admin/dashboard/users'
-      preLoaderRoute: typeof AdminDashboardUsersRouteImport
-      parentRoute: typeof AdminDashboardRoute
-    }
-    '/admin/dashboard/tickets': {
-      id: '/admin/dashboard/tickets'
-      path: '/tickets'
-      fullPath: '/admin/dashboard/tickets'
-      preLoaderRoute: typeof AdminDashboardTicketsRouteImport
-      parentRoute: typeof AdminDashboardRoute
-    }
-    '/admin/dashboard/settings': {
-      id: '/admin/dashboard/settings'
-      path: '/settings'
-      fullPath: '/admin/dashboard/settings'
-      preLoaderRoute: typeof AdminDashboardSettingsRouteImport
-      parentRoute: typeof AdminDashboardRoute
-    }
-    '/admin/dashboard/payments': {
-      id: '/admin/dashboard/payments'
-      path: '/payments'
-      fullPath: '/admin/dashboard/payments'
-      preLoaderRoute: typeof AdminDashboardPaymentsRouteImport
-      parentRoute: typeof AdminDashboardRoute
-    }
-    '/admin/dashboard/notifications': {
-      id: '/admin/dashboard/notifications'
-      path: '/notifications'
-      fullPath: '/admin/dashboard/notifications'
-      preLoaderRoute: typeof AdminDashboardNotificationsRouteImport
-      parentRoute: typeof AdminDashboardRoute
-    }
-    '/admin/dashboard/media': {
-      id: '/admin/dashboard/media'
-      path: '/media'
-      fullPath: '/admin/dashboard/media'
-      preLoaderRoute: typeof AdminDashboardMediaRouteImport
-      parentRoute: typeof AdminDashboardRoute
-    }
-    '/admin/dashboard/events': {
-      id: '/admin/dashboard/events'
-      path: '/events'
-      fullPath: '/admin/dashboard/events'
-      preLoaderRoute: typeof AdminDashboardEventsRouteImport
-      parentRoute: typeof AdminDashboardRoute
-    }
-    '/admin/dashboard/audit-log': {
-      id: '/admin/dashboard/audit-log'
-      path: '/audit-log'
-      fullPath: '/admin/dashboard/audit-log'
-      preLoaderRoute: typeof AdminDashboardAuditLogRouteImport
-      parentRoute: typeof AdminDashboardRoute
-    }
     '/_marketing/join/$inviteId': {
       id: '/_marketing/join/$inviteId'
       path: '/join/$inviteId'
@@ -671,33 +302,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingJoinInviteIdRouteImport
       parentRoute: typeof MarketingRoute
     }
-    '/app/events/invitations/accept': {
-      id: '/app/events/invitations/accept'
-      path: '/invitations/accept'
-      fullPath: '/app/events/invitations/accept'
-      preLoaderRoute: typeof AppEventsInvitationsAcceptRouteImport
-      parentRoute: typeof AppEventsRoute
+    '/_marketing/events/$eventId': {
+      id: '/_marketing/events/$eventId'
+      path: '/events/$eventId'
+      fullPath: '/events/$eventId'
+      preLoaderRoute: typeof MarketingEventsEventIdRouteImport
+      parentRoute: typeof MarketingRoute
     }
-    '/admin/dashboard/users/$userId': {
-      id: '/admin/dashboard/users/$userId'
-      path: '/$userId'
-      fullPath: '/admin/dashboard/users/$userId'
-      preLoaderRoute: typeof AdminDashboardUsersUserIdRouteImport
-      parentRoute: typeof AdminDashboardUsersRoute
+    '/_marketing/event/$eventId': {
+      id: '/_marketing/event/$eventId'
+      path: '/event/$eventId'
+      fullPath: '/event/$eventId'
+      preLoaderRoute: typeof MarketingEventEventIdRouteImport
+      parentRoute: typeof MarketingRoute
     }
-    '/admin/dashboard/tickets/$ticketId': {
-      id: '/admin/dashboard/tickets/$ticketId'
-      path: '/$ticketId'
-      fullPath: '/admin/dashboard/tickets/$ticketId'
-      preLoaderRoute: typeof AdminDashboardTicketsTicketIdRouteImport
-      parentRoute: typeof AdminDashboardTicketsRoute
-    }
-    '/admin/dashboard/events/$eventId': {
-      id: '/admin/dashboard/events/$eventId'
-      path: '/$eventId'
-      fullPath: '/admin/dashboard/events/$eventId'
-      preLoaderRoute: typeof AdminDashboardEventsEventIdRouteImport
-      parentRoute: typeof AdminDashboardEventsRoute
+    '/_marketing/camera/$inviteId': {
+      id: '/_marketing/camera/$inviteId'
+      path: '/camera/$inviteId'
+      fullPath: '/camera/$inviteId'
+      preLoaderRoute: typeof MarketingCameraInviteIdRouteImport
+      parentRoute: typeof MarketingRoute
     }
   }
 }
@@ -707,6 +331,9 @@ interface MarketingRouteChildren {
   MarketingPrivacyPolicyRoute: typeof MarketingPrivacyPolicyRoute
   MarketingTermsOfServiceRoute: typeof MarketingTermsOfServiceRoute
   MarketingIndexRoute: typeof MarketingIndexRoute
+  MarketingCameraInviteIdRoute: typeof MarketingCameraInviteIdRoute
+  MarketingEventEventIdRoute: typeof MarketingEventEventIdRoute
+  MarketingEventsEventIdRoute: typeof MarketingEventsEventIdRoute
   MarketingJoinInviteIdRoute: typeof MarketingJoinInviteIdRoute
 }
 
@@ -715,6 +342,9 @@ const MarketingRouteChildren: MarketingRouteChildren = {
   MarketingPrivacyPolicyRoute: MarketingPrivacyPolicyRoute,
   MarketingTermsOfServiceRoute: MarketingTermsOfServiceRoute,
   MarketingIndexRoute: MarketingIndexRoute,
+  MarketingCameraInviteIdRoute: MarketingCameraInviteIdRoute,
+  MarketingEventEventIdRoute: MarketingEventEventIdRoute,
+  MarketingEventsEventIdRoute: MarketingEventsEventIdRoute,
   MarketingJoinInviteIdRoute: MarketingJoinInviteIdRoute,
 }
 
@@ -722,123 +352,12 @@ const MarketingRouteWithChildren = MarketingRoute._addFileChildren(
   MarketingRouteChildren,
 )
 
-interface AdminDashboardEventsRouteChildren {
-  AdminDashboardEventsEventIdRoute: typeof AdminDashboardEventsEventIdRoute
-}
-
-const AdminDashboardEventsRouteChildren: AdminDashboardEventsRouteChildren = {
-  AdminDashboardEventsEventIdRoute: AdminDashboardEventsEventIdRoute,
-}
-
-const AdminDashboardEventsRouteWithChildren =
-  AdminDashboardEventsRoute._addFileChildren(AdminDashboardEventsRouteChildren)
-
-interface AdminDashboardTicketsRouteChildren {
-  AdminDashboardTicketsTicketIdRoute: typeof AdminDashboardTicketsTicketIdRoute
-}
-
-const AdminDashboardTicketsRouteChildren: AdminDashboardTicketsRouteChildren = {
-  AdminDashboardTicketsTicketIdRoute: AdminDashboardTicketsTicketIdRoute,
-}
-
-const AdminDashboardTicketsRouteWithChildren =
-  AdminDashboardTicketsRoute._addFileChildren(
-    AdminDashboardTicketsRouteChildren,
-  )
-
-interface AdminDashboardUsersRouteChildren {
-  AdminDashboardUsersUserIdRoute: typeof AdminDashboardUsersUserIdRoute
-}
-
-const AdminDashboardUsersRouteChildren: AdminDashboardUsersRouteChildren = {
-  AdminDashboardUsersUserIdRoute: AdminDashboardUsersUserIdRoute,
-}
-
-const AdminDashboardUsersRouteWithChildren =
-  AdminDashboardUsersRoute._addFileChildren(AdminDashboardUsersRouteChildren)
-
-interface AdminDashboardRouteChildren {
-  AdminDashboardAuditLogRoute: typeof AdminDashboardAuditLogRoute
-  AdminDashboardEventsRoute: typeof AdminDashboardEventsRouteWithChildren
-  AdminDashboardMediaRoute: typeof AdminDashboardMediaRoute
-  AdminDashboardNotificationsRoute: typeof AdminDashboardNotificationsRoute
-  AdminDashboardPaymentsRoute: typeof AdminDashboardPaymentsRoute
-  AdminDashboardSettingsRoute: typeof AdminDashboardSettingsRoute
-  AdminDashboardTicketsRoute: typeof AdminDashboardTicketsRouteWithChildren
-  AdminDashboardUsersRoute: typeof AdminDashboardUsersRouteWithChildren
-  AdminDashboardIndexRoute: typeof AdminDashboardIndexRoute
-}
-
-const AdminDashboardRouteChildren: AdminDashboardRouteChildren = {
-  AdminDashboardAuditLogRoute: AdminDashboardAuditLogRoute,
-  AdminDashboardEventsRoute: AdminDashboardEventsRouteWithChildren,
-  AdminDashboardMediaRoute: AdminDashboardMediaRoute,
-  AdminDashboardNotificationsRoute: AdminDashboardNotificationsRoute,
-  AdminDashboardPaymentsRoute: AdminDashboardPaymentsRoute,
-  AdminDashboardSettingsRoute: AdminDashboardSettingsRoute,
-  AdminDashboardTicketsRoute: AdminDashboardTicketsRouteWithChildren,
-  AdminDashboardUsersRoute: AdminDashboardUsersRouteWithChildren,
-  AdminDashboardIndexRoute: AdminDashboardIndexRoute,
-}
-
-const AdminDashboardRouteWithChildren = AdminDashboardRoute._addFileChildren(
-  AdminDashboardRouteChildren,
-)
-
-interface AdminRouteChildren {
-  AdminDashboardRoute: typeof AdminDashboardRouteWithChildren
-  AdminLoginRoute: typeof AdminLoginRoute
-  AdminIndexRoute: typeof AdminIndexRoute
-}
-
-const AdminRouteChildren: AdminRouteChildren = {
-  AdminDashboardRoute: AdminDashboardRouteWithChildren,
-  AdminLoginRoute: AdminLoginRoute,
-  AdminIndexRoute: AdminIndexRoute,
-}
-
-const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
-
-interface AppEventsRouteChildren {
-  AppEventsEventIdRoute: typeof AppEventsEventIdRoute
-  AppEventsNewRoute: typeof AppEventsNewRoute
-  AppEventsInvitationsAcceptRoute: typeof AppEventsInvitationsAcceptRoute
-}
-
-const AppEventsRouteChildren: AppEventsRouteChildren = {
-  AppEventsEventIdRoute: AppEventsEventIdRoute,
-  AppEventsNewRoute: AppEventsNewRoute,
-  AppEventsInvitationsAcceptRoute: AppEventsInvitationsAcceptRoute,
-}
-
-const AppEventsRouteWithChildren = AppEventsRoute._addFileChildren(
-  AppEventsRouteChildren,
-)
-
-interface AppRouteChildren {
-  AppEventsRoute: typeof AppEventsRouteWithChildren
-  AppImagesRoute: typeof AppImagesRoute
-  AppLoginRoute: typeof AppLoginRoute
-  AppNotificationsRoute: typeof AppNotificationsRoute
-  AppSettingsRoute: typeof AppSettingsRoute
-  AppIndexRoute: typeof AppIndexRoute
-}
-
-const AppRouteChildren: AppRouteChildren = {
-  AppEventsRoute: AppEventsRouteWithChildren,
-  AppImagesRoute: AppImagesRoute,
-  AppLoginRoute: AppLoginRoute,
-  AppNotificationsRoute: AppNotificationsRoute,
-  AppSettingsRoute: AppSettingsRoute,
-  AppIndexRoute: AppIndexRoute,
-}
-
-const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   MarketingRoute: MarketingRouteWithChildren,
-  AdminRoute: AdminRouteWithChildren,
-  AppRoute: AppRouteWithChildren,
+  AppleAppSiteAssociationRoute: AppleAppSiteAssociationRoute,
+  DotwellKnownAppleAppSiteAssociationRoute:
+    DotwellKnownAppleAppSiteAssociationRoute,
+  DotwellKnownAssetlinksDotjsonRoute: DotwellKnownAssetlinksDotjsonRoute,
   ApiAppleAppSiteAssociationRoute: ApiAppleAppSiteAssociationRoute,
   ApiWellKnownAppleAppSiteAssociationRoute:
     ApiWellKnownAppleAppSiteAssociationRoute,

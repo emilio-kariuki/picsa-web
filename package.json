@@ -3,6 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@10.17.1",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
@@ -40,7 +46,6 @@
     "@radix-ui/react-toggle": "1.1.10",
     "@radix-ui/react-toggle-group": "1.1.11",
     "@radix-ui/react-tooltip": "1.2.8",
-    "@tanstack/react-query": "^5.60.0",
     "@tanstack/react-router": "^1.120.3",
     "@tanstack/react-start": "^1.120.3",
     "class-variance-authority": "^0.7.1",
@@ -49,10 +54,8 @@
     "date-fns": "4.1.0",
     "embla-carousel-react": "8.6.0",
     "input-otp": "1.4.2",
-    "jotai": "^2.10.0",
     "next-themes": "^0.4.6",
     "nitro": "3.0.260311-beta",
-    "qrcode": "^1.5.4",
     "react": "19.2.4",
     "react-day-picker": "9.13.2",
     "react-dom": "19.2.4",
@@ -70,7 +73,6 @@
     "@fontsource/geist-sans": "^5.2.5",
     "@tailwindcss/vite": "^4.2.2",
     "@types/node": "^22",
-    "@types/qrcode": "^1.5.5",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "^6.0.1",

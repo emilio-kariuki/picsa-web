@@ -2,13 +2,13 @@ const steps = [
   {
     number: '01',
     title: 'Create your event',
-    desc: 'Name your event, set the date, choose privacy settings, and customise the look. Takes less than two minutes.',
+    desc: 'Open Picsa on your phone, name your event, set the date, and choose your privacy settings.',
     detail: 'Wedding, birthday, reunion — whatever it is, Picsa shapes itself around your moment.',
   },
   {
     number: '02',
     title: 'Invite your people',
-    desc: 'Share a link, send email invites, or both. Guests can join on any device — no app download required.',
+    desc: 'Share your event link or QR code. Guests open the invite in Picsa and sign in to join.',
     detail: 'Your guests get a beautiful invitation, not a WhatsApp message they will scroll past.',
   },
   {

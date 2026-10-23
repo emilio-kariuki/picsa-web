@@ -1,13 +1,12 @@
 import { Link } from '@tanstack/react-router'
 import { Instagram, Twitter, Github } from '@/components/ui/icons'
-import { CLIENT_LOGIN_PATH } from '@/lib/site-urls'
 import { AppStoreButtons } from './app-store-buttons'
 
 const footerLinks = [
   { label: 'Features', to: '/', hash: 'features' },
   { label: 'How it works', to: '/', hash: 'how-it-works' },
   { label: 'Pricing', to: '/', hash: 'pricing' },
-  { label: 'Log in', to: CLIENT_LOGIN_PATH },
+  { label: 'Get Picsa', to: '/', hash: 'download' },
   { label: 'Delete Account', to: '/delete-account' },
   { label: 'Privacy Policy', to: '/privacy-policy' },
   { label: 'Terms', to: '/terms-of-service' },

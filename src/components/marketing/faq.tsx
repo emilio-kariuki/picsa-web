@@ -8,7 +8,7 @@ const faqs = [
   },
   {
     q: 'Can guests upload photos without creating an account?',
-    a: 'Yes. Guests can upload photos and join the event chat using just the invite link — no sign-up required. Hosts create accounts, but your guests never have to.',
+    a: 'Guests open the invite in Picsa and sign in with Google or Apple before joining, uploading photos, or chatting.',
   },
   {
     q: 'How long are my photos stored?',
@@ -24,7 +24,7 @@ const faqs = [
   },
   {
     q: 'Is Picsa good for large events like weddings or concerts?',
-    a: 'Absolutely. Picsa is built for exactly this. Pro plan supports unlimited guests and unlimited HD uploads, with moderation and custom branding for a polished experience.',
+    a: 'A Pro event supports up to 100 guests and 2,500 photo uploads, with HD uploads and moderation controls.',
   },
 ]
 

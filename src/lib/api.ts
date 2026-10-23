@@ -25,7 +25,7 @@ export class ApiError extends Error {
   }
 }
 
-interface AdminApiRequestOptions extends Omit<RequestInit, 'body' | 'headers'> {
+interface ApiRequestOptions extends Omit<RequestInit, 'body' | 'headers'> {
   body?: BodyInit | object | null
   headers?: HeadersInit
   accessToken?: string | null
@@ -75,7 +75,7 @@ function normalizeApiBaseUrl(baseUrl: string) {
   }
 }
 
-export function getAdminApiBaseUrl() {
+export function getApiBaseUrl() {
   const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim()
 
   if (!configuredBaseUrl) {
@@ -85,7 +85,7 @@ export function getAdminApiBaseUrl() {
   return normalizeApiBaseUrl(configuredBaseUrl)
 }
 
-function buildRequestBody(body: AdminApiRequestOptions['body']) {
+function buildRequestBody(body: ApiRequestOptions['body']) {
   if (
     body == null ||
     typeof body === 'string' ||
@@ -101,7 +101,7 @@ function buildRequestBody(body: AdminApiRequestOptions['body']) {
 }
 
 function buildRequestHeaders(
-  body: AdminApiRequestOptions['body'],
+  body: ApiRequestOptions['body'],
   accessToken: string | null | undefined,
   headers: HeadersInit | undefined,
 ) {
@@ -148,14 +148,14 @@ async function parseApiResponse<T>(response: Response): Promise<T> {
 
 export async function apiRequest<T>(
   path: string,
-  options: AdminApiRequestOptions = {},
+  options: ApiRequestOptions = {},
 ) {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`
 
   let response: Response
 
   try {
-    response = await fetch(`${getAdminApiBaseUrl()}${normalizedPath}`, {
+    response = await fetch(`${getApiBaseUrl()}${normalizedPath}`, {
       ...options,
       cache: 'no-store',
       headers: buildRequestHeaders(options.body, options.accessToken, options.headers),
@@ -173,19 +173,7 @@ export async function apiRequest<T>(
   return parseApiResponse<T>(response)
 }
 
-export function adminApiRequest<T>(
-  path: string,
-  options: AdminApiRequestOptions = {},
-) {
-  return apiRequest<T>(path, options)
-}
 
 export function isApiError(error: unknown): error is ApiError {
   return error instanceof ApiError
-}
-
-export const AdminApiError = ApiError
-
-export function isAdminApiError(error: unknown): error is ApiError {
-  return isApiError(error)
 }

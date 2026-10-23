@@ -3,10 +3,23 @@ import {
   createRootRoute,
   HeadContent,
   Scripts,
+  redirect,
 } from '@tanstack/react-router'
+import { buildAppClipBanner } from '@/lib/app-links'
 import appCss from './globals.css?url'
 
 export const Route = createRootRoute({
+  beforeLoad: ({ location }) => {
+    const pathname = location.pathname.replace(/\/$/, '') || '/'
+    const event = pathname.match(/^\/app\/events\/([a-zA-Z0-9_-]+)$/)
+    if (event && event[1] !== 'new') {
+      throw redirect({ to: '/events/$eventId', params: { eventId: event[1] }, search: location.search, statusCode: 308 })
+    }
+    const publicEvent = pathname !== '/events/new' && /^\/(?:join|events?|camera)\/[a-zA-Z0-9_-]+$/.test(pathname)
+    if (!publicEvent && /^\/(?:app|admin|dashboard|login|events|images|notifications|settings|payments|auth)(?:\/|$)/.test(pathname)) {
+      throw redirect({ to: '/', hash: 'download', search: {}, statusCode: 308 })
+    }
+  },
   head: () => ({
     meta: [
       { charSet: 'utf-8' },
@@ -15,9 +28,10 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       { title: 'Picsa' },
+      { name: 'apple-itunes-app', content: buildAppClipBanner() },
       {
         name: 'description',
-        content: 'Picsa brings event memories and admin operations into one platform.',
+        content: 'Collect and share every photo from your event with Picsa.',
       },
     ],
     links: [

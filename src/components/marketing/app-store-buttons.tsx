@@ -1,7 +1,3 @@
-const PLAY_STORE_URL =
-  'https://play.google.com/store/apps/details?id=com.ecoville.picsa&pcampaignid=web_share'
-const APP_STORE_URL = 'https://apps.apple.com/us/app/picsa-pro/id6744581978'
-
 function AppleLogo({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 384 512" fill="currentColor">
@@ -27,39 +23,29 @@ export function AppStoreButtons({ variant = 'dark', className = '' }: AppStoreBu
   const base = 'inline-flex items-center gap-2.5 rounded-xl px-4 py-2.5 transition-all duration-200 no-underline'
 
   const styles = {
-    dark: `${base} bg-foreground text-background hover:bg-foreground/90`,
-    light: `${base} bg-background text-foreground hover:bg-background/90`,
-    outline: `${base} border border-border text-foreground hover:bg-secondary`,
+    dark: `${base} bg-foreground text-background`,
+    light: `${base} bg-background text-foreground`,
+    outline: `${base} border border-border text-foreground`,
   }
 
   const style = styles[variant]
 
   return (
     <div className={`flex flex-wrap items-center gap-3 ${className}`}>
-      <a
-        href={APP_STORE_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={style}
-      >
+      <div className={style}>
         <AppleLogo className="w-5 h-5" />
         <div className="flex flex-col">
-          <span className="text-[10px] leading-none opacity-80">Download on the</span>
+          <span className="text-[10px] leading-none opacity-80">Coming soon on the</span>
           <span className="text-sm font-semibold leading-tight">App Store</span>
         </div>
-      </a>
-      <a
-        href={PLAY_STORE_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={style}
-      >
+      </div>
+      <div className={style}>
         <PlayStoreLogo className="w-4.5 h-4.5" />
         <div className="flex flex-col">
-          <span className="text-[10px] leading-none opacity-80">Get it on</span>
+          <span className="text-[10px] leading-none opacity-80">Coming soon on</span>
           <span className="text-sm font-semibold leading-tight">Google Play</span>
         </div>
-      </a>
+      </div>
     </div>
   )
 }
