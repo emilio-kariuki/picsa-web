@@ -38,11 +38,13 @@ function DeleteAccountPage() {
 
             <div className="space-y-4">
               <h1 className="font-serif text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-                Need your Picsa account removed?
+                Delete your Picsa account
               </h1>
               <p className="max-w-lg text-base leading-8 text-muted-foreground sm:text-lg">
-                Submit a simple deletion request and our team will follow up within 48
-                hours to confirm the details and help complete the process safely.
+                For Picsa Pro: Event Photos, open Settings → Delete Account in the
+                app. You can also enter your account email and a short deletion
+                request in this form. We will follow up within 48 hours to verify
+                the request.
               </p>
             </div>
 
@@ -64,8 +66,53 @@ function DeleteAccountPage() {
             </Button>
           </div>
 
-          <div className="w-full max-w-2xl flex-1">
+          <div className="w-full max-w-2xl flex-1 space-y-8">
             <AccountDeletionRequestForm />
+            <section aria-labelledby="deletion-details" className="space-y-5 rounded-3xl border border-border/70 bg-card p-6 text-sm leading-7 text-muted-foreground">
+              <h2 id="deletion-details" className="font-serif text-2xl font-semibold text-foreground">
+                What happens to your data
+              </h2>
+              <div className="space-y-2">
+                <h3 className="font-semibold text-foreground">Data removed from Picsa</h3>
+                <p>
+                  Completing account deletion removes your profile, sign-in sessions,
+                  event memberships, and your photo and message records. Events you
+                  host are also removed, including other guests&apos; photos and messages
+                  in those events. Save anything you want to keep first.
+                </p>
+                <p>
+                  Stored media is removed separately. A storage failure can leave
+                  copies that need manual follow-up. We cannot remove copies other
+                  people have downloaded or exported.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-semibold text-foreground">Records retained after deletion</h3>
+                <p>
+                  Purchase and transaction records remain for purchase verification
+                  and disputes. Security and audit logs, including IP addresses and
+                  device details, and support requests, including contact details and
+                  messages, also remain. These records currently have no fixed
+                  automatic deletion date.
+                </p>
+                <p>
+                  Deleting your Picsa account does not automatically delete separate
+                  records held by Google Analytics, RevenueCat, Apple, or Google Play.
+                  Google Analytics is configured for two months of event data and
+                  fourteen months of user data; most aggregate reports are excluded
+                  from those limits.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-semibold text-foreground">Response and deletion timing</h3>
+                <p>
+                  The 48-hour target is for a human response, not completed erasure.
+                  We do not currently guarantee a fixed deadline for clearing backups
+                  or failed media cleanup. Use this form to ask what is still retained
+                  for your account or to request a review of that data.
+                </p>
+              </div>
+            </section>
           </div>
         </div>
       </section>

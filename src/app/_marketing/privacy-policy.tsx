@@ -40,15 +40,17 @@ const privacySections = [
   {
     title: 'Sharing and disclosures',
     body: [
-      'Picsa may share information with service providers that help operate the platform, such as hosting vendors, analytics providers, messaging infrastructure, and payment or subscription processors. These parties are permitted to access information only as reasonably necessary to perform services on our behalf.',
+      'Picsa shares information with hosting vendors, analytics providers, messaging infrastructure, and purchase processors to operate the service. Google Analytics also receives measurement data, including user and device identifiers, usage, purchase, approximate-location, and diagnostic data. Google products-and-services sharing is enabled, so Google may use shared analytics data to improve its products and services.',
       'We may also disclose information when required by law, when necessary to protect users, organizers, guests, or Picsa from harm, or in connection with a merger, acquisition, financing, or similar business transaction involving all or part of the service.',
     ],
   },
   {
     title: 'Retention and deletion',
     body: [
-      'We keep information for as long as it is reasonably needed to provide the service, comply with legal obligations, resolve disputes, enforce agreements, and maintain security records. Retention periods may vary depending on the type of data, the event lifecycle, and whether the information is needed for safety or abuse prevention.',
-      'When data is no longer required, Picsa may delete, anonymize, or aggregate it. Some backups or archival copies may persist for a limited period before being overwritten as part of normal infrastructure operations.',
+      'Completing account deletion removes your profile, sign-in sessions, event memberships, and your photo and message records from Picsa. Events you host are also removed, including content contributed by other participants. Stored media is removed separately; storage failures can leave copies that need manual follow-up. Copies downloaded or exported by other people are outside our control.',
+      'Purchase and transaction records remain for purchase verification and disputes. Security and audit logs, including IP addresses and device details, and support requests, including contact details and messages, also remain. These records currently have no fixed automatic deletion date.',
+      'Account deletion does not automatically delete separate records held by Google Analytics, RevenueCat, Apple, or Google Play. Google Analytics is configured for two months of event data and fourteen months of user data; most aggregate reports are excluded from those limits. We do not currently guarantee a fixed deadline for clearing backups or failed media cleanup.',
+      'Open Settings → Delete Account in the app, or visit https://picsa.pro/delete-account to request deletion or ask about retained data. The 48-hour response target on that page is for a human response, not completed erasure.',
     ],
   },
   {
@@ -80,7 +82,7 @@ function PrivacyPolicyPage() {
       eyebrow="Privacy policy"
       title="Your memories deserve clarity, not hidden fine print."
       description="This Privacy Policy explains how Picsa handles personal information across event creation, shared albums, guest participation, messaging, and subscription experiences."
-      lastUpdated="March 25, 2026"
+      lastUpdated="October 24, 2026"
       accent="privacy"
       sections={[...privacySections]}
     />
