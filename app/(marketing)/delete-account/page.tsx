@@ -100,9 +100,10 @@ export default function DeleteAccountPage() {
                 <h3 className="font-semibold text-foreground">Response and deletion timing</h3>
                 <p>
                   The 48-hour target is for a human response, not completed erasure.
-                  We do not currently guarantee a fixed deadline for clearing backups
-                  or failed media cleanup. Use this form to ask what is still retained
-                  for your account or to request a review of that data.
+                  Database backups currently have no automatic expiry. Failed media
+                  cleanup may require manual follow-up, with no guaranteed completion
+                  date. Use this form to ask what is still retained for your account
+                  or to request a review of that data.
                 </p>
               </div>
             </section>
