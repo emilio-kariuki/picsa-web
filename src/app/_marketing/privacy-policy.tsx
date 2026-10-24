@@ -49,7 +49,7 @@ const privacySections = [
     body: [
       'Completing account deletion removes your profile, sign-in sessions, event memberships, and your photo and message records from Picsa. Events you host are also removed, including content contributed by other participants. Stored media is removed separately; storage failures can leave copies that need manual follow-up. Copies downloaded or exported by other people are outside our control.',
       'Purchase and transaction records remain for purchase verification and disputes. Security and audit logs, including IP addresses and device details, and support requests, including contact details and messages, also remain. These records currently have no fixed automatic deletion date.',
-      'Account deletion does not automatically delete separate records held by Google Analytics, RevenueCat, Apple, or Google Play. Google Analytics is configured for two months of event data and fourteen months of user data; most aggregate reports are excluded from those limits. We do not currently guarantee a fixed deadline for clearing backups or failed media cleanup.',
+      'Account deletion does not automatically delete separate records held by Google Analytics, RevenueCat, Apple, or Google Play. Google Analytics is configured for two months of event data and fourteen months of user data; most aggregate reports are excluded from those limits. Database backups currently have no automatic expiry. Failed media cleanup may require manual follow-up, with no guaranteed completion date.',
       'Open Settings → Delete Account in the app, or visit https://picsa.pro/delete-account to request deletion or ask about retained data. The 48-hour response target on that page is for a human response, not completed erasure.',
     ],
   },
