@@ -85,6 +85,8 @@ export function getApiBaseUrl() {
   return normalizeApiBaseUrl(configuredBaseUrl)
 }
 
+export const getAdminApiBaseUrl = getApiBaseUrl
+
 function buildRequestBody(body: ApiRequestOptions['body']) {
   if (
     body == null ||
@@ -174,6 +176,19 @@ export async function apiRequest<T>(
 }
 
 
+export function adminApiRequest<T>(
+  path: string,
+  options: ApiRequestOptions = {},
+) {
+  return apiRequest<T>(path, options)
+}
+
 export function isApiError(error: unknown): error is ApiError {
   return error instanceof ApiError
+}
+
+export const AdminApiError = ApiError
+
+export function isAdminApiError(error: unknown): error is ApiError {
+  return isApiError(error)
 }
